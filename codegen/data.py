@@ -8,7 +8,7 @@ gameName = "Plants"
 constants = [
   ]
 
-modelOrder = ['Player', 'Mappable', 'Plant', 'MutationSpecification']
+modelOrder = ['Player', 'Mappable', 'Plant', 'Mutation']
 
 globals = [
   Variable('mapWidth', int, 'The width of the total map.'),
@@ -37,38 +37,6 @@ Mappable = Model('Mappable',
   doc='A mappable object!',
 )
 
-#UNIT
-Unit = Model('Unit',
-  parent = Mappable,
-  data = [
-    Variable('owner', int, 'The owner of this Unit.'),
-    Variable('mutation', int, 'The mutation of this Unit. This mutation refers to list of MutationSpecifications.'),
-
-    Variable('rads', int, 'The current amount health this Unit has remaining.'),
-    Variable('maxRads', int, 'The maximum amount of this health this Unit can have'),
-    
-    Variable('range', int, 'The maximum range this unit can attack/heal'),
-    
-    Variable('movementLeft', int, 'The distance this unit has left to move'),
-    Variable('maxMovement', int, 'The maximum distance this unit can move each turn'),
-    
-    Variable('strength', int, 'The power of this unit\'s attack/heal/buff'),
-
-    Variable('storage', int, 'The current amount of radiation this Unit can have'),
-    Variable('maxStorage', int, 'The maximum amount of radiation this Unit can have'),
-
-    Variable('sporeCost', int, 'The number of spores required to spawn this unit'),
-    ],
-  doc='Represents a single Unit on the map.',
-  functions=[
-    Function('radiate', [Variable('x', int), Variable('y', int)],
-    doc='Command to radiate (heal, attack) another Unit.'),
-
-    Function('talk', [Variable('message', str)],
-    doc='Command for a plant to send a message.'),
-  ],
-)
-
 #PLANT
 Plant = Model('Plant',
   parent = Mappable,
@@ -79,15 +47,20 @@ Plant = Model('Plant',
     Variable('rads', int, 'The current amount health this Plant has remaining.'),
     Variable('maxRads', int, 'The maximum amount of this health this Plant can have'),
     
-    Variable('range', int, 'The maximum range this plant can attack/heal'),
+    Variable('range', int, 'The maximum range this plant can radiate'),
     
     Variable('movementLeft', int, 'The distance this plant has left to move'),
     Variable('maxMovement', int, 'The maximum distance this plant can move each turn'),
-    
-    Variable('strength', int, 'The power of this plant\'s attack/heal/buff'),
+
+    Variable('strength',     int, 'The current power of this plant\'s radiation'),
+    Variable('minStrength',  int, 'The minimum power of this plant\'s radiation'),
+    Variable('baseStrength', int, 'The base power of this plant\'s radiation'),
+    Variable('maxStrength',  int, 'The maximum power of this plant\'s radiation'),
     
     Variable('storage', int, 'The current amount of radiation this Plant can have'),
     Variable('maxStorage', int, 'The maximum amount of radiation this Plant can have'),
+
+    Variable('spores', int, 'The number of spores required to spawn this unit'),
     ],
   doc='Represents a single Plant on the map.',
   functions=[
@@ -97,20 +70,23 @@ Plant = Model('Plant',
 )
 
 #MUTATIONSPECIFICATION
-MutationSpecification = Model('MutationSpecification',
+Mutation = Model('Mutation',
   data = [
     Variable('name', str, 'The name of this mutation of Plant.'),
-    Variable('mutation', int, 'The MutationSpecification specific id representing this mutation of Plant.'),
-    Variable('cost', int, 'The scrap cost to spawn this Plant mutation into the game.'),
+    Variable('mutation', int, 'The Mutation specific id representing this mutation of Plant.'),
+    Variable('spores', int, 'The spore cost to spawn this Plant mutation into the game.'),
     Variable('maxAttacks', int, 'The maximum number of times the Plant can attack.'),
     Variable('maxHealth', int, 'The maximum amount of this health this Plant can have'),
     Variable('maxMovement', int, 'The maximum number of moves this Plant can move.'),
     Variable('range', int, 'The range of this Plant\'s attack.'),
-    Variable('attack', int, 'The power of this Plant mutation\'s attack.'),
-    Variable('maxArmor', int, 'How much armor the Plant has which reduces damage taken.'),
-    Variable('scrapWorth', int, 'The amount of scrap the Plant drops.'),
-    Variable('turnsToBeHacked', int, 'The number of turns this unit will be hacked, if it is hacked. If 0, the Plant cannot be hacked.'),
-    Variable('hacketsMax', int, 'The maximum number of hackets that can be sustained before hacked. If 0, the Plant cannot be hacked.')
+
+    Variable('minStrength',  int, 'The minimum strength of this mutation\'s attack/heal/buff'),
+    Variable('baseStrength', int, 'The base strength of this mutation\'s attack/heal/buff'),
+    Variable('maxStrength',  int, 'The power of this plant\'s attack/heal/buff'),
+
+    Variable('maxStorage', int, 'The power of this Plant mutation\'s attack.'),
+
+
     ],
   doc='Represents a mutation of Plant.',
   functions=[],
