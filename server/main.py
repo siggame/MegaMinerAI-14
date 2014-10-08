@@ -116,22 +116,22 @@ class GameApp(AccountsAppMixin, BaseApp):
   @protocolmethod
   @errorBuffer
   @requireTurn
-  @requireTypes(None, int, str)
-  def gameTalk(self, player, message):
-    """Allows a player to display messages on the screen"""
+  @requireTypes(None, int, int, int, int)
+  def gameGerminate(self, player, x, y, mutation):
+    """Allows a player to germinate a new Plant."""
     if self.game.turn is not self:
       return "Not your turn."
-    return self.game.talk(player, message)
+    return self.game.germinate(player, x, y, mutation)
 
   @protocolmethod
   @errorBuffer
   @requireTurn
-  @requireTypes(None, int, int, int, int)
-  def gameSpawnPlant(self, player, x, y, mutation):
-    """Allows a player to spawn a Plant."""
+  @requireTypes(None, int, str)
+  def gameTalk(self, plant, message):
+    """Allows a plant to display messages on the screen"""
     if self.game.turn is not self:
       return "Not your turn."
-    return self.game.spawnPlant(player, x, y, mutation)
+    return self.game.talk(plant, message)
 
   @protocolmethod
   @errorBuffer
@@ -142,6 +142,26 @@ class GameApp(AccountsAppMixin, BaseApp):
     if self.game.turn is not self:
       return "Not your turn."
     return self.game.radiate(plant, x, y)
+
+  @protocolmethod
+  @errorBuffer
+  @requireTurn
+  @requireTypes(None, int, int, int)
+  def gameRadiate(self, plant, x, y):
+    """Command to radiate (heal, attack) another Plant."""
+    if self.game.turn is not self:
+      return "Not your turn."
+    return self.game.radiate(plant, x, y)
+
+  @protocolmethod
+  @errorBuffer
+  @requireTurn
+  @requireTypes(None, int, int, int, int)
+  def gameUproot(self, plant, x, y, mutation):
+    """Command to radiate (heal, attack) another Plant."""
+    if self.game.turn is not self:
+      return "Not your turn."
+    return self.game.uproot(plant, x, y, mutation)
 
 
   @protocolmethod

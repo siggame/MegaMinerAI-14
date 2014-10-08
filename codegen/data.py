@@ -24,8 +24,8 @@ playerData = [
   ]
 
 playerFunctions = [
-  Function('talk', [Variable('message', str)], doc='Allows a player to display messages on the screen'),
-  Function('spawnPlant', [Variable('x', int), Variable('y', int), Variable('mutation', int)], doc='Allows a player to spawn a Plant.'),
+  Function('germinate', [Variable('x', int), Variable('y', int), Variable('mutation', int)],
+  doc='Allows a player to germinate a new Plant.'),
 ]
 
 #MAPPABLE
@@ -44,27 +44,35 @@ Plant = Model('Plant',
     Variable('owner', int, 'The owner of this Plant.'),
     Variable('mutation', int, 'The mutation of this Plant. This mutation refers to list of MutationSpecifications.'),
 
-    Variable('rads', int, 'The current amount health this Plant has remaining.'),
-    Variable('maxRads', int, 'The maximum amount of this health this Plant can have'),
-    
-    Variable('range', int, 'The maximum range this plant can radiate'),
-    
-    Variable('movementLeft', int, 'The distance this plant has left to move'),
-    Variable('maxMovement', int, 'The maximum distance this plant can move each turn'),
+    Variable('rads', int, 'The current amount of radiation this Plant has.'),
+    Variable('maxRads', int, 'The maximum amount of radiation this Plant can have before dying.'),
 
-    Variable('strength',     int, 'The current power of this plant\'s radiation'),
-    Variable('minStrength',  int, 'The minimum power of this plant\'s radiation'),
-    Variable('baseStrength', int, 'The base power of this plant\'s radiation'),
-    Variable('maxStrength',  int, 'The maximum power of this plant\'s radiation'),
-    
-    Variable('storage', int, 'The current amount of radiation this Plant can have'),
-    Variable('maxStorage', int, 'The maximum amount of radiation this Plant can have'),
+    Variable('radiatesLeft', int, 'The remaining number of times the plant can radiate.'),
+    Variable('maxRadiates', int, 'The maximum number of times the plant can radiate.'),
 
-    Variable('spores', int, 'The number of spores required to spawn this unit'),
+    Variable('range', int, 'The maximum range this plant can radiate.'),
+    
+    Variable('uprootsLeft', int, 'The remaining number of times this plant can be uprooted.'),
+    Variable('maxUproots', int, 'The maximum number of times this plant can be uprooted.'),
+
+    Variable('strength',     int, 'The current power of this plant.'),
+    Variable('minStrength',  int, 'The minimum power of this plant.'),
+    Variable('baseStrength', int, 'The base power of this plant.'),
+    Variable('maxStrength',  int, 'The maximum power of this plant.'),
+
     ],
   doc='Represents a single Plant on the map.',
   functions=[
+    Function('talk', [Variable('message', str)],
+    doc='Allows a plant to display messages on the screen'),
+
     Function('radiate', [Variable('x', int), Variable('y', int)],
+    doc='Command to radiate (heal, attack) another Plant.'),
+
+    Function('radiate', [Variable('x', int), Variable('y', int)],
+    doc='Command to radiate (heal, attack) another Plant.'),
+
+    Function('uproot', [Variable('x', int), Variable('y', int), Variable('mutation', int)],
     doc='Command to radiate (heal, attack) another Plant.'),
   ],
 )
@@ -73,19 +81,20 @@ Plant = Model('Plant',
 Mutation = Model('Mutation',
   data = [
     Variable('name', str, 'The name of this mutation of Plant.'),
-    Variable('mutation', int, 'The Mutation specific id representing this mutation of Plant.'),
-    Variable('spores', int, 'The spore cost to spawn this Plant mutation into the game.'),
-    Variable('maxAttacks', int, 'The maximum number of times the Plant can attack.'),
-    Variable('maxHealth', int, 'The maximum amount of this health this Plant can have'),
-    Variable('maxMovement', int, 'The maximum number of moves this Plant can move.'),
-    Variable('range', int, 'The range of this Plant\'s attack.'),
+    Variable('type', int, 'The mutation of this Plant. This value is unique for all Mutations.'),
+    Variable('spores', int, 'The current amount of radiation this Plant has.'),
 
-    Variable('minStrength',  int, 'The minimum strength of this mutation\'s attack/heal/buff'),
-    Variable('baseStrength', int, 'The base strength of this mutation\'s attack/heal/buff'),
-    Variable('maxStrength',  int, 'The power of this plant\'s attack/heal/buff'),
+    Variable('maxRadiates', int, 'The maximum number of times the Plant can radiate.'),
 
-    Variable('maxStorage', int, 'The power of this Plant mutation\'s attack.'),
+    Variable('maxRads', int, 'The maximum amount of radiation this Plant can have before dying.'),
 
+    Variable('range', int, 'The maximum range this plant can radiate.'),
+
+    Variable('maxUproots', int, 'The maximum number of times this plant can be uprooted.'),
+
+    Variable('minStrength',  int, 'The minimum power of this plant.'),
+    Variable('baseStrength', int, 'The base power of this plant.'),
+    Variable('maxStrength',  int, 'The maximum power of this plant.'),
 
     ],
   doc='Represents a mutation of Plant.',
@@ -93,7 +102,7 @@ Mutation = Model('Mutation',
   permanent = True,
   )
 
-move = Animation('move',
+move = Animation('uproot',
   data=[
     Variable('actingID', int),
     Variable('fromX', int),
@@ -110,29 +119,24 @@ attack = Animation('attack',
   ],
   )
 
-repair = Animation('repair',
+heal = Animation('heal',
   data=[
     Variable('actingID', int),
     Variable('targetID', int)
   ],
   )
 
-hack = Animation('hack',
+soak = Animation('soak',
   data=[
     Variable('actingID', int),
     Variable('targetID', int)
   ],
   )
 
-spawn = Animation('spawn',
+germinate = Animation('germinate',
   data=[
-    Variable('sourceID', int),
-    Variable('unitID', int)
-  ],
-  )
-
-orbitalDrop = Animation('orbitalDrop',
-  data=[
-    Variable('sourceID', int)
+    Variable('actingID', int),
+    Variable('x', int),
+    Variable('y', int)
   ],
   )

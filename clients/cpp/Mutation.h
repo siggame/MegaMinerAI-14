@@ -18,26 +18,24 @@ class Mutation {
   int id();
   ///The name of this mutation of Plant.
   char* name();
-  ///The Mutation specific id representing this mutation of Plant.
-  int mutation();
-  ///The spore cost to spawn this Plant mutation into the game.
+  ///The mutation of this Plant. This value is unique for all Mutations.
+  int type();
+  ///The current amount of radiation this Plant has.
   int spores();
-  ///The maximum number of times the Plant can attack.
-  int maxAttacks();
-  ///The maximum amount of this health this Plant can have
-  int maxHealth();
-  ///The maximum number of moves this Plant can move.
-  int maxMovement();
-  ///The range of this Plant's attack.
+  ///The maximum number of times the Plant can radiate.
+  int maxRadiates();
+  ///The maximum amount of radiation this Plant can have before dying.
+  int maxRads();
+  ///The maximum range this plant can radiate.
   int range();
-  ///The minimum strength of this mutation's attack/heal/buff
+  ///The maximum number of times this plant can be uprooted.
+  int maxUproots();
+  ///The minimum power of this plant.
   int minStrength();
-  ///The base strength of this mutation's attack/heal/buff
+  ///The base power of this plant.
   int baseStrength();
-  ///The power of this plant's attack/heal/buff
+  ///The maximum power of this plant.
   int maxStrength();
-  ///The power of this Plant mutation's attack.
-  int maxStorage();
 
   // Actions
 

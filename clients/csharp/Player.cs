@@ -38,20 +38,12 @@ public class Player
 
   #region Commands
   /// <summary>
-  /// Allows a player to display messages on the screen
+  /// Allows a player to germinate a new Plant.
   /// </summary>
-  public bool talk(string message)
+  public bool germinate(int x, int y, int mutation)
   {
     validify();
-    return (Client.playerTalk(ptr, message) == 0) ? false : true;
-  }
-  /// <summary>
-  /// Allows a player to spawn a Plant.
-  /// </summary>
-  public bool spawnPlant(int x, int y, int mutation)
-  {
-    validify();
-    return (Client.playerSpawnPlant(ptr, x, y, mutation) == 0) ? false : true;
+    return (Client.playerGerminate(ptr, x, y, mutation) == 0) ? false : true;
   }
   #endregion
 

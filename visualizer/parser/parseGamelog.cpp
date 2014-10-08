@@ -182,6 +182,24 @@ static bool parsePlant(Plant& object, sexp_t* expression)
     return false;
   }
 
+  object.radiatesLeft = atoi(sub->val);
+  sub = sub->next;
+
+  if ( !sub ) 
+  {
+    cerr << "Error in parsePlant.\n Parsing: " << *expression << endl;
+    return false;
+  }
+
+  object.maxRadiates = atoi(sub->val);
+  sub = sub->next;
+
+  if ( !sub ) 
+  {
+    cerr << "Error in parsePlant.\n Parsing: " << *expression << endl;
+    return false;
+  }
+
   object.range = atoi(sub->val);
   sub = sub->next;
 
@@ -191,7 +209,7 @@ static bool parsePlant(Plant& object, sexp_t* expression)
     return false;
   }
 
-  object.movementLeft = atoi(sub->val);
+  object.uprootsLeft = atoi(sub->val);
   sub = sub->next;
 
   if ( !sub ) 
@@ -200,7 +218,7 @@ static bool parsePlant(Plant& object, sexp_t* expression)
     return false;
   }
 
-  object.maxMovement = atoi(sub->val);
+  object.maxUproots = atoi(sub->val);
   sub = sub->next;
 
   if ( !sub ) 
@@ -239,33 +257,6 @@ static bool parsePlant(Plant& object, sexp_t* expression)
   object.maxStrength = atoi(sub->val);
   sub = sub->next;
 
-  if ( !sub ) 
-  {
-    cerr << "Error in parsePlant.\n Parsing: " << *expression << endl;
-    return false;
-  }
-
-  object.storage = atoi(sub->val);
-  sub = sub->next;
-
-  if ( !sub ) 
-  {
-    cerr << "Error in parsePlant.\n Parsing: " << *expression << endl;
-    return false;
-  }
-
-  object.maxStorage = atoi(sub->val);
-  sub = sub->next;
-
-  if ( !sub ) 
-  {
-    cerr << "Error in parsePlant.\n Parsing: " << *expression << endl;
-    return false;
-  }
-
-  object.spores = atoi(sub->val);
-  sub = sub->next;
-
   return true;
 
 }
@@ -301,7 +292,7 @@ static bool parseMutation(Mutation& object, sexp_t* expression)
     return false;
   }
 
-  object.mutation = atoi(sub->val);
+  object.type = atoi(sub->val);
   sub = sub->next;
 
   if ( !sub ) 
@@ -319,7 +310,7 @@ static bool parseMutation(Mutation& object, sexp_t* expression)
     return false;
   }
 
-  object.maxAttacks = atoi(sub->val);
+  object.maxRadiates = atoi(sub->val);
   sub = sub->next;
 
   if ( !sub ) 
@@ -328,16 +319,7 @@ static bool parseMutation(Mutation& object, sexp_t* expression)
     return false;
   }
 
-  object.maxHealth = atoi(sub->val);
-  sub = sub->next;
-
-  if ( !sub ) 
-  {
-    cerr << "Error in parseMutation.\n Parsing: " << *expression << endl;
-    return false;
-  }
-
-  object.maxMovement = atoi(sub->val);
+  object.maxRads = atoi(sub->val);
   sub = sub->next;
 
   if ( !sub ) 
@@ -347,6 +329,15 @@ static bool parseMutation(Mutation& object, sexp_t* expression)
   }
 
   object.range = atoi(sub->val);
+  sub = sub->next;
+
+  if ( !sub ) 
+  {
+    cerr << "Error in parseMutation.\n Parsing: " << *expression << endl;
+    return false;
+  }
+
+  object.maxUproots = atoi(sub->val);
   sub = sub->next;
 
   if ( !sub ) 
@@ -376,102 +367,47 @@ static bool parseMutation(Mutation& object, sexp_t* expression)
   object.maxStrength = atoi(sub->val);
   sub = sub->next;
 
-  if ( !sub ) 
-  {
-    cerr << "Error in parseMutation.\n Parsing: " << *expression << endl;
-    return false;
-  }
-
-  object.maxStorage = atoi(sub->val);
-  sub = sub->next;
-
   return true;
 
 }
 
-static bool parseSpawn(spawn& object, sexp_t* expression)
+static bool parseUproot(uproot& object, sexp_t* expression)
 {
   sexp_t* sub;
   if ( !expression ) return false;
-  object.type = SPAWN;
+  object.type = UPROOT;
   sub = expression->list->next;
   if( !sub ) 
   {
-    cerr << "Error in parsespawn.\n Parsing: " << *expression << endl;
-    return false;
-  }
-  object.sourceID = atoi(sub->val);
-  sub = sub->next;
-  if( !sub ) 
-  {
-    cerr << "Error in parsespawn.\n Parsing: " << *expression << endl;
-    return false;
-  }
-  object.unitID = atoi(sub->val);
-  sub = sub->next;
-  return true;
-
-}
-static bool parseRepair(repair& object, sexp_t* expression)
-{
-  sexp_t* sub;
-  if ( !expression ) return false;
-  object.type = REPAIR;
-  sub = expression->list->next;
-  if( !sub ) 
-  {
-    cerr << "Error in parserepair.\n Parsing: " << *expression << endl;
+    cerr << "Error in parseuproot.\n Parsing: " << *expression << endl;
     return false;
   }
   object.actingID = atoi(sub->val);
   sub = sub->next;
   if( !sub ) 
   {
-    cerr << "Error in parserepair.\n Parsing: " << *expression << endl;
-    return false;
-  }
-  object.targetID = atoi(sub->val);
-  sub = sub->next;
-  return true;
-
-}
-static bool parseMove(move& object, sexp_t* expression)
-{
-  sexp_t* sub;
-  if ( !expression ) return false;
-  object.type = MOVE;
-  sub = expression->list->next;
-  if( !sub ) 
-  {
-    cerr << "Error in parsemove.\n Parsing: " << *expression << endl;
-    return false;
-  }
-  object.actingID = atoi(sub->val);
-  sub = sub->next;
-  if( !sub ) 
-  {
-    cerr << "Error in parsemove.\n Parsing: " << *expression << endl;
+    cerr << "Error in parseuproot.\n Parsing: " << *expression << endl;
     return false;
   }
   object.fromX = atoi(sub->val);
   sub = sub->next;
   if( !sub ) 
   {
-    cerr << "Error in parsemove.\n Parsing: " << *expression << endl;
+    cerr << "Error in parseuproot.\n Parsing: " << *expression << endl;
     return false;
   }
   object.fromY = atoi(sub->val);
   sub = sub->next;
   if( !sub ) 
   {
-    cerr << "Error in parsemove.\n Parsing: " << *expression << endl;
+    cerr << "Error in parseuproot.\n Parsing: " << *expression << endl;
     return false;
   }
   object.toX = atoi(sub->val);
   sub = sub->next;
   if( !sub ) 
   {
-    cerr << "Error in parsemove.\n Parsing: " << *expression << endl;
+    cerr << "Error in parseuproot.\n Parsing: " << *expression << endl;
     return false;
   }
   object.toY = atoi(sub->val);
@@ -479,22 +415,22 @@ static bool parseMove(move& object, sexp_t* expression)
   return true;
 
 }
-static bool parseHack(hack& object, sexp_t* expression)
+static bool parseSoak(soak& object, sexp_t* expression)
 {
   sexp_t* sub;
   if ( !expression ) return false;
-  object.type = HACK;
+  object.type = SOAK;
   sub = expression->list->next;
   if( !sub ) 
   {
-    cerr << "Error in parsehack.\n Parsing: " << *expression << endl;
+    cerr << "Error in parsesoak.\n Parsing: " << *expression << endl;
     return false;
   }
   object.actingID = atoi(sub->val);
   sub = sub->next;
   if( !sub ) 
   {
-    cerr << "Error in parsehack.\n Parsing: " << *expression << endl;
+    cerr << "Error in parsesoak.\n Parsing: " << *expression << endl;
     return false;
   }
   object.targetID = atoi(sub->val);
@@ -502,18 +438,25 @@ static bool parseHack(hack& object, sexp_t* expression)
   return true;
 
 }
-static bool parseOrbitalDrop(orbitalDrop& object, sexp_t* expression)
+static bool parseHeal(heal& object, sexp_t* expression)
 {
   sexp_t* sub;
   if ( !expression ) return false;
-  object.type = ORBITALDROP;
+  object.type = HEAL;
   sub = expression->list->next;
   if( !sub ) 
   {
-    cerr << "Error in parseorbitalDrop.\n Parsing: " << *expression << endl;
+    cerr << "Error in parseheal.\n Parsing: " << *expression << endl;
     return false;
   }
-  object.sourceID = atoi(sub->val);
+  object.actingID = atoi(sub->val);
+  sub = sub->next;
+  if( !sub ) 
+  {
+    cerr << "Error in parseheal.\n Parsing: " << *expression << endl;
+    return false;
+  }
+  object.targetID = atoi(sub->val);
   sub = sub->next;
   return true;
 
@@ -537,6 +480,36 @@ static bool parseAttack(attack& object, sexp_t* expression)
     return false;
   }
   object.targetID = atoi(sub->val);
+  sub = sub->next;
+  return true;
+
+}
+static bool parseGerminate(germinate& object, sexp_t* expression)
+{
+  sexp_t* sub;
+  if ( !expression ) return false;
+  object.type = GERMINATE;
+  sub = expression->list->next;
+  if( !sub ) 
+  {
+    cerr << "Error in parsegerminate.\n Parsing: " << *expression << endl;
+    return false;
+  }
+  object.actingID = atoi(sub->val);
+  sub = sub->next;
+  if( !sub ) 
+  {
+    cerr << "Error in parsegerminate.\n Parsing: " << *expression << endl;
+    return false;
+  }
+  object.x = atoi(sub->val);
+  sub = sub->next;
+  if( !sub ) 
+  {
+    cerr << "Error in parsegerminate.\n Parsing: " << *expression << endl;
+    return false;
+  }
+  object.y = atoi(sub->val);
   sub = sub->next;
   return true;
 
@@ -641,42 +614,26 @@ static bool parseSexp(Game& game, sexp_t* expression)
       expression = expression->next;
       sub = expression->list;
       if ( !sub ) return false;
-      if(string(ToLower( sub->val ) ) == "spawn")
+      if(string(ToLower( sub->val ) ) == "uproot")
       {
-        SmartPointer<spawn> animation = new spawn;
-        if ( !parseSpawn(*animation, expression) )
+        SmartPointer<uproot> animation = new uproot;
+        if ( !parseUproot(*animation, expression) )
           return false;
 
         animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
       }
-      if(string(ToLower( sub->val ) ) == "repair")
+      if(string(ToLower( sub->val ) ) == "soak")
       {
-        SmartPointer<repair> animation = new repair;
-        if ( !parseRepair(*animation, expression) )
+        SmartPointer<soak> animation = new soak;
+        if ( !parseSoak(*animation, expression) )
           return false;
 
         animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
       }
-      if(string(ToLower( sub->val ) ) == "move")
+      if(string(ToLower( sub->val ) ) == "heal")
       {
-        SmartPointer<move> animation = new move;
-        if ( !parseMove(*animation, expression) )
-          return false;
-
-        animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
-      }
-      if(string(ToLower( sub->val ) ) == "hack")
-      {
-        SmartPointer<hack> animation = new hack;
-        if ( !parseHack(*animation, expression) )
-          return false;
-
-        animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
-      }
-      if(string(ToLower( sub->val ) ) == "orbital-drop")
-      {
-        SmartPointer<orbitalDrop> animation = new orbitalDrop;
-        if ( !parseOrbitalDrop(*animation, expression) )
+        SmartPointer<heal> animation = new heal;
+        if ( !parseHeal(*animation, expression) )
           return false;
 
         animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
@@ -685,6 +642,14 @@ static bool parseSexp(Game& game, sexp_t* expression)
       {
         SmartPointer<attack> animation = new attack;
         if ( !parseAttack(*animation, expression) )
+          return false;
+
+        animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
+      }
+      if(string(ToLower( sub->val ) ) == "germinate")
+      {
+        SmartPointer<germinate> animation = new germinate;
+        if ( !parseGerminate(*animation, expression) )
           return false;
 
         animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );

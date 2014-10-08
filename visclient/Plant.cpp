@@ -47,19 +47,29 @@ int Plant::maxRads()
   return ((_Plant*)ptr)->maxRads;
 }
 
+int Plant::radiatesLeft()
+{
+  return ((_Plant*)ptr)->radiatesLeft;
+}
+
+int Plant::maxRadiates()
+{
+  return ((_Plant*)ptr)->maxRadiates;
+}
+
 int Plant::range()
 {
   return ((_Plant*)ptr)->range;
 }
 
-int Plant::movementLeft()
+int Plant::uprootsLeft()
 {
-  return ((_Plant*)ptr)->movementLeft;
+  return ((_Plant*)ptr)->uprootsLeft;
 }
 
-int Plant::maxMovement()
+int Plant::maxUproots()
 {
-  return ((_Plant*)ptr)->maxMovement;
+  return ((_Plant*)ptr)->maxUproots;
 }
 
 int Plant::strength()
@@ -82,25 +92,25 @@ int Plant::maxStrength()
   return ((_Plant*)ptr)->maxStrength;
 }
 
-int Plant::storage()
-{
-  return ((_Plant*)ptr)->storage;
-}
 
-int Plant::maxStorage()
+int Plant::talk(char* message)
 {
-  return ((_Plant*)ptr)->maxStorage;
+  return plantTalk( (_Plant*)ptr, message);
 }
-
-int Plant::spores()
-{
-  return ((_Plant*)ptr)->spores;
-}
-
 
 int Plant::radiate(int x, int y)
 {
   return plantRadiate( (_Plant*)ptr, x, y);
+}
+
+int Plant::radiate(int x, int y)
+{
+  return plantRadiate( (_Plant*)ptr, x, y);
+}
+
+int Plant::uproot(int x, int y, int mutation)
+{
+  return plantUproot( (_Plant*)ptr, x, y, mutation);
 }
 
 
@@ -114,16 +124,15 @@ std::ostream& operator<<(std::ostream& stream,Plant ob)
   stream << "mutation: " << ((_Plant*)ob.ptr)->mutation  <<'\n';
   stream << "rads: " << ((_Plant*)ob.ptr)->rads  <<'\n';
   stream << "maxRads: " << ((_Plant*)ob.ptr)->maxRads  <<'\n';
+  stream << "radiatesLeft: " << ((_Plant*)ob.ptr)->radiatesLeft  <<'\n';
+  stream << "maxRadiates: " << ((_Plant*)ob.ptr)->maxRadiates  <<'\n';
   stream << "range: " << ((_Plant*)ob.ptr)->range  <<'\n';
-  stream << "movementLeft: " << ((_Plant*)ob.ptr)->movementLeft  <<'\n';
-  stream << "maxMovement: " << ((_Plant*)ob.ptr)->maxMovement  <<'\n';
+  stream << "uprootsLeft: " << ((_Plant*)ob.ptr)->uprootsLeft  <<'\n';
+  stream << "maxUproots: " << ((_Plant*)ob.ptr)->maxUproots  <<'\n';
   stream << "strength: " << ((_Plant*)ob.ptr)->strength  <<'\n';
   stream << "minStrength: " << ((_Plant*)ob.ptr)->minStrength  <<'\n';
   stream << "baseStrength: " << ((_Plant*)ob.ptr)->baseStrength  <<'\n';
   stream << "maxStrength: " << ((_Plant*)ob.ptr)->maxStrength  <<'\n';
-  stream << "storage: " << ((_Plant*)ob.ptr)->storage  <<'\n';
-  stream << "maxStorage: " << ((_Plant*)ob.ptr)->maxStorage  <<'\n';
-  stream << "spores: " << ((_Plant*)ob.ptr)->spores  <<'\n';
   return stream;
 }
 

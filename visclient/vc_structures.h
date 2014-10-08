@@ -39,32 +39,30 @@ struct _Plant
   int mutation;
   int rads;
   int maxRads;
+  int radiatesLeft;
+  int maxRadiates;
   int range;
-  int movementLeft;
-  int maxMovement;
+  int uprootsLeft;
+  int maxUproots;
   int strength;
   int minStrength;
   int baseStrength;
   int maxStrength;
-  int storage;
-  int maxStorage;
-  int spores;
 };
 struct _Mutation
 {
   Connection* _c;
   int id;
   char* name;
-  int mutation;
+  int type;
   int spores;
-  int maxAttacks;
-  int maxHealth;
-  int maxMovement;
+  int maxRadiates;
+  int maxRads;
   int range;
+  int maxUproots;
   int minStrength;
   int baseStrength;
   int maxStrength;
-  int maxStorage;
 };
 
 }

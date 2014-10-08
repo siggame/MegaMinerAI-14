@@ -157,17 +157,25 @@ class Match(DefaultGameWorld):
   def logPath(self):
     return "logs/" + str(self.id)
 
-  @derefArgs(Player, None)
+  @derefArgs(Player, None, None, None)
+  def germinate(self, object, x, y, mutation):
+    return object.germinate(x, y, mutation, )
+
+  @derefArgs(Plant, None)
   def talk(self, object, message):
     return object.talk(message, )
-
-  @derefArgs(Player, None, None, None)
-  def spawnPlant(self, object, x, y, mutation):
-    return object.spawnPlant(x, y, mutation, )
 
   @derefArgs(Plant, None, None)
   def radiate(self, object, x, y):
     return object.radiate(x, y, )
+
+  @derefArgs(Plant, None, None)
+  def radiate(self, object, x, y):
+    return object.radiate(x, y, )
+
+  @derefArgs(Plant, None, None, None)
+  def uproot(self, object, x, y, mutation):
+    return object.uproot(x, y, mutation, )
 
 
   def sendIdent(self, players):

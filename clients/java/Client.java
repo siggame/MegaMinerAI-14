@@ -18,9 +18,11 @@ public interface Client extends Library {
 
 
     //commands
-  int playerTalk(Pointer object, String message);
-  int playerSpawnPlant(Pointer object, int x, int y, int mutation);
+  int playerGerminate(Pointer object, int x, int y, int mutation);
+  int plantTalk(Pointer object, String message);
   int plantRadiate(Pointer object, int x, int y);
+  int plantRadiate(Pointer object, int x, int y);
+  int plantUproot(Pointer object, int x, int y, int mutation);
 
     //accessors
   int getMapWidth(Pointer connection);
@@ -57,29 +59,27 @@ public interface Client extends Library {
   int plantGetMutation(Pointer ptr);
   int plantGetRads(Pointer ptr);
   int plantGetMaxRads(Pointer ptr);
+  int plantGetRadiatesLeft(Pointer ptr);
+  int plantGetMaxRadiates(Pointer ptr);
   int plantGetRange(Pointer ptr);
-  int plantGetMovementLeft(Pointer ptr);
-  int plantGetMaxMovement(Pointer ptr);
+  int plantGetUprootsLeft(Pointer ptr);
+  int plantGetMaxUproots(Pointer ptr);
   int plantGetStrength(Pointer ptr);
   int plantGetMinStrength(Pointer ptr);
   int plantGetBaseStrength(Pointer ptr);
   int plantGetMaxStrength(Pointer ptr);
-  int plantGetStorage(Pointer ptr);
-  int plantGetMaxStorage(Pointer ptr);
-  int plantGetSpores(Pointer ptr);
 
   int mutationGetId(Pointer ptr);
   String mutationGetName(Pointer ptr);
-  int mutationGetMutation(Pointer ptr);
+  int mutationGetType(Pointer ptr);
   int mutationGetSpores(Pointer ptr);
-  int mutationGetMaxAttacks(Pointer ptr);
-  int mutationGetMaxHealth(Pointer ptr);
-  int mutationGetMaxMovement(Pointer ptr);
+  int mutationGetMaxRadiates(Pointer ptr);
+  int mutationGetMaxRads(Pointer ptr);
   int mutationGetRange(Pointer ptr);
+  int mutationGetMaxUproots(Pointer ptr);
   int mutationGetMinStrength(Pointer ptr);
   int mutationGetBaseStrength(Pointer ptr);
   int mutationGetMaxStrength(Pointer ptr);
-  int mutationGetMaxStorage(Pointer ptr);
 
 
     //properties

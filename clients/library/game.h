@@ -66,12 +66,16 @@ extern "C"
 
 //commands
 
-  ///Allows a player to display messages on the screen
-  DLLEXPORT int playerTalk(_Player* object, char* message);
-  ///Allows a player to spawn a Plant.
-  DLLEXPORT int playerSpawnPlant(_Player* object, int x, int y, int mutation);
+  ///Allows a player to germinate a new Plant.
+  DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation);
+  ///Allows a plant to display messages on the screen
+  DLLEXPORT int plantTalk(_Plant* object, char* message);
   ///Command to radiate (heal, attack) another Plant.
   DLLEXPORT int plantRadiate(_Plant* object, int x, int y);
+  ///Command to radiate (heal, attack) another Plant.
+  DLLEXPORT int plantRadiate(_Plant* object, int x, int y);
+  ///Command to radiate (heal, attack) another Plant.
+  DLLEXPORT int plantUproot(_Plant* object, int x, int y, int mutation);
 
 //derived properties
 

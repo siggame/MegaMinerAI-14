@@ -41,14 +41,20 @@ library.networkLoop.restype = c_int
 library.networkLoop.argtypes = [c_void_p]
 
 #Functions
-library.playerTalk.restype = c_int
-library.playerTalk.argtypes = [c_void_p, c_char_p]
+library.playerGerminate.restype = c_int
+library.playerGerminate.argtypes = [c_void_p, c_int, c_int, c_int]
 
-library.playerSpawnPlant.restype = c_int
-library.playerSpawnPlant.argtypes = [c_void_p, c_int, c_int, c_int]
+library.plantTalk.restype = c_int
+library.plantTalk.argtypes = [c_void_p, c_char_p]
 
 library.plantRadiate.restype = c_int
 library.plantRadiate.argtypes = [c_void_p, c_int, c_int]
+
+library.plantRadiate.restype = c_int
+library.plantRadiate.argtypes = [c_void_p, c_int, c_int]
+
+library.plantUproot.restype = c_int
+library.plantUproot.argtypes = [c_void_p, c_int, c_int, c_int]
 
 # accessors
 
@@ -140,14 +146,20 @@ library.plantGetRads.argtypes = [c_void_p]
 library.plantGetMaxRads.restype = c_int
 library.plantGetMaxRads.argtypes = [c_void_p]
 
+library.plantGetRadiatesLeft.restype = c_int
+library.plantGetRadiatesLeft.argtypes = [c_void_p]
+
+library.plantGetMaxRadiates.restype = c_int
+library.plantGetMaxRadiates.argtypes = [c_void_p]
+
 library.plantGetRange.restype = c_int
 library.plantGetRange.argtypes = [c_void_p]
 
-library.plantGetMovementLeft.restype = c_int
-library.plantGetMovementLeft.argtypes = [c_void_p]
+library.plantGetUprootsLeft.restype = c_int
+library.plantGetUprootsLeft.argtypes = [c_void_p]
 
-library.plantGetMaxMovement.restype = c_int
-library.plantGetMaxMovement.argtypes = [c_void_p]
+library.plantGetMaxUproots.restype = c_int
+library.plantGetMaxUproots.argtypes = [c_void_p]
 
 library.plantGetStrength.restype = c_int
 library.plantGetStrength.argtypes = [c_void_p]
@@ -161,38 +173,29 @@ library.plantGetBaseStrength.argtypes = [c_void_p]
 library.plantGetMaxStrength.restype = c_int
 library.plantGetMaxStrength.argtypes = [c_void_p]
 
-library.plantGetStorage.restype = c_int
-library.plantGetStorage.argtypes = [c_void_p]
-
-library.plantGetMaxStorage.restype = c_int
-library.plantGetMaxStorage.argtypes = [c_void_p]
-
-library.plantGetSpores.restype = c_int
-library.plantGetSpores.argtypes = [c_void_p]
-
 library.mutationGetId.restype = c_int
 library.mutationGetId.argtypes = [c_void_p]
 
 library.mutationGetName.restype = c_char_p
 library.mutationGetName.argtypes = [c_void_p]
 
-library.mutationGetMutation.restype = c_int
-library.mutationGetMutation.argtypes = [c_void_p]
+library.mutationGetType.restype = c_int
+library.mutationGetType.argtypes = [c_void_p]
 
 library.mutationGetSpores.restype = c_int
 library.mutationGetSpores.argtypes = [c_void_p]
 
-library.mutationGetMaxAttacks.restype = c_int
-library.mutationGetMaxAttacks.argtypes = [c_void_p]
+library.mutationGetMaxRadiates.restype = c_int
+library.mutationGetMaxRadiates.argtypes = [c_void_p]
 
-library.mutationGetMaxHealth.restype = c_int
-library.mutationGetMaxHealth.argtypes = [c_void_p]
-
-library.mutationGetMaxMovement.restype = c_int
-library.mutationGetMaxMovement.argtypes = [c_void_p]
+library.mutationGetMaxRads.restype = c_int
+library.mutationGetMaxRads.argtypes = [c_void_p]
 
 library.mutationGetRange.restype = c_int
 library.mutationGetRange.argtypes = [c_void_p]
+
+library.mutationGetMaxUproots.restype = c_int
+library.mutationGetMaxUproots.argtypes = [c_void_p]
 
 library.mutationGetMinStrength.restype = c_int
 library.mutationGetMinStrength.argtypes = [c_void_p]
@@ -202,9 +205,6 @@ library.mutationGetBaseStrength.argtypes = [c_void_p]
 
 library.mutationGetMaxStrength.restype = c_int
 library.mutationGetMaxStrength.argtypes = [c_void_p]
-
-library.mutationGetMaxStorage.restype = c_int
-library.mutationGetMaxStorage.argtypes = [c_void_p]
 
 
 #Properties

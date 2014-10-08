@@ -14,12 +14,11 @@
 namespace parser
 {
 
-const int SPAWN = 0;
-const int REPAIR = 1;
-const int MOVE = 2;
-const int HACK = 3;
-const int ORBITALDROP = 4;
-const int ATTACK = 5;
+const int UPROOT = 0;
+const int SOAK = 1;
+const int HEAL = 2;
+const int ATTACK = 3;
+const int GERMINATE = 4;
 
 struct Player
 {
@@ -46,16 +45,15 @@ struct Plant: public Mappable
   int mutation;
   int rads;
   int maxRads;
+  int radiatesLeft;
+  int maxRadiates;
   int range;
-  int movementLeft;
-  int maxMovement;
+  int uprootsLeft;
+  int maxUproots;
   int strength;
   int minStrength;
   int baseStrength;
   int maxStrength;
-  int storage;
-  int maxStorage;
-  int spores;
 
   friend std::ostream& operator<<(std::ostream& stream, Plant obj);
 };
@@ -64,16 +62,15 @@ struct Mutation
 {
   int id;
   char* name;
-  int mutation;
+  int type;
   int spores;
-  int maxAttacks;
-  int maxHealth;
-  int maxMovement;
+  int maxRadiates;
+  int maxRads;
   int range;
+  int maxUproots;
   int minStrength;
   int baseStrength;
   int maxStrength;
-  int maxStorage;
 
   friend std::ostream& operator<<(std::ostream& stream, Mutation obj);
 };
@@ -84,23 +81,7 @@ struct Animation
   int type;
 };
 
-struct spawn : public Animation
-{
-  int sourceID;
-  int unitID;
-
-  friend std::ostream& operator<<(std::ostream& stream, spawn obj);
-};
-
-struct repair : public Animation
-{
-  int actingID;
-  int targetID;
-
-  friend std::ostream& operator<<(std::ostream& stream, repair obj);
-};
-
-struct move : public Animation
+struct uproot : public Animation
 {
   int actingID;
   int fromX;
@@ -108,22 +89,23 @@ struct move : public Animation
   int toX;
   int toY;
 
-  friend std::ostream& operator<<(std::ostream& stream, move obj);
+  friend std::ostream& operator<<(std::ostream& stream, uproot obj);
 };
 
-struct hack : public Animation
+struct soak : public Animation
 {
   int actingID;
   int targetID;
 
-  friend std::ostream& operator<<(std::ostream& stream, hack obj);
+  friend std::ostream& operator<<(std::ostream& stream, soak obj);
 };
 
-struct orbitalDrop : public Animation
+struct heal : public Animation
 {
-  int sourceID;
+  int actingID;
+  int targetID;
 
-  friend std::ostream& operator<<(std::ostream& stream, orbitalDrop obj);
+  friend std::ostream& operator<<(std::ostream& stream, heal obj);
 };
 
 struct attack : public Animation
@@ -132,6 +114,15 @@ struct attack : public Animation
   int targetID;
 
   friend std::ostream& operator<<(std::ostream& stream, attack obj);
+};
+
+struct germinate : public Animation
+{
+  int actingID;
+  int x;
+  int y;
+
+  friend std::ostream& operator<<(std::ostream& stream, germinate obj);
 };
 
 

@@ -27,10 +27,8 @@ class Player {
   int spores();
 
   // Actions
-  ///Allows a player to display messages on the screen
-  int talk(char* message);
-  ///Allows a player to spawn a Plant.
-  int spawnPlant(int x, int y, int mutation);
+  ///Allows a player to germinate a new Plant.
+  int germinate(int x, int y, int mutation);
 
   // Properties
 

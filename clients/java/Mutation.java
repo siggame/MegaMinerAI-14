@@ -44,65 +44,59 @@ class Mutation
     validify();
     return Client.INSTANCE.mutationGetName(ptr);
   }
-  ///The Mutation specific id representing this mutation of Plant.
-  public int getMutation()
+  ///The mutation of this Plant. This value is unique for all Mutations.
+  public int getType()
   {
     validify();
-    return Client.INSTANCE.mutationGetMutation(ptr);
+    return Client.INSTANCE.mutationGetType(ptr);
   }
-  ///The spore cost to spawn this Plant mutation into the game.
+  ///The current amount of radiation this Plant has.
   public int getSpores()
   {
     validify();
     return Client.INSTANCE.mutationGetSpores(ptr);
   }
-  ///The maximum number of times the Plant can attack.
-  public int getMaxAttacks()
+  ///The maximum number of times the Plant can radiate.
+  public int getMaxRadiates()
   {
     validify();
-    return Client.INSTANCE.mutationGetMaxAttacks(ptr);
+    return Client.INSTANCE.mutationGetMaxRadiates(ptr);
   }
-  ///The maximum amount of this health this Plant can have
-  public int getMaxHealth()
+  ///The maximum amount of radiation this Plant can have before dying.
+  public int getMaxRads()
   {
     validify();
-    return Client.INSTANCE.mutationGetMaxHealth(ptr);
+    return Client.INSTANCE.mutationGetMaxRads(ptr);
   }
-  ///The maximum number of moves this Plant can move.
-  public int getMaxMovement()
-  {
-    validify();
-    return Client.INSTANCE.mutationGetMaxMovement(ptr);
-  }
-  ///The range of this Plant's attack.
+  ///The maximum range this plant can radiate.
   public int getRange()
   {
     validify();
     return Client.INSTANCE.mutationGetRange(ptr);
   }
-  ///The minimum strength of this mutation's attack/heal/buff
+  ///The maximum number of times this plant can be uprooted.
+  public int getMaxUproots()
+  {
+    validify();
+    return Client.INSTANCE.mutationGetMaxUproots(ptr);
+  }
+  ///The minimum power of this plant.
   public int getMinStrength()
   {
     validify();
     return Client.INSTANCE.mutationGetMinStrength(ptr);
   }
-  ///The base strength of this mutation's attack/heal/buff
+  ///The base power of this plant.
   public int getBaseStrength()
   {
     validify();
     return Client.INSTANCE.mutationGetBaseStrength(ptr);
   }
-  ///The power of this plant's attack/heal/buff
+  ///The maximum power of this plant.
   public int getMaxStrength()
   {
     validify();
     return Client.INSTANCE.mutationGetMaxStrength(ptr);
-  }
-  ///The power of this Plant mutation's attack.
-  public int getMaxStorage()
-  {
-    validify();
-    return Client.INSTANCE.mutationGetMaxStorage(ptr);
   }
 
 }

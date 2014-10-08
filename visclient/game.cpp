@@ -204,22 +204,10 @@ DLLEXPORT void getStatus(Connection* c)
 }
 
 
-DLLEXPORT int playerTalk(_Player* object, char* message)
+DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
 {
   stringstream expr;
-  expr << "(game-talk " << object->id
-      << " \"" << escape_string(message) << "\""
-       << ")";
-  LOCK( &object->_c->mutex);
-  send_string(object->_c->socket, expr.str().c_str());
-  UNLOCK( &object->_c->mutex);
-  return 1;
-}
-
-DLLEXPORT int playerSpawnPlant(_Player* object, int x, int y, int mutation)
-{
-  stringstream expr;
-  expr << "(game-spawn-plant " << object->id
+  expr << "(game-germinate " << object->id
        << " " << x
        << " " << y
        << " " << mutation
@@ -232,12 +220,51 @@ DLLEXPORT int playerSpawnPlant(_Player* object, int x, int y, int mutation)
 
 
 
+DLLEXPORT int plantTalk(_Plant* object, char* message)
+{
+  stringstream expr;
+  expr << "(game-talk " << object->id
+      << " \"" << escape_string(message) << "\""
+       << ")";
+  LOCK( &object->_c->mutex);
+  send_string(object->_c->socket, expr.str().c_str());
+  UNLOCK( &object->_c->mutex);
+  return 1;
+}
+
 DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
 {
   stringstream expr;
   expr << "(game-radiate " << object->id
        << " " << x
        << " " << y
+       << ")";
+  LOCK( &object->_c->mutex);
+  send_string(object->_c->socket, expr.str().c_str());
+  UNLOCK( &object->_c->mutex);
+  return 1;
+}
+
+DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
+{
+  stringstream expr;
+  expr << "(game-radiate " << object->id
+       << " " << x
+       << " " << y
+       << ")";
+  LOCK( &object->_c->mutex);
+  send_string(object->_c->socket, expr.str().c_str());
+  UNLOCK( &object->_c->mutex);
+  return 1;
+}
+
+DLLEXPORT int plantUproot(_Plant* object, int x, int y, int mutation)
+{
+  stringstream expr;
+  expr << "(game-uproot " << object->id
+       << " " << x
+       << " " << y
+       << " " << mutation
        << ")";
   LOCK( &object->_c->mutex);
   send_string(object->_c->socket, expr.str().c_str());
@@ -303,11 +330,15 @@ void parsePlant(Connection* c, _Plant* object, sexp_t* expression)
   sub = sub->next;
   object->maxRads = atoi(sub->val);
   sub = sub->next;
+  object->radiatesLeft = atoi(sub->val);
+  sub = sub->next;
+  object->maxRadiates = atoi(sub->val);
+  sub = sub->next;
   object->range = atoi(sub->val);
   sub = sub->next;
-  object->movementLeft = atoi(sub->val);
+  object->uprootsLeft = atoi(sub->val);
   sub = sub->next;
-  object->maxMovement = atoi(sub->val);
+  object->maxUproots = atoi(sub->val);
   sub = sub->next;
   object->strength = atoi(sub->val);
   sub = sub->next;
@@ -316,12 +347,6 @@ void parsePlant(Connection* c, _Plant* object, sexp_t* expression)
   object->baseStrength = atoi(sub->val);
   sub = sub->next;
   object->maxStrength = atoi(sub->val);
-  sub = sub->next;
-  object->storage = atoi(sub->val);
-  sub = sub->next;
-  object->maxStorage = atoi(sub->val);
-  sub = sub->next;
-  object->spores = atoi(sub->val);
   sub = sub->next;
 
 }
@@ -338,25 +363,23 @@ void parseMutation(Connection* c, _Mutation* object, sexp_t* expression)
   strncpy(object->name, sub->val, strlen(sub->val));
   object->name[strlen(sub->val)] = 0;
   sub = sub->next;
-  object->mutation = atoi(sub->val);
+  object->type = atoi(sub->val);
   sub = sub->next;
   object->spores = atoi(sub->val);
   sub = sub->next;
-  object->maxAttacks = atoi(sub->val);
+  object->maxRadiates = atoi(sub->val);
   sub = sub->next;
-  object->maxHealth = atoi(sub->val);
-  sub = sub->next;
-  object->maxMovement = atoi(sub->val);
+  object->maxRads = atoi(sub->val);
   sub = sub->next;
   object->range = atoi(sub->val);
+  sub = sub->next;
+  object->maxUproots = atoi(sub->val);
   sub = sub->next;
   object->minStrength = atoi(sub->val);
   sub = sub->next;
   object->baseStrength = atoi(sub->val);
   sub = sub->next;
   object->maxStrength = atoi(sub->val);
-  sub = sub->next;
-  object->maxStorage = atoi(sub->val);
   sub = sub->next;
 
 }

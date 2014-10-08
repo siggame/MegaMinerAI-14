@@ -30,14 +30,9 @@ int Player::spores()
 }
 
 
-bool Player::talk(char* message)
+bool Player::germinate(int x, int y, int mutation)
 {
-  return playerTalk( (_Player*)ptr, message);
-}
-
-bool Player::spawnPlant(int x, int y, int mutation)
-{
-  return playerSpawnPlant( (_Player*)ptr, x, y, mutation);
+  return playerGerminate( (_Player*)ptr, x, y, mutation);
 }
 
 

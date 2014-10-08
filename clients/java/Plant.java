@@ -24,11 +24,29 @@ class Plant extends Mappable
 
     //commands
 
+  ///Allows a plant to display messages on the screen
+  boolean talk(String message)
+  {
+    validify();
+    return (Client.INSTANCE.plantTalk(ptr, message) == 0) ? false : true;
+  }
   ///Command to radiate (heal, attack) another Plant.
   boolean radiate(int x, int y)
   {
     validify();
     return (Client.INSTANCE.plantRadiate(ptr, x, y) == 0) ? false : true;
+  }
+  ///Command to radiate (heal, attack) another Plant.
+  boolean radiate(int x, int y)
+  {
+    validify();
+    return (Client.INSTANCE.plantRadiate(ptr, x, y) == 0) ? false : true;
+  }
+  ///Command to radiate (heal, attack) another Plant.
+  boolean uproot(int x, int y, int mutation)
+  {
+    validify();
+    return (Client.INSTANCE.plantUproot(ptr, x, y, mutation) == 0) ? false : true;
   }
 
     //getters
@@ -63,77 +81,71 @@ class Plant extends Mappable
     validify();
     return Client.INSTANCE.plantGetMutation(ptr);
   }
-  ///The current amount health this Plant has remaining.
+  ///The current amount of radiation this Plant has.
   public int getRads()
   {
     validify();
     return Client.INSTANCE.plantGetRads(ptr);
   }
-  ///The maximum amount of this health this Plant can have
+  ///The maximum amount of radiation this Plant can have before dying.
   public int getMaxRads()
   {
     validify();
     return Client.INSTANCE.plantGetMaxRads(ptr);
   }
-  ///The maximum range this plant can radiate
+  ///The remaining number of times the plant can radiate.
+  public int getRadiatesLeft()
+  {
+    validify();
+    return Client.INSTANCE.plantGetRadiatesLeft(ptr);
+  }
+  ///The maximum number of times the plant can radiate.
+  public int getMaxRadiates()
+  {
+    validify();
+    return Client.INSTANCE.plantGetMaxRadiates(ptr);
+  }
+  ///The maximum range this plant can radiate.
   public int getRange()
   {
     validify();
     return Client.INSTANCE.plantGetRange(ptr);
   }
-  ///The distance this plant has left to move
-  public int getMovementLeft()
+  ///The remaining number of times this plant can be uprooted.
+  public int getUprootsLeft()
   {
     validify();
-    return Client.INSTANCE.plantGetMovementLeft(ptr);
+    return Client.INSTANCE.plantGetUprootsLeft(ptr);
   }
-  ///The maximum distance this plant can move each turn
-  public int getMaxMovement()
+  ///The maximum number of times this plant can be uprooted.
+  public int getMaxUproots()
   {
     validify();
-    return Client.INSTANCE.plantGetMaxMovement(ptr);
+    return Client.INSTANCE.plantGetMaxUproots(ptr);
   }
-  ///The current power of this plant's radiation
+  ///The current power of this plant.
   public int getStrength()
   {
     validify();
     return Client.INSTANCE.plantGetStrength(ptr);
   }
-  ///The minimum power of this plant's radiation
+  ///The minimum power of this plant.
   public int getMinStrength()
   {
     validify();
     return Client.INSTANCE.plantGetMinStrength(ptr);
   }
-  ///The base power of this plant's radiation
+  ///The base power of this plant.
   public int getBaseStrength()
   {
     validify();
     return Client.INSTANCE.plantGetBaseStrength(ptr);
   }
-  ///The maximum power of this plant's radiation
+  ///The maximum power of this plant.
   public int getMaxStrength()
   {
     validify();
     return Client.INSTANCE.plantGetMaxStrength(ptr);
-  }
-  ///The current amount of radiation this Plant can have
-  public int getStorage()
-  {
-    validify();
-    return Client.INSTANCE.plantGetStorage(ptr);
-  }
-  ///The maximum amount of radiation this Plant can have
-  public int getMaxStorage()
-  {
-    validify();
-    return Client.INSTANCE.plantGetMaxStorage(ptr);
-  }
-  ///The number of spores required to spawn this unit
-  public int getSpores()
-  {
-    validify();
-    return Client.INSTANCE.plantGetSpores(ptr);
   }
 
 }

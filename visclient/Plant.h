@@ -28,34 +28,38 @@ class Plant : public Mappable {
   int owner();
   ///The mutation of this Plant. This mutation refers to list of MutationSpecifications.
   int mutation();
-  ///The current amount health this Plant has remaining.
+  ///The current amount of radiation this Plant has.
   int rads();
-  ///The maximum amount of this health this Plant can have
+  ///The maximum amount of radiation this Plant can have before dying.
   int maxRads();
-  ///The maximum range this plant can radiate
+  ///The remaining number of times the plant can radiate.
+  int radiatesLeft();
+  ///The maximum number of times the plant can radiate.
+  int maxRadiates();
+  ///The maximum range this plant can radiate.
   int range();
-  ///The distance this plant has left to move
-  int movementLeft();
-  ///The maximum distance this plant can move each turn
-  int maxMovement();
-  ///The current power of this plant's radiation
+  ///The remaining number of times this plant can be uprooted.
+  int uprootsLeft();
+  ///The maximum number of times this plant can be uprooted.
+  int maxUproots();
+  ///The current power of this plant.
   int strength();
-  ///The minimum power of this plant's radiation
+  ///The minimum power of this plant.
   int minStrength();
-  ///The base power of this plant's radiation
+  ///The base power of this plant.
   int baseStrength();
-  ///The maximum power of this plant's radiation
+  ///The maximum power of this plant.
   int maxStrength();
-  ///The current amount of radiation this Plant can have
-  int storage();
-  ///The maximum amount of radiation this Plant can have
-  int maxStorage();
-  ///The number of spores required to spawn this unit
-  int spores();
 
   // Actions
+  ///Allows a plant to display messages on the screen
+  int talk(char* message);
   ///Command to radiate (heal, attack) another Plant.
   int radiate(int x, int y);
+  ///Command to radiate (heal, attack) another Plant.
+  int radiate(int x, int y);
+  ///Command to radiate (heal, attack) another Plant.
+  int uproot(int x, int y, int mutation);
 
   // Properties
 

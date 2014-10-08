@@ -56,17 +56,25 @@ DLLEXPORT int plantGetMaxRads(_Plant* ptr)
 {
   return ptr->maxRads;
 }
+DLLEXPORT int plantGetRadiatesLeft(_Plant* ptr)
+{
+  return ptr->radiatesLeft;
+}
+DLLEXPORT int plantGetMaxRadiates(_Plant* ptr)
+{
+  return ptr->maxRadiates;
+}
 DLLEXPORT int plantGetRange(_Plant* ptr)
 {
   return ptr->range;
 }
-DLLEXPORT int plantGetMovementLeft(_Plant* ptr)
+DLLEXPORT int plantGetUprootsLeft(_Plant* ptr)
 {
-  return ptr->movementLeft;
+  return ptr->uprootsLeft;
 }
-DLLEXPORT int plantGetMaxMovement(_Plant* ptr)
+DLLEXPORT int plantGetMaxUproots(_Plant* ptr)
 {
-  return ptr->maxMovement;
+  return ptr->maxUproots;
 }
 DLLEXPORT int plantGetStrength(_Plant* ptr)
 {
@@ -84,18 +92,6 @@ DLLEXPORT int plantGetMaxStrength(_Plant* ptr)
 {
   return ptr->maxStrength;
 }
-DLLEXPORT int plantGetStorage(_Plant* ptr)
-{
-  return ptr->storage;
-}
-DLLEXPORT int plantGetMaxStorage(_Plant* ptr)
-{
-  return ptr->maxStorage;
-}
-DLLEXPORT int plantGetSpores(_Plant* ptr)
-{
-  return ptr->spores;
-}
 DLLEXPORT int mutationGetId(_Mutation* ptr)
 {
   return ptr->id;
@@ -104,29 +100,29 @@ DLLEXPORT char* mutationGetName(_Mutation* ptr)
 {
   return ptr->name;
 }
-DLLEXPORT int mutationGetMutation(_Mutation* ptr)
+DLLEXPORT int mutationGetType(_Mutation* ptr)
 {
-  return ptr->mutation;
+  return ptr->type;
 }
 DLLEXPORT int mutationGetSpores(_Mutation* ptr)
 {
   return ptr->spores;
 }
-DLLEXPORT int mutationGetMaxAttacks(_Mutation* ptr)
+DLLEXPORT int mutationGetMaxRadiates(_Mutation* ptr)
 {
-  return ptr->maxAttacks;
+  return ptr->maxRadiates;
 }
-DLLEXPORT int mutationGetMaxHealth(_Mutation* ptr)
+DLLEXPORT int mutationGetMaxRads(_Mutation* ptr)
 {
-  return ptr->maxHealth;
-}
-DLLEXPORT int mutationGetMaxMovement(_Mutation* ptr)
-{
-  return ptr->maxMovement;
+  return ptr->maxRads;
 }
 DLLEXPORT int mutationGetRange(_Mutation* ptr)
 {
   return ptr->range;
+}
+DLLEXPORT int mutationGetMaxUproots(_Mutation* ptr)
+{
+  return ptr->maxUproots;
 }
 DLLEXPORT int mutationGetMinStrength(_Mutation* ptr)
 {
@@ -139,9 +135,5 @@ DLLEXPORT int mutationGetBaseStrength(_Mutation* ptr)
 DLLEXPORT int mutationGetMaxStrength(_Mutation* ptr)
 {
   return ptr->maxStrength;
-}
-DLLEXPORT int mutationGetMaxStorage(_Mutation* ptr)
-{
-  return ptr->maxStorage;
 }
 

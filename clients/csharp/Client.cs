@@ -24,11 +24,15 @@ public class Client {
 
 #region Commands
   [DllImport("client")]
-  public static extern int playerTalk(IntPtr self, string message);
+  public static extern int playerGerminate(IntPtr self, int x, int y, int mutation);
   [DllImport("client")]
-  public static extern int playerSpawnPlant(IntPtr self, int x, int y, int mutation);
+  public static extern int plantTalk(IntPtr self, string message);
   [DllImport("client")]
   public static extern int plantRadiate(IntPtr self, int x, int y);
+  [DllImport("client")]
+  public static extern int plantRadiate(IntPtr self, int x, int y);
+  [DllImport("client")]
+  public static extern int plantUproot(IntPtr self, int x, int y, int mutation);
 #endregion
 
 #region Accessors
@@ -95,11 +99,15 @@ public class Client {
   [DllImport("client")]
   public static extern int plantGetMaxRads(IntPtr ptr);
   [DllImport("client")]
+  public static extern int plantGetRadiatesLeft(IntPtr ptr);
+  [DllImport("client")]
+  public static extern int plantGetMaxRadiates(IntPtr ptr);
+  [DllImport("client")]
   public static extern int plantGetRange(IntPtr ptr);
   [DllImport("client")]
-  public static extern int plantGetMovementLeft(IntPtr ptr);
+  public static extern int plantGetUprootsLeft(IntPtr ptr);
   [DllImport("client")]
-  public static extern int plantGetMaxMovement(IntPtr ptr);
+  public static extern int plantGetMaxUproots(IntPtr ptr);
   [DllImport("client")]
   public static extern int plantGetStrength(IntPtr ptr);
   [DllImport("client")]
@@ -108,37 +116,29 @@ public class Client {
   public static extern int plantGetBaseStrength(IntPtr ptr);
   [DllImport("client")]
   public static extern int plantGetMaxStrength(IntPtr ptr);
-  [DllImport("client")]
-  public static extern int plantGetStorage(IntPtr ptr);
-  [DllImport("client")]
-  public static extern int plantGetMaxStorage(IntPtr ptr);
-  [DllImport("client")]
-  public static extern int plantGetSpores(IntPtr ptr);
 
   [DllImport("client")]
   public static extern int mutationGetId(IntPtr ptr);
   [DllImport("client")]
   public static extern IntPtr mutationGetName(IntPtr ptr);
   [DllImport("client")]
-  public static extern int mutationGetMutation(IntPtr ptr);
+  public static extern int mutationGetType(IntPtr ptr);
   [DllImport("client")]
   public static extern int mutationGetSpores(IntPtr ptr);
   [DllImport("client")]
-  public static extern int mutationGetMaxAttacks(IntPtr ptr);
+  public static extern int mutationGetMaxRadiates(IntPtr ptr);
   [DllImport("client")]
-  public static extern int mutationGetMaxHealth(IntPtr ptr);
-  [DllImport("client")]
-  public static extern int mutationGetMaxMovement(IntPtr ptr);
+  public static extern int mutationGetMaxRads(IntPtr ptr);
   [DllImport("client")]
   public static extern int mutationGetRange(IntPtr ptr);
+  [DllImport("client")]
+  public static extern int mutationGetMaxUproots(IntPtr ptr);
   [DllImport("client")]
   public static extern int mutationGetMinStrength(IntPtr ptr);
   [DllImport("client")]
   public static extern int mutationGetBaseStrength(IntPtr ptr);
   [DllImport("client")]
   public static extern int mutationGetMaxStrength(IntPtr ptr);
-  [DllImport("client")]
-  public static extern int mutationGetMaxStorage(IntPtr ptr);
 
 #endregion
 

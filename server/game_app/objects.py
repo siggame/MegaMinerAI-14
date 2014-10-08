@@ -18,10 +18,7 @@ class Player(object):
   def nextTurn(self):
     pass
 
-  def talk(self, message):
-    pass
-
-  def spawnPlant(self, x, y, mutation):
+  def germinate(self, x, y, mutation):
     pass
 
   def __setattr__(self, name, value):
@@ -54,8 +51,8 @@ class Mappable(object):
       object.__setattr__(self, name, value)
 
 class Plant(Mappable):
-  game_state_attributes = ['id', 'x', 'y', 'owner', 'mutation', 'rads', 'maxRads', 'range', 'movementLeft', 'maxMovement', 'strength', 'minStrength', 'baseStrength', 'maxStrength', 'storage', 'maxStorage', 'spores']
-  def __init__(self, game, id, x, y, owner, mutation, rads, maxRads, range, movementLeft, maxMovement, strength, minStrength, baseStrength, maxStrength, storage, maxStorage, spores):
+  game_state_attributes = ['id', 'x', 'y', 'owner', 'mutation', 'rads', 'maxRads', 'radiatesLeft', 'maxRadiates', 'range', 'uprootsLeft', 'maxUproots', 'strength', 'minStrength', 'baseStrength', 'maxStrength']
+  def __init__(self, game, id, x, y, owner, mutation, rads, maxRads, radiatesLeft, maxRadiates, range, uprootsLeft, maxUproots, strength, minStrength, baseStrength, maxStrength):
     self.game = game
     self.id = id
     self.x = x
@@ -64,29 +61,37 @@ class Plant(Mappable):
     self.mutation = mutation
     self.rads = rads
     self.maxRads = maxRads
+    self.radiatesLeft = radiatesLeft
+    self.maxRadiates = maxRadiates
     self.range = range
-    self.movementLeft = movementLeft
-    self.maxMovement = maxMovement
+    self.uprootsLeft = uprootsLeft
+    self.maxUproots = maxUproots
     self.strength = strength
     self.minStrength = minStrength
     self.baseStrength = baseStrength
     self.maxStrength = maxStrength
-    self.storage = storage
-    self.maxStorage = maxStorage
-    self.spores = spores
     self.updatedAt = game.turnNumber
 
   def toList(self):
-    return [self.id, self.x, self.y, self.owner, self.mutation, self.rads, self.maxRads, self.range, self.movementLeft, self.maxMovement, self.strength, self.minStrength, self.baseStrength, self.maxStrength, self.storage, self.maxStorage, self.spores, ]
+    return [self.id, self.x, self.y, self.owner, self.mutation, self.rads, self.maxRads, self.radiatesLeft, self.maxRadiates, self.range, self.uprootsLeft, self.maxUproots, self.strength, self.minStrength, self.baseStrength, self.maxStrength, ]
   
   # This will not work if the object has variables other than primitives
   def toJson(self):
-    return dict(id = self.id, x = self.x, y = self.y, owner = self.owner, mutation = self.mutation, rads = self.rads, maxRads = self.maxRads, range = self.range, movementLeft = self.movementLeft, maxMovement = self.maxMovement, strength = self.strength, minStrength = self.minStrength, baseStrength = self.baseStrength, maxStrength = self.maxStrength, storage = self.storage, maxStorage = self.maxStorage, spores = self.spores, )
+    return dict(id = self.id, x = self.x, y = self.y, owner = self.owner, mutation = self.mutation, rads = self.rads, maxRads = self.maxRads, radiatesLeft = self.radiatesLeft, maxRadiates = self.maxRadiates, range = self.range, uprootsLeft = self.uprootsLeft, maxUproots = self.maxUproots, strength = self.strength, minStrength = self.minStrength, baseStrength = self.baseStrength, maxStrength = self.maxStrength, )
   
   def nextTurn(self):
     pass
 
+  def talk(self, message):
+    pass
+
   def radiate(self, x, y):
+    pass
+
+  def radiate(self, x, y):
+    pass
+
+  def uproot(self, x, y, mutation):
     pass
 
   def __setattr__(self, name, value):
@@ -95,29 +100,28 @@ class Plant(Mappable):
       object.__setattr__(self, name, value)
 
 class Mutation(object):
-  game_state_attributes = ['id', 'name', 'mutation', 'spores', 'maxAttacks', 'maxHealth', 'maxMovement', 'range', 'minStrength', 'baseStrength', 'maxStrength', 'maxStorage']
-  def __init__(self, game, id, name, mutation, spores, maxAttacks, maxHealth, maxMovement, range, minStrength, baseStrength, maxStrength, maxStorage):
+  game_state_attributes = ['id', 'name', 'type', 'spores', 'maxRadiates', 'maxRads', 'range', 'maxUproots', 'minStrength', 'baseStrength', 'maxStrength']
+  def __init__(self, game, id, name, type, spores, maxRadiates, maxRads, range, maxUproots, minStrength, baseStrength, maxStrength):
     self.game = game
     self.id = id
     self.name = name
-    self.mutation = mutation
+    self.type = type
     self.spores = spores
-    self.maxAttacks = maxAttacks
-    self.maxHealth = maxHealth
-    self.maxMovement = maxMovement
+    self.maxRadiates = maxRadiates
+    self.maxRads = maxRads
     self.range = range
+    self.maxUproots = maxUproots
     self.minStrength = minStrength
     self.baseStrength = baseStrength
     self.maxStrength = maxStrength
-    self.maxStorage = maxStorage
     self.updatedAt = game.turnNumber
 
   def toList(self):
-    return [self.id, self.name, self.mutation, self.spores, self.maxAttacks, self.maxHealth, self.maxMovement, self.range, self.minStrength, self.baseStrength, self.maxStrength, self.maxStorage, ]
+    return [self.id, self.name, self.type, self.spores, self.maxRadiates, self.maxRads, self.range, self.maxUproots, self.minStrength, self.baseStrength, self.maxStrength, ]
   
   # This will not work if the object has variables other than primitives
   def toJson(self):
-    return dict(id = self.id, name = self.name, mutation = self.mutation, spores = self.spores, maxAttacks = self.maxAttacks, maxHealth = self.maxHealth, maxMovement = self.maxMovement, range = self.range, minStrength = self.minStrength, baseStrength = self.baseStrength, maxStrength = self.maxStrength, maxStorage = self.maxStorage, )
+    return dict(id = self.id, name = self.name, type = self.type, spores = self.spores, maxRadiates = self.maxRadiates, maxRads = self.maxRads, range = self.range, maxUproots = self.maxUproots, minStrength = self.minStrength, baseStrength = self.baseStrength, maxStrength = self.maxStrength, )
   
   def nextTurn(self):
     pass
@@ -129,29 +133,7 @@ class Mutation(object):
 
 
 # The following are animations and do not need to have any logic added
-class SpawnAnimation:
-  def __init__(self, sourceID, unitID):
-    self.sourceID = sourceID
-    self.unitID = unitID
-
-  def toList(self):
-    return ["spawn", self.sourceID, self.unitID, ]
-
-  def toJson(self):
-    return dict(type = "spawn", sourceID = self.sourceID, unitID = self.unitID)
-
-class RepairAnimation:
-  def __init__(self, actingID, targetID):
-    self.actingID = actingID
-    self.targetID = targetID
-
-  def toList(self):
-    return ["repair", self.actingID, self.targetID, ]
-
-  def toJson(self):
-    return dict(type = "repair", actingID = self.actingID, targetID = self.targetID)
-
-class MoveAnimation:
+class UprootAnimation:
   def __init__(self, actingID, fromX, fromY, toX, toY):
     self.actingID = actingID
     self.fromX = fromX
@@ -160,31 +142,32 @@ class MoveAnimation:
     self.toY = toY
 
   def toList(self):
-    return ["move", self.actingID, self.fromX, self.fromY, self.toX, self.toY, ]
+    return ["uproot", self.actingID, self.fromX, self.fromY, self.toX, self.toY, ]
 
   def toJson(self):
-    return dict(type = "move", actingID = self.actingID, fromX = self.fromX, fromY = self.fromY, toX = self.toX, toY = self.toY)
+    return dict(type = "uproot", actingID = self.actingID, fromX = self.fromX, fromY = self.fromY, toX = self.toX, toY = self.toY)
 
-class HackAnimation:
+class SoakAnimation:
   def __init__(self, actingID, targetID):
     self.actingID = actingID
     self.targetID = targetID
 
   def toList(self):
-    return ["hack", self.actingID, self.targetID, ]
+    return ["soak", self.actingID, self.targetID, ]
 
   def toJson(self):
-    return dict(type = "hack", actingID = self.actingID, targetID = self.targetID)
+    return dict(type = "soak", actingID = self.actingID, targetID = self.targetID)
 
-class OrbitalDropAnimation:
-  def __init__(self, sourceID):
-    self.sourceID = sourceID
+class HealAnimation:
+  def __init__(self, actingID, targetID):
+    self.actingID = actingID
+    self.targetID = targetID
 
   def toList(self):
-    return ["orbitalDrop", self.sourceID, ]
+    return ["heal", self.actingID, self.targetID, ]
 
   def toJson(self):
-    return dict(type = "orbitalDrop", sourceID = self.sourceID)
+    return dict(type = "heal", actingID = self.actingID, targetID = self.targetID)
 
 class AttackAnimation:
   def __init__(self, actingID, targetID):
@@ -196,4 +179,16 @@ class AttackAnimation:
 
   def toJson(self):
     return dict(type = "attack", actingID = self.actingID, targetID = self.targetID)
+
+class GerminateAnimation:
+  def __init__(self, actingID, x, y):
+    self.actingID = actingID
+    self.x = x
+    self.y = y
+
+  def toList(self):
+    return ["germinate", self.actingID, self.x, self.y, ]
+
+  def toJson(self):
+    return dict(type = "germinate", actingID = self.actingID, x = self.x, y = self.y)
 

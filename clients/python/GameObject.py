@@ -33,15 +33,10 @@ class Player(GameObject):
         return True
     raise ExistentialError()
   #\endcond
-  ##Allows a player to display messages on the screen
-  def talk(self, message):
+  ##Allows a player to germinate a new Plant.
+  def germinate(self, x, y, mutation):
     self.validify()
-    return library.playerTalk(self._ptr, message)
-
-  ##Allows a player to spawn a Plant.
-  def spawnPlant(self, x, y, mutation):
-    self.validify()
-    return library.playerSpawnPlant(self._ptr, x, y, mutation)
+    return library.playerGerminate(self._ptr, x, y, mutation)
 
   #\cond
   def getId(self):
@@ -162,10 +157,25 @@ class Plant(Mappable):
         return True
     raise ExistentialError()
   #\endcond
+  ##Allows a plant to display messages on the screen
+  def talk(self, message):
+    self.validify()
+    return library.plantTalk(self._ptr, message)
+
   ##Command to radiate (heal, attack) another Plant.
   def radiate(self, x, y):
     self.validify()
     return library.plantRadiate(self._ptr, x, y)
+
+  ##Command to radiate (heal, attack) another Plant.
+  def radiate(self, x, y):
+    self.validify()
+    return library.plantRadiate(self._ptr, x, y)
+
+  ##Command to radiate (heal, attack) another Plant.
+  def uproot(self, x, y, mutation):
+    self.validify()
+    return library.plantUproot(self._ptr, x, y, mutation)
 
   #\cond
   def getId(self):
@@ -212,7 +222,7 @@ class Plant(Mappable):
     self.validify()
     return library.plantGetRads(self._ptr)
   #\endcond
-  ##The current amount health this Plant has remaining.
+  ##The current amount of radiation this Plant has.
   rads = property(getRads)
 
   #\cond
@@ -220,39 +230,55 @@ class Plant(Mappable):
     self.validify()
     return library.plantGetMaxRads(self._ptr)
   #\endcond
-  ##The maximum amount of this health this Plant can have
+  ##The maximum amount of radiation this Plant can have before dying.
   maxRads = property(getMaxRads)
+
+  #\cond
+  def getRadiatesLeft(self):
+    self.validify()
+    return library.plantGetRadiatesLeft(self._ptr)
+  #\endcond
+  ##The remaining number of times the plant can radiate.
+  radiatesLeft = property(getRadiatesLeft)
+
+  #\cond
+  def getMaxRadiates(self):
+    self.validify()
+    return library.plantGetMaxRadiates(self._ptr)
+  #\endcond
+  ##The maximum number of times the plant can radiate.
+  maxRadiates = property(getMaxRadiates)
 
   #\cond
   def getRange(self):
     self.validify()
     return library.plantGetRange(self._ptr)
   #\endcond
-  ##The maximum range this plant can radiate
+  ##The maximum range this plant can radiate.
   range = property(getRange)
 
   #\cond
-  def getMovementLeft(self):
+  def getUprootsLeft(self):
     self.validify()
-    return library.plantGetMovementLeft(self._ptr)
+    return library.plantGetUprootsLeft(self._ptr)
   #\endcond
-  ##The distance this plant has left to move
-  movementLeft = property(getMovementLeft)
+  ##The remaining number of times this plant can be uprooted.
+  uprootsLeft = property(getUprootsLeft)
 
   #\cond
-  def getMaxMovement(self):
+  def getMaxUproots(self):
     self.validify()
-    return library.plantGetMaxMovement(self._ptr)
+    return library.plantGetMaxUproots(self._ptr)
   #\endcond
-  ##The maximum distance this plant can move each turn
-  maxMovement = property(getMaxMovement)
+  ##The maximum number of times this plant can be uprooted.
+  maxUproots = property(getMaxUproots)
 
   #\cond
   def getStrength(self):
     self.validify()
     return library.plantGetStrength(self._ptr)
   #\endcond
-  ##The current power of this plant's radiation
+  ##The current power of this plant.
   strength = property(getStrength)
 
   #\cond
@@ -260,7 +286,7 @@ class Plant(Mappable):
     self.validify()
     return library.plantGetMinStrength(self._ptr)
   #\endcond
-  ##The minimum power of this plant's radiation
+  ##The minimum power of this plant.
   minStrength = property(getMinStrength)
 
   #\cond
@@ -268,7 +294,7 @@ class Plant(Mappable):
     self.validify()
     return library.plantGetBaseStrength(self._ptr)
   #\endcond
-  ##The base power of this plant's radiation
+  ##The base power of this plant.
   baseStrength = property(getBaseStrength)
 
   #\cond
@@ -276,32 +302,8 @@ class Plant(Mappable):
     self.validify()
     return library.plantGetMaxStrength(self._ptr)
   #\endcond
-  ##The maximum power of this plant's radiation
+  ##The maximum power of this plant.
   maxStrength = property(getMaxStrength)
-
-  #\cond
-  def getStorage(self):
-    self.validify()
-    return library.plantGetStorage(self._ptr)
-  #\endcond
-  ##The current amount of radiation this Plant can have
-  storage = property(getStorage)
-
-  #\cond
-  def getMaxStorage(self):
-    self.validify()
-    return library.plantGetMaxStorage(self._ptr)
-  #\endcond
-  ##The maximum amount of radiation this Plant can have
-  maxStorage = property(getMaxStorage)
-
-  #\cond
-  def getSpores(self):
-    self.validify()
-    return library.plantGetSpores(self._ptr)
-  #\endcond
-  ##The number of spores required to spawn this unit
-  spores = property(getSpores)
 
 
   def __str__(self):
@@ -314,16 +316,15 @@ class Plant(Mappable):
     ret += "mutation: %s\n" % self.getMutation()
     ret += "rads: %s\n" % self.getRads()
     ret += "maxRads: %s\n" % self.getMaxRads()
+    ret += "radiatesLeft: %s\n" % self.getRadiatesLeft()
+    ret += "maxRadiates: %s\n" % self.getMaxRadiates()
     ret += "range: %s\n" % self.getRange()
-    ret += "movementLeft: %s\n" % self.getMovementLeft()
-    ret += "maxMovement: %s\n" % self.getMaxMovement()
+    ret += "uprootsLeft: %s\n" % self.getUprootsLeft()
+    ret += "maxUproots: %s\n" % self.getMaxUproots()
     ret += "strength: %s\n" % self.getStrength()
     ret += "minStrength: %s\n" % self.getMinStrength()
     ret += "baseStrength: %s\n" % self.getBaseStrength()
     ret += "maxStrength: %s\n" % self.getMaxStrength()
-    ret += "storage: %s\n" % self.getStorage()
-    ret += "maxStorage: %s\n" % self.getMaxStorage()
-    ret += "spores: %s\n" % self.getSpores()
     return ret
 
 ##Represents a mutation of Plant.
@@ -365,59 +366,59 @@ class Mutation(GameObject):
   name = property(getName)
 
   #\cond
-  def getMutation(self):
+  def getType(self):
     self.validify()
-    return library.mutationGetMutation(self._ptr)
+    return library.mutationGetType(self._ptr)
   #\endcond
-  ##The Mutation specific id representing this mutation of Plant.
-  mutation = property(getMutation)
+  ##The mutation of this Plant. This value is unique for all Mutations.
+  type = property(getType)
 
   #\cond
   def getSpores(self):
     self.validify()
     return library.mutationGetSpores(self._ptr)
   #\endcond
-  ##The spore cost to spawn this Plant mutation into the game.
+  ##The current amount of radiation this Plant has.
   spores = property(getSpores)
 
   #\cond
-  def getMaxAttacks(self):
+  def getMaxRadiates(self):
     self.validify()
-    return library.mutationGetMaxAttacks(self._ptr)
+    return library.mutationGetMaxRadiates(self._ptr)
   #\endcond
-  ##The maximum number of times the Plant can attack.
-  maxAttacks = property(getMaxAttacks)
+  ##The maximum number of times the Plant can radiate.
+  maxRadiates = property(getMaxRadiates)
 
   #\cond
-  def getMaxHealth(self):
+  def getMaxRads(self):
     self.validify()
-    return library.mutationGetMaxHealth(self._ptr)
+    return library.mutationGetMaxRads(self._ptr)
   #\endcond
-  ##The maximum amount of this health this Plant can have
-  maxHealth = property(getMaxHealth)
-
-  #\cond
-  def getMaxMovement(self):
-    self.validify()
-    return library.mutationGetMaxMovement(self._ptr)
-  #\endcond
-  ##The maximum number of moves this Plant can move.
-  maxMovement = property(getMaxMovement)
+  ##The maximum amount of radiation this Plant can have before dying.
+  maxRads = property(getMaxRads)
 
   #\cond
   def getRange(self):
     self.validify()
     return library.mutationGetRange(self._ptr)
   #\endcond
-  ##The range of this Plant's attack.
+  ##The maximum range this plant can radiate.
   range = property(getRange)
+
+  #\cond
+  def getMaxUproots(self):
+    self.validify()
+    return library.mutationGetMaxUproots(self._ptr)
+  #\endcond
+  ##The maximum number of times this plant can be uprooted.
+  maxUproots = property(getMaxUproots)
 
   #\cond
   def getMinStrength(self):
     self.validify()
     return library.mutationGetMinStrength(self._ptr)
   #\endcond
-  ##The minimum strength of this mutation's attack/heal/buff
+  ##The minimum power of this plant.
   minStrength = property(getMinStrength)
 
   #\cond
@@ -425,7 +426,7 @@ class Mutation(GameObject):
     self.validify()
     return library.mutationGetBaseStrength(self._ptr)
   #\endcond
-  ##The base strength of this mutation's attack/heal/buff
+  ##The base power of this plant.
   baseStrength = property(getBaseStrength)
 
   #\cond
@@ -433,16 +434,8 @@ class Mutation(GameObject):
     self.validify()
     return library.mutationGetMaxStrength(self._ptr)
   #\endcond
-  ##The power of this plant's attack/heal/buff
+  ##The maximum power of this plant.
   maxStrength = property(getMaxStrength)
-
-  #\cond
-  def getMaxStorage(self):
-    self.validify()
-    return library.mutationGetMaxStorage(self._ptr)
-  #\endcond
-  ##The power of this Plant mutation's attack.
-  maxStorage = property(getMaxStorage)
 
 
   def __str__(self):
@@ -450,14 +443,13 @@ class Mutation(GameObject):
     ret = ""
     ret += "id: %s\n" % self.getId()
     ret += "name: %s\n" % self.getName()
-    ret += "mutation: %s\n" % self.getMutation()
+    ret += "type: %s\n" % self.getType()
     ret += "spores: %s\n" % self.getSpores()
-    ret += "maxAttacks: %s\n" % self.getMaxAttacks()
-    ret += "maxHealth: %s\n" % self.getMaxHealth()
-    ret += "maxMovement: %s\n" % self.getMaxMovement()
+    ret += "maxRadiates: %s\n" % self.getMaxRadiates()
+    ret += "maxRads: %s\n" % self.getMaxRads()
     ret += "range: %s\n" % self.getRange()
+    ret += "maxUproots: %s\n" % self.getMaxUproots()
     ret += "minStrength: %s\n" % self.getMinStrength()
     ret += "baseStrength: %s\n" % self.getBaseStrength()
     ret += "maxStrength: %s\n" % self.getMaxStrength()
-    ret += "maxStorage: %s\n" % self.getMaxStorage()
     return ret

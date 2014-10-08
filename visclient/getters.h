@@ -33,30 +33,28 @@ DLLEXPORT int plantGetOwner(_Plant* ptr);
 DLLEXPORT int plantGetMutation(_Plant* ptr);
 DLLEXPORT int plantGetRads(_Plant* ptr);
 DLLEXPORT int plantGetMaxRads(_Plant* ptr);
+DLLEXPORT int plantGetRadiatesLeft(_Plant* ptr);
+DLLEXPORT int plantGetMaxRadiates(_Plant* ptr);
 DLLEXPORT int plantGetRange(_Plant* ptr);
-DLLEXPORT int plantGetMovementLeft(_Plant* ptr);
-DLLEXPORT int plantGetMaxMovement(_Plant* ptr);
+DLLEXPORT int plantGetUprootsLeft(_Plant* ptr);
+DLLEXPORT int plantGetMaxUproots(_Plant* ptr);
 DLLEXPORT int plantGetStrength(_Plant* ptr);
 DLLEXPORT int plantGetMinStrength(_Plant* ptr);
 DLLEXPORT int plantGetBaseStrength(_Plant* ptr);
 DLLEXPORT int plantGetMaxStrength(_Plant* ptr);
-DLLEXPORT int plantGetStorage(_Plant* ptr);
-DLLEXPORT int plantGetMaxStorage(_Plant* ptr);
-DLLEXPORT int plantGetSpores(_Plant* ptr);
 
 
 DLLEXPORT int mutationGetId(_Mutation* ptr);
 DLLEXPORT char* mutationGetName(_Mutation* ptr);
-DLLEXPORT int mutationGetMutation(_Mutation* ptr);
+DLLEXPORT int mutationGetType(_Mutation* ptr);
 DLLEXPORT int mutationGetSpores(_Mutation* ptr);
-DLLEXPORT int mutationGetMaxAttacks(_Mutation* ptr);
-DLLEXPORT int mutationGetMaxHealth(_Mutation* ptr);
-DLLEXPORT int mutationGetMaxMovement(_Mutation* ptr);
+DLLEXPORT int mutationGetMaxRadiates(_Mutation* ptr);
+DLLEXPORT int mutationGetMaxRads(_Mutation* ptr);
 DLLEXPORT int mutationGetRange(_Mutation* ptr);
+DLLEXPORT int mutationGetMaxUproots(_Mutation* ptr);
 DLLEXPORT int mutationGetMinStrength(_Mutation* ptr);
 DLLEXPORT int mutationGetBaseStrength(_Mutation* ptr);
 DLLEXPORT int mutationGetMaxStrength(_Mutation* ptr);
-DLLEXPORT int mutationGetMaxStorage(_Mutation* ptr);
 
 
 

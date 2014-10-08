@@ -29,17 +29,11 @@ class Player
 
     //commands
 
-  ///Allows a player to display messages on the screen
-  boolean talk(String message)
+  ///Allows a player to germinate a new Plant.
+  boolean germinate(int x, int y, int mutation)
   {
     validify();
-    return (Client.INSTANCE.playerTalk(ptr, message) == 0) ? false : true;
-  }
-  ///Allows a player to spawn a Plant.
-  boolean spawnPlant(int x, int y, int mutation)
-  {
-    validify();
-    return (Client.INSTANCE.playerSpawnPlant(ptr, x, y, mutation) == 0) ? false : true;
+    return (Client.INSTANCE.playerGerminate(ptr, x, y, mutation) == 0) ? false : true;
   }
 
     //getters
