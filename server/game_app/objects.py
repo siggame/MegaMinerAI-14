@@ -80,6 +80,9 @@ class Plant(Mappable):
     return dict(id = self.id, x = self.x, y = self.y, owner = self.owner, mutation = self.mutation, rads = self.rads, maxRads = self.maxRads, radiatesLeft = self.radiatesLeft, maxRadiates = self.maxRadiates, range = self.range, uprootsLeft = self.uprootsLeft, maxUproots = self.maxUproots, strength = self.strength, minStrength = self.minStrength, baseStrength = self.baseStrength, maxStrength = self.maxStrength, )
 
   def nextTurn(self):
+    if self.owner == self.game.playerID:
+      self.uprootsLeft = self.maxUproots
+      self.radiatesLeft = self.maxRads
     pass
 
   def talk(self, message):
