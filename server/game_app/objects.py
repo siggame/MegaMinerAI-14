@@ -78,7 +78,7 @@ class Plant(Mappable):
   # This will not work if the object has variables other than primitives
   def toJson(self):
     return dict(id = self.id, x = self.x, y = self.y, owner = self.owner, mutation = self.mutation, rads = self.rads, maxRads = self.maxRads, radiatesLeft = self.radiatesLeft, maxRadiates = self.maxRadiates, range = self.range, uprootsLeft = self.uprootsLeft, maxUproots = self.maxUproots, strength = self.strength, minStrength = self.minStrength, baseStrength = self.baseStrength, maxStrength = self.maxStrength, )
-  
+
   def nextTurn(self):
     pass
 
@@ -92,7 +92,34 @@ class Plant(Mappable):
     pass
 
   def uproot(self, x, y, mutation):
-    pass
+    #abstract out
+    spawnerNo = 1
+    if self.owner != self.game.playerID:
+      return 'Turn {}: You cannot uproot the opponent\'s plant {}.'.format(self.game.turnNumber, self.id)
+    elif self.uprootsLeft <= 0:
+      return 'Turn {}: Your plant {} does not have any uproots left.'.format(self.game.turnNumber, self.id)
+    elif not (0 < self.x <= self.game.mapWidth) or not (0 < self.y <= self.game.mapHeight):
+      return 'Turn {}: Your plant {} cannot move off the map.'.format(self.game.turnNumber, self.id)
+    inRange = False
+    #make sure there are no plants on the tile
+    for plant in self.game.plants:
+      if (plant.x == x) and (plant.y == y):
+        return 'Turn {}: Your plant {} cannot move on top of another plant.'.format(self.game.turnNumber, self.id)
+      #check if movement location is in the range of an owned spawner too
+      if plant.mutation == spawnerNo and plant.owner == self.game.playerID:
+        if self.game.dist(x, y, plant.x, plant.y) <= plant.range:
+          inRange = True
+
+    if not inRange:
+      return 'Turn {}: Your plant {} is trying to move out of the range of a spawner.'.format(self.game.turnNumber, self.id)
+
+    #otherwise it's okay
+    self.x = x
+    self.y = y
+    self.uprootsLeft -= 1
+    self.game.addAnimation(UprootAnimation(self.x, self.y, x, y))
+
+    return True
 
   def __setattr__(self, name, value):
       if name in self.game_state_attributes:
