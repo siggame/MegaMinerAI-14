@@ -42,7 +42,7 @@ class Match(DefaultGameWorld):
   def __del__(self):
     pass
 
-  def dist(self, x1, x2, y1, y2):
+  def dist(self, x1, y1, x2, y2):
     return int(math.hypot(x1-x2, y1-y2))
 
   def addPlayer(self, connection, type="player"):
