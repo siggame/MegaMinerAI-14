@@ -98,7 +98,7 @@ class Plant(Mappable):
       return 'Turn {}: You cannot uproot the opponent\'s plant {}.'.format(self.game.turnNumber, self.id)
     elif self.uprootsLeft <= 0:
       return 'Turn {}: Your plant {} does not have any uproots left.'.format(self.game.turnNumber, self.id)
-    elif not (0 < self.x <= self.game.mapWidth) or not (0 < self.y <= self.game.mapHeight):
+    elif not (0 <= self.x < self.game.mapWidth) or not (0 <= self.y < self.game.mapHeight):
       return 'Turn {}: Your plant {} cannot move off the map.'.format(self.game.turnNumber, self.id)
     inRange = False
     #make sure there are no plants on the tile
