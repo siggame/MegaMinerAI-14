@@ -8,6 +8,7 @@ import os
 import itertools
 import scribe
 import jsonLogger
+import math
 
 Scribe = scribe.Scribe
 
@@ -40,6 +41,9 @@ class Match(DefaultGameWorld):
   #this is here to be wrapped
   def __del__(self):
     pass
+
+  def dist(self, x1, x2, y1, y2):
+    return int(math.hypot(x1-x2, y1-y2))
 
   def addPlayer(self, connection, type="player"):
     connection.type = type
