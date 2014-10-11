@@ -52,10 +52,8 @@ class Plant : public Mappable {
   bool talk(char* message);
   ///Command to radiate (heal, attack) another Plant.
   bool radiate(int x, int y);
-  ///Command to radiate (heal, attack) another Plant.
-  bool radiate(int x, int y);
-  ///Command to radiate (heal, attack) another Plant.
-  bool uproot(int x, int y, int mutation);
+  ///Command to uproot a plant and move to a new location.
+  bool uproot(int x, int y);
 
   // Properties
 

@@ -21,8 +21,7 @@ public interface Client extends Library {
   int playerGerminate(Pointer object, int x, int y, int mutation);
   int plantTalk(Pointer object, String message);
   int plantRadiate(Pointer object, int x, int y);
-  int plantRadiate(Pointer object, int x, int y);
-  int plantUproot(Pointer object, int x, int y, int mutation);
+  int plantUproot(Pointer object, int x, int y);
 
     //accessors
   int getMapWidth(Pointer connection);

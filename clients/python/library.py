@@ -50,11 +50,8 @@ library.plantTalk.argtypes = [c_void_p, c_char_p]
 library.plantRadiate.restype = c_int
 library.plantRadiate.argtypes = [c_void_p, c_int, c_int]
 
-library.plantRadiate.restype = c_int
-library.plantRadiate.argtypes = [c_void_p, c_int, c_int]
-
 library.plantUproot.restype = c_int
-library.plantUproot.argtypes = [c_void_p, c_int, c_int, c_int]
+library.plantUproot.argtypes = [c_void_p, c_int, c_int]
 
 # accessors
 

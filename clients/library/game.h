@@ -72,10 +72,8 @@ extern "C"
   DLLEXPORT int plantTalk(_Plant* object, char* message);
   ///Command to radiate (heal, attack) another Plant.
   DLLEXPORT int plantRadiate(_Plant* object, int x, int y);
-  ///Command to radiate (heal, attack) another Plant.
-  DLLEXPORT int plantRadiate(_Plant* object, int x, int y);
-  ///Command to radiate (heal, attack) another Plant.
-  DLLEXPORT int plantUproot(_Plant* object, int x, int y, int mutation);
+  ///Command to uproot a plant and move to a new location.
+  DLLEXPORT int plantUproot(_Plant* object, int x, int y);
 
 //derived properties
 

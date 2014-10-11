@@ -174,12 +174,8 @@ class Match(DefaultGameWorld):
     return object.radiate(x, y, )
 
   @derefArgs(Plant, None, None)
-  def radiate(self, object, x, y):
-    return object.radiate(x, y, )
-
-  @derefArgs(Plant, None, None, None)
-  def uproot(self, object, x, y, mutation):
-    return object.uproot(x, y, mutation, )
+  def uproot(self, object, x, y):
+    return object.uproot(x, y, )
 
 
   def sendIdent(self, players):
