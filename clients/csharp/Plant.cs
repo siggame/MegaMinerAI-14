@@ -51,20 +51,12 @@ public class Plant: Mappable
     return (Client.plantRadiate(ptr, x, y) == 0) ? false : true;
   }
   /// <summary>
-  /// Command to radiate (heal, attack) another Plant.
+  /// Command to uproot a plant and move to a new location.
   /// </summary>
-  public bool radiate(int x, int y)
+  public bool uproot(int x, int y)
   {
     validify();
-    return (Client.plantRadiate(ptr, x, y) == 0) ? false : true;
-  }
-  /// <summary>
-  /// Command to radiate (heal, attack) another Plant.
-  /// </summary>
-  public bool uproot(int x, int y, int mutation)
-  {
-    validify();
-    return (Client.plantUproot(ptr, x, y, mutation) == 0) ? false : true;
+    return (Client.plantUproot(ptr, x, y) == 0) ? false : true;
   }
   #endregion
 

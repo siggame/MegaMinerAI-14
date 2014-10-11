@@ -36,17 +36,11 @@ class Plant extends Mappable
     validify();
     return (Client.INSTANCE.plantRadiate(ptr, x, y) == 0) ? false : true;
   }
-  ///Command to radiate (heal, attack) another Plant.
-  boolean radiate(int x, int y)
+  ///Command to uproot a plant and move to a new location.
+  boolean uproot(int x, int y)
   {
     validify();
-    return (Client.INSTANCE.plantRadiate(ptr, x, y) == 0) ? false : true;
-  }
-  ///Command to radiate (heal, attack) another Plant.
-  boolean uproot(int x, int y, int mutation)
-  {
-    validify();
-    return (Client.INSTANCE.plantUproot(ptr, x, y, mutation) == 0) ? false : true;
+    return (Client.INSTANCE.plantUproot(ptr, x, y) == 0) ? false : true;
   }
 
     //getters

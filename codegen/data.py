@@ -69,11 +69,8 @@ Plant = Model('Plant',
     Function('radiate', [Variable('x', int), Variable('y', int)],
     doc='Command to radiate (heal, attack) another Plant.'),
 
-    Function('radiate', [Variable('x', int), Variable('y', int)],
-    doc='Command to radiate (heal, attack) another Plant.'),
-
-    Function('uproot', [Variable('x', int), Variable('y', int), Variable('mutation', int)],
-    doc='Command to radiate (heal, attack) another Plant.'),
+    Function('uproot', [Variable('x', int), Variable('y', int)],
+    doc='Command to uproot a plant and move to a new location.'),
   ],
 )
 

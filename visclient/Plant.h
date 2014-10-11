@@ -56,10 +56,8 @@ class Plant : public Mappable {
   int talk(char* message);
   ///Command to radiate (heal, attack) another Plant.
   int radiate(int x, int y);
-  ///Command to radiate (heal, attack) another Plant.
-  int radiate(int x, int y);
-  ///Command to radiate (heal, attack) another Plant.
-  int uproot(int x, int y, int mutation);
+  ///Command to uproot a plant and move to a new location.
+  int uproot(int x, int y);
 
   // Properties
 
