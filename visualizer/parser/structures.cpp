@@ -67,6 +67,15 @@ std::ostream& operator<<(std::ostream& stream, Mutation ob)
 
 
 
+std::ostream& operator<<(std::ostream& stream, soak ob)
+{
+  stream << "soak" << "\n";
+  stream << "actingID: " << ob.actingID  <<'\n';
+  stream << "targetID: " << ob.targetID  <<'\n';
+  return stream;
+}
+
+
 std::ostream& operator<<(std::ostream& stream, uproot ob)
 {
   stream << "uproot" << "\n";
@@ -75,15 +84,6 @@ std::ostream& operator<<(std::ostream& stream, uproot ob)
   stream << "fromY: " << ob.fromY  <<'\n';
   stream << "toX: " << ob.toX  <<'\n';
   stream << "toY: " << ob.toY  <<'\n';
-  return stream;
-}
-
-
-std::ostream& operator<<(std::ostream& stream, soak ob)
-{
-  stream << "soak" << "\n";
-  stream << "actingID: " << ob.actingID  <<'\n';
-  stream << "targetID: " << ob.targetID  <<'\n';
   return stream;
 }
 
@@ -147,10 +147,10 @@ std::ostream& operator<<(std::ostream& stream, GameState ob)
   {
   for(std::vector< SmartPointer< Animation > >::iterator i = j->second.begin(); i != j->second.end(); i++)
   {
-//    if((*(*i)).type == UPROOT)
-//      stream << *((uproot*)*i) << "\n";
 //    if((*(*i)).type == SOAK)
 //      stream << *((soak*)*i) << "\n";
+//    if((*(*i)).type == UPROOT)
+//      stream << *((uproot*)*i) << "\n";
 //    if((*(*i)).type == HEAL)
 //      stream << *((heal*)*i) << "\n";
 //    if((*(*i)).type == ATTACK)

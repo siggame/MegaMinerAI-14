@@ -88,10 +88,7 @@ class Plant(Mappable):
   def radiate(self, x, y):
     pass
 
-  def radiate(self, x, y):
-    pass
-
-  def uproot(self, x, y, mutation):
+  def uproot(self, x, y):
     pass
 
   def __setattr__(self, name, value):
