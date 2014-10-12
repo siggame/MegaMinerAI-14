@@ -14,8 +14,8 @@
 namespace parser
 {
 
-const int UPROOT = 0;
-const int SOAK = 1;
+const int SOAK = 0;
+const int UPROOT = 1;
 const int HEAL = 2;
 const int ATTACK = 3;
 const int GERMINATE = 4;
@@ -81,6 +81,14 @@ struct Animation
   int type;
 };
 
+struct soak : public Animation
+{
+  int actingID;
+  int targetID;
+
+  friend std::ostream& operator<<(std::ostream& stream, soak obj);
+};
+
 struct uproot : public Animation
 {
   int actingID;
@@ -90,14 +98,6 @@ struct uproot : public Animation
   int toY;
 
   friend std::ostream& operator<<(std::ostream& stream, uproot obj);
-};
-
-struct soak : public Animation
-{
-  int actingID;
-  int targetID;
-
-  friend std::ostream& operator<<(std::ostream& stream, soak obj);
 };
 
 struct heal : public Animation

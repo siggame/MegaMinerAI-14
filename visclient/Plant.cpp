@@ -103,14 +103,9 @@ int Plant::radiate(int x, int y)
   return plantRadiate( (_Plant*)ptr, x, y);
 }
 
-int Plant::radiate(int x, int y)
+int Plant::uproot(int x, int y)
 {
-  return plantRadiate( (_Plant*)ptr, x, y);
-}
-
-int Plant::uproot(int x, int y, int mutation)
-{
-  return plantUproot( (_Plant*)ptr, x, y, mutation);
+  return plantUproot( (_Plant*)ptr, x, y);
 }
 
 

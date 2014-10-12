@@ -245,26 +245,12 @@ DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
   return 1;
 }
 
-DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
-{
-  stringstream expr;
-  expr << "(game-radiate " << object->id
-       << " " << x
-       << " " << y
-       << ")";
-  LOCK( &object->_c->mutex);
-  send_string(object->_c->socket, expr.str().c_str());
-  UNLOCK( &object->_c->mutex);
-  return 1;
-}
-
-DLLEXPORT int plantUproot(_Plant* object, int x, int y, int mutation)
+DLLEXPORT int plantUproot(_Plant* object, int x, int y)
 {
   stringstream expr;
   expr << "(game-uproot " << object->id
        << " " << x
        << " " << y
-       << " " << mutation
        << ")";
   LOCK( &object->_c->mutex);
   send_string(object->_c->socket, expr.str().c_str());

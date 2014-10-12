@@ -147,21 +147,11 @@ class GameApp(AccountsAppMixin, BaseApp):
   @errorBuffer
   @requireTurn
   @requireTypes(None, int, int, int)
-  def gameRadiate(self, plant, x, y):
-    """Command to radiate (heal, attack) another Plant."""
+  def gameUproot(self, plant, x, y):
+    """Command to uproot a plant and move to a new location."""
     if self.game.turn is not self:
       return "Not your turn."
-    return self.game.radiate(plant, x, y)
-
-  @protocolmethod
-  @errorBuffer
-  @requireTurn
-  @requireTypes(None, int, int, int, int)
-  def gameUproot(self, plant, x, y, mutation):
-    """Command to radiate (heal, attack) another Plant."""
-    if self.game.turn is not self:
-      return "Not your turn."
-    return self.game.uproot(plant, x, y, mutation)
+    return self.game.uproot(plant, x, y)
 
 
   @protocolmethod

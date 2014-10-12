@@ -91,9 +91,6 @@ class Plant(Mappable):
   def radiate(self, x, y):
     pass
 
-  def radiate(self, x, y):
-    pass
-
   def uproot(self, x, y, mutation):
     #abstract out
     spawnerNo = 1

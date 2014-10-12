@@ -167,15 +167,10 @@ class Plant(Mappable):
     self.validify()
     return library.plantRadiate(self._ptr, x, y)
 
-  ##Command to radiate (heal, attack) another Plant.
-  def radiate(self, x, y):
+  ##Command to uproot a plant and move to a new location.
+  def uproot(self, x, y):
     self.validify()
-    return library.plantRadiate(self._ptr, x, y)
-
-  ##Command to radiate (heal, attack) another Plant.
-  def uproot(self, x, y, mutation):
-    self.validify()
-    return library.plantUproot(self._ptr, x, y, mutation)
+    return library.plantUproot(self._ptr, x, y)
 
   #\cond
   def getId(self):

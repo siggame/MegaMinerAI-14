@@ -371,6 +371,29 @@ static bool parseMutation(Mutation& object, sexp_t* expression)
 
 }
 
+static bool parseSoak(soak& object, sexp_t* expression)
+{
+  sexp_t* sub;
+  if ( !expression ) return false;
+  object.type = SOAK;
+  sub = expression->list->next;
+  if( !sub ) 
+  {
+    cerr << "Error in parsesoak.\n Parsing: " << *expression << endl;
+    return false;
+  }
+  object.actingID = atoi(sub->val);
+  sub = sub->next;
+  if( !sub ) 
+  {
+    cerr << "Error in parsesoak.\n Parsing: " << *expression << endl;
+    return false;
+  }
+  object.targetID = atoi(sub->val);
+  sub = sub->next;
+  return true;
+
+}
 static bool parseUproot(uproot& object, sexp_t* expression)
 {
   sexp_t* sub;
@@ -411,29 +434,6 @@ static bool parseUproot(uproot& object, sexp_t* expression)
     return false;
   }
   object.toY = atoi(sub->val);
-  sub = sub->next;
-  return true;
-
-}
-static bool parseSoak(soak& object, sexp_t* expression)
-{
-  sexp_t* sub;
-  if ( !expression ) return false;
-  object.type = SOAK;
-  sub = expression->list->next;
-  if( !sub ) 
-  {
-    cerr << "Error in parsesoak.\n Parsing: " << *expression << endl;
-    return false;
-  }
-  object.actingID = atoi(sub->val);
-  sub = sub->next;
-  if( !sub ) 
-  {
-    cerr << "Error in parsesoak.\n Parsing: " << *expression << endl;
-    return false;
-  }
-  object.targetID = atoi(sub->val);
   sub = sub->next;
   return true;
 
@@ -614,18 +614,18 @@ static bool parseSexp(Game& game, sexp_t* expression)
       expression = expression->next;
       sub = expression->list;
       if ( !sub ) return false;
-      if(string(ToLower( sub->val ) ) == "uproot")
-      {
-        SmartPointer<uproot> animation = new uproot;
-        if ( !parseUproot(*animation, expression) )
-          return false;
-
-        animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
-      }
       if(string(ToLower( sub->val ) ) == "soak")
       {
         SmartPointer<soak> animation = new soak;
         if ( !parseSoak(*animation, expression) )
+          return false;
+
+        animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
+      }
+      if(string(ToLower( sub->val ) ) == "uproot")
+      {
+        SmartPointer<uproot> animation = new uproot;
+        if ( !parseUproot(*animation, expression) )
           return false;
 
         animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );

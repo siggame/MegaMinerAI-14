@@ -100,14 +100,9 @@ bool Plant::radiate(int x, int y)
   return plantRadiate( (_Plant*)ptr, x, y);
 }
 
-bool Plant::radiate(int x, int y)
+bool Plant::uproot(int x, int y)
 {
-  return plantRadiate( (_Plant*)ptr, x, y);
-}
-
-bool Plant::uproot(int x, int y, int mutation)
-{
-  return plantUproot( (_Plant*)ptr, x, y, mutation);
+  return plantUproot( (_Plant*)ptr, x, y);
 }
 
 

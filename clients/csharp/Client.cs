@@ -30,9 +30,7 @@ public class Client {
   [DllImport("client")]
   public static extern int plantRadiate(IntPtr self, int x, int y);
   [DllImport("client")]
-  public static extern int plantRadiate(IntPtr self, int x, int y);
-  [DllImport("client")]
-  public static extern int plantUproot(IntPtr self, int x, int y, int mutation);
+  public static extern int plantUproot(IntPtr self, int x, int y);
 #endregion
 
 #region Accessors
