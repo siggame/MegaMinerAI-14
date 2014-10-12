@@ -31,10 +31,15 @@ class Player(object):
     pass
 
   def germinate(self, x, y, mutation):
+    mutationNum = mutation
     mutation = self.game.getMutation(mutation)
     spawnerNo = 1
     MotherNo = 0
-    if self.spores < mutation.spores:
+    if mutation is None:
+      return 'Turn {}: {} is not a valid variant.'.format(self.game.turnNumber, mutationNum)
+    elif mutation.spores == 0:
+      return 'Turn {}: You cannot germinate a {}.'.format(self.game.turnNumber, mutation.name)
+    elif self.spores < mutation.spores:
       return 'Turn {}: You do not have enough spores to germinate. Need: {} Have: {}'.format(self.game.turnNumber, self.spore, mutationObj.cost)
     elif not 0 <= x < self.game.mapWidth or not 0 <= y < self.game.mapHeight:
       return 'Turn {}: You are trying to germinate outside of the map.'.format(self.game.turnNumber)

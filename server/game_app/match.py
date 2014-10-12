@@ -46,7 +46,7 @@ class Match(DefaultGameWorld):
     pass
 
   def getMutation(self, type):
-    if 0 < type < len(self.objects.mutations):
+    if 0 <= type < len(self.objects.mutations):
       return self.objects.mutations[type]
     else:
       return None
