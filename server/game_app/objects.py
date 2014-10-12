@@ -82,7 +82,7 @@ class Plant(Mappable):
   def nextTurn(self):
     if self.owner == self.game.playerID:
       self.uprootsLeft = self.maxUproots
-      self.radiatesLeft = self.maxRads
+      self.radiatesLeft = self.maxRadiates
     pass
 
   def talk(self, message):
