@@ -30,13 +30,15 @@ class Match(DefaultGameWorld):
       self.dictLog = dict(gameName = "Plants", turns = [])
     self.addPlayer(self.scribe, "spectator")
 
-    #TODO: INITIALIZE THESE!
-    self.mapWidth = None
-    self.mapHeight = None
-    self.turnNumber = None
-    self.maxPlants = None
-    self.playerID = None
+    self.turnNumber = -1
+    self.playerID = -1
     self.gameNumber = id
+
+    self.mapWidth = self.mapWidth
+    self.mapHeight = self.mapHeight
+    self.turnNumber = self.turnNumber
+    self.maxPlants = self.maxPlants
+    self.playerID = self.playerID
 
   #this is here to be wrapped
   def __del__(self):
@@ -52,7 +54,8 @@ class Match(DefaultGameWorld):
     if type == "player":
       self.players.append(connection)
       try:
-        self.addObject(Player, [connection.screenName, self.startTime])
+        #handle spores in next turn
+        self.addObject(Player, [connection.screenName, self.startTime, 0])
       except TypeError:
         raise TypeError("Someone forgot to add the extra attributes to the Player object initialization")
     elif type == "spectator":
