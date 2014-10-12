@@ -1,3 +1,7 @@
+import networking.config.config
+
+cfgMutations = networking.config.config.readConfig("config/mutations.cfg")
+
 class Player(object):
   game_state_attributes = ['id', 'playerName', 'time', 'spores']
   def __init__(self, game, id, playerName, time, spores):
@@ -7,6 +11,7 @@ class Player(object):
     self.time = time
     self.spores = spores
     self.updatedAt = game.turnNumber
+    self.toSpawn = []
 
   def toList(self):
     return [self.id, self.playerName, self.time, self.spores, ]
@@ -16,10 +21,42 @@ class Player(object):
     return dict(id = self.id, playerName = self.playerName, time = self.time, spores = self.spores, )
   
   def nextTurn(self):
+    if self.game.playerID == self.id:
+      #spores to test spawning
+      self.spores += 300
+    for plantStats in self.toSpawn:
+      self.game.addObject(Plant, plantStats)
+    #get rid of old spawns
+    self.toSpawn = []
     pass
 
   def germinate(self, x, y, mutation):
-    pass
+    mutation = self.game.getMutation(mutation)
+    spawnerNo = 1
+    MotherNo = 0
+    if self.spores < mutation.spores:
+      return 'Turn {}: You do not have enough spores to germinate. Need: {} Have: {}'.format(self.game.turnNumber, self.spore, mutationObj.cost)
+    elif not 0 <= x < self.game.mapWidth or not 0 <= y < self.game.mapHeight:
+      return 'Turn {}: You are trying to germinate outside of the map.'.format(self.game.turnNumber)
+    elif sum(x.owner == self.id for x in self.game.objects.plants) >= self.game.maxPlants:
+      return 'Turn {}: You already have the maximum number of plants.'.format(self.game.turnNumber)
+    #check range
+    inRange = False
+    #make sure there are no plants on the tile
+    for plant in self.game.objects.plants:
+      if (plant.x == x) and (plant.y == y):
+        return 'Turn {}: You cannot germinate on top of another plant.'.format(self.game.turnNumber)
+      #check if movement location is in the range of an owned spawner too
+      if (plant.mutation == spawnerNo or plant.mutation == MotherNo) and plant.owner == self.id:
+        if self.game.dist(x, y, plant.x, plant.y) <= plant.range:
+          inRange = True
+    if not inRange:
+      return 'Turn {}: ({}, {}) is not in the range of a Spawner or Mother Weed'.format(self.game.turnNumber, x, y)
+    #now spawn the object [actually add to the list of things to spawn]
+    self.toSpawn.append([x, y, self.id, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
+    #subtract the cost
+    self.spores -= mutation.spores
+    return True
 
   def __setattr__(self, name, value):
       if name in self.game_state_attributes:
@@ -91,7 +128,7 @@ class Plant(Mappable):
   def radiate(self, x, y):
     pass
 
-  def uproot(self, x, y, mutation):
+  def uproot(self, x, y):
     #abstract out
     spawnerNo = 1
     if self.owner != self.game.playerID:
@@ -102,13 +139,14 @@ class Plant(Mappable):
       return 'Turn {}: Your plant {} cannot move off the map.'.format(self.game.turnNumber, self.id)
     inRange = False
     #make sure there are no plants on the tile
-    for plant in self.game.plants:
-      if (plant.x == x) and (plant.y == y):
-        return 'Turn {}: Your plant {} cannot move on top of another plant.'.format(self.game.turnNumber, self.id)
-      #check if movement location is in the range of an owned spawner too
-      if plant.mutation == spawnerNo and plant.owner == self.game.playerID:
-        if self.game.dist(x, y, plant.x, plant.y) <= plant.range:
-          inRange = True
+    for plant in self.game.objects.plants:
+      if plant.id != self.id:
+        if (plant.x == x) and (plant.y == y):
+          return 'Turn {}: Your plant {} cannot move on top of another plant.'.format(self.game.turnNumber, self.id)
+        #check if movement location is in the range of an owned spawner too
+        if plant.mutation == spawnerNo and plant.owner == self.game.playerID:
+          if self.game.dist(x, y, plant.x, plant.y) <= plant.range:
+            inRange = True
 
     if not inRange:
       return 'Turn {}: Your plant {} is trying to move out of the range of a spawner.'.format(self.game.turnNumber, self.id)
@@ -117,7 +155,7 @@ class Plant(Mappable):
     self.x = x
     self.y = y
     self.uprootsLeft -= 1
-    self.game.addAnimation(UprootAnimation(self.x, self.y, x, y))
+    self.game.addAnimation(UprootAnimation(self.id, self.x, self.y, x, y))
 
     return True
 

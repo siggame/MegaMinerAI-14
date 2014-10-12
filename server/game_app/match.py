@@ -9,6 +9,7 @@ import itertools
 import scribe
 import jsonLogger
 import math
+import random
 
 Scribe = scribe.Scribe
 
@@ -43,6 +44,12 @@ class Match(DefaultGameWorld):
   #this is here to be wrapped
   def __del__(self):
     pass
+
+  def getMutation(self, type):
+    if 0 < type < len(self.objects.mutations):
+      return self.objects.mutations[type]
+    else:
+      return None
 
   def dist(self, x1, y1, x2, y2):
     return int(math.hypot(x1-x2, y1-y2))
@@ -83,6 +90,25 @@ class Match(DefaultGameWorld):
     #TODO: START STUFF
     self.turn = self.players[-1]
     self.turnNumber = -1
+
+    #make mutation types
+    statList = ['name', 'type', 'spores', 'maxRadiates', 'maxRads', 'range', 'maxUproots', 'minStrength', 'baseStrength', 'maxStrength']
+    mutationsMake = cfgMutations.values()
+    mutationsMake.sort(key=lambda variant: variant['type'])
+    for t in mutationsMake:
+      self.addObject(Mutation, [t[value] for value in statList])
+
+    #make some Mother Weeds
+    mutation = self.objects.mutations[0]
+    #do this later? [Russley says to use static location]
+    #y = random.randint(0, self.game.mapHeight)
+    #x = random.randint(0, self.game.mapWidth/10)
+    y = self.mapHeight/2
+    x = 0 + mutation.range + 1
+    self.addObject(Plant, [x, y, 0, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
+    #player 2 plant
+    x = self.mapWidth - x
+    self.addObject(Plant, [x, y, 1, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
 
     self.nextTurn()
     return True
