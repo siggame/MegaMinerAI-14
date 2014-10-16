@@ -136,25 +136,28 @@ class Plant(Mappable):
   def uproot(self, x, y):
     #abstract out
     spawnerNo = 1
+    tumbleNo = 4
     if self.owner != self.game.playerID:
       return 'Turn {}: You cannot uproot the opponent\'s plant {}.'.format(self.game.turnNumber, self.id)
     elif self.uprootsLeft <= 0:
       return 'Turn {}: Your plant {} does not have any uproots left.'.format(self.game.turnNumber, self.id)
     elif not (0 <= x < self.game.mapWidth) or not (0 <= y < self.game.mapHeight):
       return 'Turn {}: Your plant {} cannot move off the map.'.format(self.game.turnNumber, self.id)
-    inRange = False
+    #automatically set tumbleweed to be considered in range
+    inRange = (self.mutation == tumbleNo)
     #make sure there are no plants on the tile
     for plant in self.game.objects.plants:
       if plant.id != self.id:
         if (plant.x == x) and (plant.y == y):
           return 'Turn {}: Your plant {} cannot move on top of another plant.'.format(self.game.turnNumber, self.id)
         #check if movement location is in the range of an owned spawner too
-        if plant.mutation == spawnerNo and plant.owner == self.game.playerID:
+        if plant.mutation == spawnerNo and plant.owner == self.game.playerID and not inRange:
           if self.game.dist(x, y, plant.x, plant.y) <= plant.range:
-            inRange = True
+            if self.game.dist(self.x, self.y, plant.x, plant.y) <= plant.range:
+              inRange = True
 
     if not inRange:
-      return 'Turn {}: Your plant {} is trying to move out of the range of a spawner.'.format(self.game.turnNumber, self.id)
+      return 'Turn {}: Your plant {} is trying to move out of the range of a spawner it is in range of.'.format(self.game.turnNumber, self.id)
 
     #otherwise it's okay
     self.x = x
