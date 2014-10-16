@@ -134,7 +134,7 @@ class Match(DefaultGameWorld):
       self.sendStatus([self.turn] +  self.spectators)
     else:
       self.sendStatus(self.spectators)
-    
+
     if( self.logJson ):
       self.dictLog['turns'].append(
         dict(
@@ -157,9 +157,63 @@ class Match(DefaultGameWorld):
     return True
 
   def checkWinner(self):
-    #TODO: Make this check if a player won, and call declareWinner with a player if they did
-    if self.turnNumber >= self.turnLimit:
-       self.declareWinner(self.players[0], "Because I said so, this shold be removed")
+    # mother dead, mother health, most plants, lowest total rads,
+    # total strength, coin flip
+    motherDead1 = True  # true if player 1's mother plant is dead
+    motherDead2 = True  # true if player 2's mother plant is dead
+    random.seed()
+
+    # 0 = mother
+    for plant in self.objects.mutations:
+      if plant.owner == 0 and plant.rads <= plant.maxRad and plant.mutation == 0:
+        motherDead1 = False
+      if plant.owner == 1 and plant.rads <= plant.maxRad and plant.mutation == 0:
+        motherDead2 = False
+
+    if motherDead1:
+      self.declareWinner(self.players[1], "Player 1\'s mother plant is dead")
+    elif motherDead2:
+      self.declareWinner(self.players[0], "Player 2\'s mother plant is dead")
+    elif self.turnNumber >= self.turnLimit:
+      motherRad1 = 0
+      motherRad2 = 0
+      totalPlants1 = 0
+      totalPlants2 = 0
+      totalRads1 = 0
+      totalRads2 = 0
+      totalStrength1 = 0
+      totalStrength2 = 0
+      for plant in self.objects.mutations:
+        if plant.owner == 0:
+          totalPlants1 += 1
+          totalRads1 += plant.rads
+          totalStrength1 += plant.strength
+          if plant.mutation == 0:
+            motherRad1 = plant.rads
+        if plant.owner == 1:
+          totalPlants2 += 1
+          totalRads2 += plant.rads
+          totalStrength2 += plant.strength
+          if plant.mutation == 0:
+            motherRad2 = plant.rads
+      if motherRad1 < motherRad2:
+        self.declareWinner(self.players[0], "Player 1\'s mother plant has less rads")
+      elif motherRad1 > motherRad2:
+        self.declareWinner(self.players[1], "Player 2\'s mother plant has less rads")
+      elif totalPlants1 > totalPlants2:
+        self.declareWinner(self.players[0], "Player 1 has more plants")
+      elif totalPlants1 < totalPlants2:
+        self.declareWinner(self.players[1], "Player 2 has more plants")
+      elif totalRads1 < totalRads2:
+        self.declareWinner(self.players[0], "Player 1 has less total rads")
+      elif totalRads1 > totalRads2:
+        self.declareWinner(self.players[1], "Player 2 has less total rads")
+      elif totalStrength1 > totalStrength2:
+        self.declareWinner(self.players[0], "Player 1 has more total strength")
+      elif totalStrength1 < totalStrength2:
+        self.declareWinner(self.players[1], "Player 2 has more total strength")
+      else:
+        self.declareWinner(self.players[random.randint(0, 1)], "Coin flip since players are tied")
 
 
   def declareWinner(self, winner, reason=''):
@@ -167,19 +221,19 @@ class Match(DefaultGameWorld):
     self.winner = winner
 
     msg = ["game-winner", self.id, self.winner.user, self.getPlayerIndex(self.winner), reason]
-    
+
     if( self.logJson ):
       self.dictLog["winnerID"] =  self.getPlayerIndex(self.winner)
       self.dictLog["winReason"] = reason
       self.jsonLogger.writeLog( self.dictLog )
-    
+
     self.scribe.writeSExpr(msg)
     self.scribe.finalize()
     self.removePlayer(self.scribe)
 
     for p in self.players + self.spectators:
       p.writeSExpr(msg)
-    
+
     self.sendStatus([self.turn])
     self.playerID ^= 1
     self.sendStatus([self.players[self.playerID]])
@@ -253,8 +307,7 @@ class Match(DefaultGameWorld):
     # generate the json
     if( self.logJson ):
       self.jsonAnimations.append(anim.toJson())
-  
+
 
 
 loadClassDefaults()
-
