@@ -121,6 +121,10 @@ class Plant(Mappable):
   def toJson(self):
     return dict(id = self.id, x = self.x, y = self.y, owner = self.owner, mutation = self.mutation, rads = self.rads, maxRads = self.maxRads, radiatesLeft = self.radiatesLeft, maxRadiates = self.maxRadiates, range = self.range, uprootsLeft = self.uprootsLeft, maxUproots = self.maxUproots, strength = self.strength, minStrength = self.minStrength, baseStrength = self.baseStrength, maxStrength = self.maxStrength, )
 
+  def handleDeath(self):
+    if self.rads >= self.maxRads:
+      self.game.removeObject(self)
+
   def nextTurn(self):
     if self.owner == self.game.playerID:
       self.uprootsLeft = self.maxUproots
@@ -131,7 +135,49 @@ class Plant(Mappable):
     pass
 
   def radiate(self, x, y):
-    pass
+    if self.owner != self.game.playerID:
+      return 'Turn {}: You cannot control the opponent\'s plant {}.'.format(self.game.turnNumber, self.id)
+    elif self.radiatesLeft <= 0:
+      return 'Turn {}: Your {} does not have any radiates left.'.format(self.game.turnNumber, self.id)
+    elif self.rads == self.maxRads:
+      return 'Turn {}: Your {} does not have any health left.'.format(self.game.turnNumber, self.id)
+    elif not (0 <= x < self.game.mapWidth) or not (0 <= y < self.game.mapHeight):
+      return 'Turn {}: Your {} cannot radiate off the map.'.format(self.game.turnNumber, self.id)
+    elif not (self.game.dist(self.x, self.y, x, y) < self.range):
+      return 'Turn {}: Your {} cannot radiate outside of its range.'.format(self.game.turnNumber, self.id)
+
+    target_plant = None
+    for plant in self.game.objects.plants:
+      if (plant.x, plant.y) == (x, y) and plant.mutation != self.game.pool and plant.rads < plant.maxRads:
+        target_plant = plant
+
+    if not target_plant:
+      return 'Turn {}: Your {} must radiate another plant'.format(self.game.turnNumber, self.id)
+    if self.mutation in (self.game.choker, self.game.aralia, self.game.titan):
+      if target_plant.owner != (1 - self.game.playerID):
+        return 'Turn {}: Your {} cannot attack your own plants'.format(self.game.turnNumber, self.id)
+
+      # Deal damage
+      #TODO: Higher rads affects damage/range
+      damage = self.strength
+      target_plant.rads += damage
+      target_plant.handleDeath()
+
+    elif self.mutation == self.game.tumbleweed:
+      if target_plant.plant.owner != self.game.playerID:
+        return 'Turn {}: Your {} cannot heal opponent\'s plants'.format(self.game.turnNumber, self.id)
+
+      # Heal
+      target_plant.rads = max(target_plant.rads - self.strength, 0)
+
+    self.radiatesLeft -= 1
+    if self.mutation == self.game.tumbleweed:
+      self.game.addAnimation(HealAnimation(self.id, target_plant.id))
+    else:
+      self.game.addAnimation(AttackAnimation(self.id, target_plant.id))
+
+    return True
+
 
   def uproot(self, x, y):
     #abstract out
