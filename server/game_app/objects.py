@@ -203,6 +203,8 @@ class Plant(Mappable):
         return 'Turn {}: Your {} cannot heal opponent\'s plants'.format(self.game.turnNumber, self.id)
       elif target_plant.mutation == self.game.mother:
         return 'Turn {}: Your {} cannot heal or buff the mother weed.'.format(self.game.turnNumber, self.id)
+      elif self.mutation == self.game.soaker and target_plant.mutation == self.game.soaker:
+        return 'Turn {}: Your {} cannot buff another soaker.'.format(self.game.turnNumber, self.id)
 
       if self.mutation == self.game.tumbleweed:
         # Heal
