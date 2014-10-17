@@ -186,10 +186,63 @@ class Match(DefaultGameWorld):
     return True
 
   def checkWinner(self):
-    #TODO: Make this check if a player won, and call declareWinner with a player if they did
-    if self.turnNumber >= self.turnLimit:
-       self.declareWinner(self.players[0], "Because I said so, this shold be removed")
+    # Win order: mother dead, lowest mother health, most plants, lowest total rads,
+    # total strength, coin flip
+    motherDead1 = True
+    motherDead2 = True
+    random.seed()
 
+    # 0 = mother
+    for plant in self.objects.plants:
+      if plant.owner == 0 and plant.rads < plant.maxRad and plant.mutation == 0:
+        motherDead1 = False
+      if plant.owner == 1 and plant.rads < plant.maxRad and plant.mutation == 0:
+        motherDead2 = False
+
+    if motherDead1:
+      self.declareWinner(self.players[1], "Player 1\'s mother plant is dead")
+    elif motherDead2:
+      self.declareWinner(self.players[0], "Player 2\'s mother plant is dead")
+    elif self.turnNumber >= self.turnLimit:
+      motherRad1 = 0
+      motherRad2 = 0
+      totalPlants1 = 0
+      totalPlants2 = 0
+      totalRads1 = 0
+      totalRads2 = 0
+      totalStrength1 = 0
+      totalStrength2 = 0
+      for plant in self.objects.mutations:
+        if plant.owner == 0:
+          totalPlants1 += 1
+          totalRads1 += plant.rads
+          totalStrength1 += plant.strength
+          if plant.mutation == 0:
+            motherRad1 = plant.rads
+        elif plant.owner == 1:
+          totalPlants2 += 1
+          totalRads2 += plant.rads
+          totalStrength2 += plant.strength
+          if plant.mutation == 0:
+            motherRad2 = plant.rads
+      if motherRad1 < motherRad2:
+        self.declareWinner(self.players[0], "Player 1\'s mother plant has less rads")
+      elif motherRad1 > motherRad2:
+        self.declareWinner(self.players[1], "Player 2\'s mother plant has less rads")
+      elif totalPlants1 > totalPlants2:
+        self.declareWinner(self.players[0], "Player 1 has more plants")
+      elif totalPlants1 < totalPlants2:
+        self.declareWinner(self.players[1], "Player 2 has more plants")
+      elif totalRads1 < totalRads2:
+        self.declareWinner(self.players[0], "Player 1 has less total rads")
+      elif totalRads1 > totalRads2:
+        self.declareWinner(self.players[1], "Player 2 has less total rads")
+      elif totalStrength1 > totalStrength2:
+        self.declareWinner(self.players[0], "Player 1 has more total strength")
+      elif totalStrength1 < totalStrength2:
+        self.declareWinner(self.players[1], "Player 2 has more total strength")
+      else:
+        self.declareWinner(self.players[random.randint(0, 1)], "Coin flip since players are tied")
 
   def declareWinner(self, winner, reason=''):
     print "Player", self.getPlayerIndex(self.winner), "wins game", self.id
