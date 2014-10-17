@@ -125,7 +125,7 @@ namespace visualizer
     // Build the Debug Table's Headers
     QStringList header;
     header << "one" << "two" << "three";
-    gui->setDebugHeader( header );
+    //gui->setDebugHeader( header );
     timeManager->setNumTurns( 0 );
 
     animationEngine->registerGame(0, 0);
