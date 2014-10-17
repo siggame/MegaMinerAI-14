@@ -12,23 +12,24 @@ namespace visualizer
         void animate( const float& t, AnimData *d, IGame* game );
 
     };
+
+#define DRAW_OBJECT(nameClass, dataClass) \
+	class nameClass: public Anim \
+    { \
+        public: \
+            nameClass( dataClass* data ) { m_data = data; } \
+            void animate( const float& t, AnimData* d, IGame* game ); \
+            float controlDuration() const \
+            { return 0; } \
+            float totalDuration() const \
+            { return 0; } \
+        private: \
+            dataClass *m_data; \
+    };
   
-    class DrawSomething: public Anim
-    {
-        public:
-            DrawSomething( Something* something ) { m_Something = something; }
-            void animate( const float& t, AnimData* d, IGame* game );
-
-            float controlDuration() const
-            { return 0; }
-
-            float totalDuration() const
-            { return 0; }
-        
-        private:
-            Something *m_Something;
-
-    }; // DrawBackground
+    DRAW_OBJECT(DrawQuad, DrawQuadData)
+    DRAW_OBJECT(DrawCircle, DrawCircleData)
+    DRAW_OBJECT(DrawSprite, DrawSpriteData)
 }
 
 #endif // ANIMATION_H

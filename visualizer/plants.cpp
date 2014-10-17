@@ -41,6 +41,8 @@ namespace visualizer
     const Input& input = gui->getInput();
     
     // Handle player input here
+    renderer->setColor(Color(0.5,0.5,0.5,1));
+    renderer->drawQuad(0,0, getWidth(), getHeight());
   }
 
   void Plants::postDraw()
@@ -109,11 +111,15 @@ namespace visualizer
           );
     }
     // END: Initial Setup
-
+    
+    int width = getWidth();
+    int height = getHeight();
+    
+    cout << "Width: " << width << " Height: " << height << endl;
     // Setup the renderer as a 4 x 4 map by default
     // TODO: Change board size to something useful
-    renderer->setCamera( 0, 0, 4, 4 );
-    renderer->setGridDimensions( 4, 4 );
+    renderer->setCamera( 0, 0, width, height );
+    renderer->setGridDimensions( width, height );
  
     start();
   } // Plants::loadGamelog()
@@ -134,9 +140,23 @@ namespace visualizer
     for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
     {
       Frame turn;  // The frame that will be drawn
-      SmartPointer<Something> something = new Something();
-      something->addKeyFrame( new DrawSomething( something ) );
-      turn.addAnimatable( something );
+      
+      for(auto iter : m_game->states[state].plants)
+      {
+      	 const parser::Plant& plant = iter.second;
+      	 
+      	 float x = plant.x - plant.range / 2.0;
+      	 float y = plant.y - plant.range / 2.0;
+      	 
+      	 SmartPointer<DrawCircleData> circleData = new DrawCircleData(Color(0.1,0.6,0.8,0.3), plant.x, plant.y, plant.range * 1.2);
+      	 circleData->addKeyFrame( new DrawCircle( circleData ) );
+     	 turn.addAnimatable( circleData );
+      
+      	 SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData{Color(1,0.6,0,1), x, y, plant.range, plant.range, "soaker"};
+      	 spriteData->addKeyFrame( new DrawSprite( spriteData ) );
+     	 turn.addAnimatable( spriteData );
+      }
+      
       animationEngine->buildAnimations(turn);
       addFrame(turn);
       
