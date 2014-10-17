@@ -160,12 +160,12 @@ class Plant(Mappable):
               #remove the pool if needed
               if plant.strength <= 0:
                 self.game.removeObject(plant)
-      #handle death
-      self.handleDeath()
       if self.strength > self.maxStrength:
         self.strength = self.maxStrength
       elif self.strength < self.minStrength:
         self.strength = self.minStrength
+      #handle death
+      self.handleDeath()
     pass
 
   def talk(self, message):
