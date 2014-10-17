@@ -81,6 +81,32 @@ class Match(DefaultGameWorld):
     else:
       self.spectators.remove(connection)
 
+  def generatePools(self):
+    #don't spawn near the mother plant
+    pool = self.objects.mutations[7]
+    lowX = 1 + pool.range
+    highX = self.mapWidth/2 - pool.range
+    lowY = 0
+    highY = self.mapHeight - 1
+    num = random.randint(self.minPools, self.maxPools)
+    #make sure there's no overlap
+    spawnedAt = []
+    #generate the pools
+    for amount in range(num):
+      x = random.randint(lowX, highX)
+      y = random.randint(lowY, highY)
+      if (x,y) not in spawnedAt:
+        #add the plant
+        self.addObject(Plant, [x, y, 2, pool.type, 0, pool.maxRads, 0, pool.maxRadiates, pool.range, 0, pool.maxUproots, pool.baseStrength, pool.minStrength, pool.baseStrength, pool.maxStrength])
+        #add the mirror
+        x = self.mapWidth - x
+        self.addObject(Plant, [x, y, 2, pool.type, 0, pool.maxRads, 0, pool.maxRadiates, pool.range, 0, pool.maxUproots, pool.baseStrength, pool.minStrength, pool.baseStrength, pool.maxStrength])
+        spawnedAt.append((x,y))
+      else:
+        #do another loop
+        amount -= 1
+    pass
+
   def start(self):
     if len(self.players) < 2:
       return "Game is not full"
@@ -101,14 +127,17 @@ class Match(DefaultGameWorld):
     #make some Mother Weeds
     mutation = self.objects.mutations[0]
     #do this later? [Russley says to use static location]
-    #y = random.randint(0, self.game.mapHeight)
-    #x = random.randint(0, self.game.mapWidth/10)
+    #y = random.randint(0, self.mapHeight)
+    #x = random.randint(0, self.mapWidth/10)
     y = self.mapHeight/2
     x = 0 + mutation.range + 1
     self.addObject(Plant, [x, y, 0, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
     #player 2 plant
-    x = self.mapWidth - x
+    x = self.mapWidth - x - 1
     self.addObject(Plant, [x, y, 1, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
+
+    #generate the pools now
+    self.generatePools()
 
     self.nextTurn()
     return True
