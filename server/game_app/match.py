@@ -194,9 +194,9 @@ class Match(DefaultGameWorld):
 
     # 0 = mother
     for plant in self.objects.plants:
-      if plant.owner == 0 and plant.rads < plant.maxRad and plant.mutation == 0:
+      if plant.owner == 0 and plant.rads < plant.maxRads and plant.mutation == 0:
         motherDead1 = False
-      if plant.owner == 1 and plant.rads < plant.maxRad and plant.mutation == 0:
+      if plant.owner == 1 and plant.rads < plant.maxRads and plant.mutation == 0:
         motherDead2 = False
 
     if motherDead1:
