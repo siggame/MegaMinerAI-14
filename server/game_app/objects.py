@@ -135,13 +135,13 @@ class Plant(Mappable):
     if self.owner == self.game.playerID:
       self.uprootsLeft = self.maxUproots
       self.radiatesLeft = self.maxRadiates
+      #normalize the value
+      if self.strength < self.baseStrength:
+        self.strength += 1
+      elif self.strength > self.baseStrength:
+        self.strength -= 1
       for plant in self.game.objects.plants:
         if plant.owner != self.game.playerID:
-          #normalize the value
-          if plant.strength < plant.baseStrength:
-            plant.strength += 1
-          elif plant.strength > plant.baseStrength:
-            plant.strength -= 1
           #handle titans and pools
           if plant.mutation == self.game.titan:
             #get debuffed by a titan
