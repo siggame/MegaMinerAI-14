@@ -57,6 +57,12 @@ class Player(object):
           inRange = True
     if not inRange:
       return 'Turn {}: ({}, {}) is not in the range of a Spawner or Mother Weed'.format(self.game.turnNumber, x, y)
+    #make sure nothing is trying to be spawned there
+    for almostPlant in self.toSpawn:
+      x2 = almostPlant[0]
+      y2 = almostPlant[1]
+      if (x2 == x) and (y2 == y):
+        return 'Turn {}: A plant is already germinating on ({}, {})'.format(self.game.turnNumber, x, y)
     #now spawn the object [actually add to the list of things to spawn]
     self.toSpawn.append([x, y, self.id, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
     #subtract the cost
