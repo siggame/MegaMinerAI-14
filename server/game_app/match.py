@@ -212,7 +212,7 @@ class Match(DefaultGameWorld):
       totalRads2 = 0
       totalStrength1 = 0
       totalStrength2 = 0
-      for plant in self.objects.mutations:
+      for plant in self.objects.plants:
         if plant.owner == 0:
           totalPlants1 += 1
           totalRads1 += plant.rads
