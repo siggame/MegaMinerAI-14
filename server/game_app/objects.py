@@ -192,14 +192,19 @@ class Plant(Mappable):
       target_plant.rads += damage
       target_plant.handleDeath()
 
-    elif self.mutation == self.game.tumbleweed:
+    elif self.mutation in (self.game.tumbleweed, self.game.soaker):
       if target_plant.plant.owner != self.game.playerID:
         return 'Turn {}: Your {} cannot heal opponent\'s plants'.format(self.game.turnNumber, self.id)
       elif target_plant.mutation == self.game.mother:
-        return 'Turn {}: Your {} cannot heal the mother weed.'.format(self.game.turnNumber, self.id)
+        return 'Turn {}: Your {} cannot heal or buff the mother weed.'.format(self.game.turnNumber, self.id)
 
-      # Heal
-      target_plant.rads = max(target_plant.rads - self.strength, 0)
+      if self.mutation == self.game.tumbleweed:
+        # Heal
+        target_plant.rads = max(target_plant.rads - self.strength, 0)
+      else:
+        # Soaker; buff
+        buff = int(1 + self.strength/4)
+        target_plant.strength = max(target_plant.strength + buff, target_plant.maxStrength)
 
     self.radiatesLeft -= 1
     if self.mutation == self.game.tumbleweed:
