@@ -124,6 +124,17 @@ namespace visualizer
     start();
   } // Plants::loadGamelog()
   
+  string Plants::getPlantFromID(int id) const
+  {
+    // TODO: correctly match ids with string
+  	switch(id)
+  	{
+  	  case 0: return "mother"; break;
+  	  case 7: return "soaker"; break;
+  	  default: return "soaker";
+  	}
+  }
+  
   // The "main" function
   void Plants::run()
   {
@@ -145,14 +156,18 @@ namespace visualizer
       {
       	 const parser::Plant& plant = iter.second;
       	 
+      	 cout << plant.mutation << endl;
+      	 
       	 float x = plant.x - plant.range / 2.0;
       	 float y = plant.y - plant.range / 2.0;
       	 
       	 SmartPointer<DrawCircleData> circleData = new DrawCircleData(Color(0.1,0.6,0.8,0.3), plant.x, plant.y, plant.range * 1.2);
       	 circleData->addKeyFrame( new DrawCircle( circleData ) );
      	 turn.addAnimatable( circleData );
+     	 
+     	 string plantTexture = getPlantFromID(plant.mutation);
       
-      	 SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData{Color(1,0.6,0,1), x, y, plant.range, plant.range, "soaker"};
+      	 SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData{Color(1,0.6,0,1), x, y, plant.range, plant.range, plantTexture};
       	 spriteData->addKeyFrame( new DrawSprite( spriteData ) );
      	 turn.addAnimatable( spriteData );
       }
