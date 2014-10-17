@@ -129,6 +129,37 @@ class Plant(Mappable):
     if self.owner == self.game.playerID:
       self.uprootsLeft = self.maxUproots
       self.radiatesLeft = self.maxRadiates
+      for plant in self.game.objects.plants:
+        if plant.owner != self.game.playerID:
+          #normalize the value
+          if plant.strength < plant.baseStrength:
+            plant.strength += 1
+          elif plant.strength > plant.baseStrength:
+            plant.strength -= 1
+          #handle titans and pools
+          if plant.mutation == self.game.titan:
+            #get debuffed by a titan
+            if self.game.dist(self.x, self.y, plant.x, plant.y) <= plant.range:
+              self.strength -= self.game.titanDebuff
+          elif plant.mutation == self.game.pool:
+            #get buffed by a pool (and take damage)
+            if self.game.dist(self.x, self.y, plant.x, plant.y) <= plant.range:
+              damage = self.game.poolDamage
+              if self.mutation == self.game.soaker:
+                damage = 0
+              self.rads += damage
+              self.strength += self.game.poolBuff
+              #remove the pool's strength
+              plant.strength -= 1
+              #remove the pool if needed
+              if plant.strength <= 0:
+                self.game.removeObject(plant)
+      #handle death
+      self.handleDeath()
+      if self.strength > self.maxStrength:
+        self.strength = self.maxStrength
+      elif self.strength < self.minStrength:
+        self.strength = self.minStrength
     pass
 
   def talk(self, message):
@@ -139,8 +170,6 @@ class Plant(Mappable):
       return 'Turn {}: You cannot control the opponent\'s plant {}.'.format(self.game.turnNumber, self.id)
     elif self.radiatesLeft <= 0:
       return 'Turn {}: Your {} does not have any radiates left.'.format(self.game.turnNumber, self.id)
-    elif self.rads == self.maxRads:
-      return 'Turn {}: Your {} does not have any health left.'.format(self.game.turnNumber, self.id)
     elif not (0 <= x < self.game.mapWidth) or not (0 <= y < self.game.mapHeight):
       return 'Turn {}: Your {} cannot radiate off the map.'.format(self.game.turnNumber, self.id)
     elif not (self.game.dist(self.x, self.y, x, y) < self.range):
@@ -153,7 +182,7 @@ class Plant(Mappable):
 
     if not target_plant:
       return 'Turn {}: Your {} must radiate another plant'.format(self.game.turnNumber, self.id)
-    if self.mutation in (self.game.choker, self.game.aralia, self.game.titan):
+    if self.mutation in (self.game.choker, self.game.aralia):
       if target_plant.owner != (1 - self.game.playerID):
         return 'Turn {}: Your {} cannot attack your own plants'.format(self.game.turnNumber, self.id)
 
@@ -166,6 +195,8 @@ class Plant(Mappable):
     elif self.mutation == self.game.tumbleweed:
       if target_plant.plant.owner != self.game.playerID:
         return 'Turn {}: Your {} cannot heal opponent\'s plants'.format(self.game.turnNumber, self.id)
+      elif target_plant.mutation == self.game.mother:
+        return 'Turn {}: Your {} cannot heal the mother weed.'.format(self.game.turnNumber, self.id)
 
       # Heal
       target_plant.rads = max(target_plant.rads - self.strength, 0)
