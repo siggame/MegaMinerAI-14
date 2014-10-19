@@ -30,6 +30,10 @@ public interface Client extends Library {
   int getMaxPlants(Pointer connection);
   int getPlayerID(Pointer connection);
   int getGameNumber(Pointer connection);
+  int getBumbleweedSpeed(Pointer connection);
+  int getPoolDamage(Pointer connection);
+  int getPoolBuff(Pointer connection);
+  int getTitanDebuff(Pointer connection);
 
   Pointer getPlayer(Pointer connection, int num);
   int getPlayerCount(Pointer connection);

@@ -40,6 +40,10 @@ class Match(DefaultGameWorld):
     self.turnNumber = self.turnNumber
     self.maxPlants = self.maxPlants
     self.playerID = self.playerID
+    self.bumbleweedSpeed = self.bumbleweedSpeed
+    self.poolDamage = self.poolDamage
+    self.poolBuff = self.poolBuff
+    self.titanDebuff = self.titanDebuff
 
   #this is here to be wrapped
   def __del__(self):
@@ -173,6 +177,10 @@ class Match(DefaultGameWorld):
           maxPlants = self.maxPlants,
           playerID = self.playerID,
           gameNumber = self.gameNumber,
+          bumbleweedSpeed = self.bumbleweedSpeed,
+          poolDamage = self.poolDamage,
+          poolBuff = self.poolBuff,
+          titanDebuff = self.titanDebuff,
           Players = [i.toJson() for i in self.objects.values() if i.__class__ is Player],
           Mappables = [i.toJson() for i in self.objects.values() if i.__class__ is Mappable],
           Plants = [i.toJson() for i in self.objects.values() if i.__class__ is Plant],
@@ -315,7 +323,7 @@ class Match(DefaultGameWorld):
   def status(self):
     msg = ["status"]
 
-    msg.append(["game", self.mapWidth, self.mapHeight, self.turnNumber, self.maxPlants, self.playerID, self.gameNumber])
+    msg.append(["game", self.mapWidth, self.mapHeight, self.turnNumber, self.maxPlants, self.playerID, self.gameNumber, self.bumbleweedSpeed, self.poolDamage, self.poolBuff, self.titanDebuff])
 
     typeLists = []
     typeLists.append(["Player"] + [i.toList() for i in self.objects.values() if i.__class__ is Player])

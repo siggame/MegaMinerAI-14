@@ -550,6 +550,18 @@ static bool parseSexp(Game& game, sexp_t* expression)
           if ( !sub ) return false;
           gs.gameNumber = atoi(sub->val);
           sub = sub->next;
+          if ( !sub ) return false;
+          gs.bumbleweedSpeed = atoi(sub->val);
+          sub = sub->next;
+          if ( !sub ) return false;
+          gs.poolDamage = atoi(sub->val);
+          sub = sub->next;
+          if ( !sub ) return false;
+          gs.poolBuff = atoi(sub->val);
+          sub = sub->next;
+          if ( !sub ) return false;
+          gs.titanDebuff = atoi(sub->val);
+          sub = sub->next;
       }
       else if(string(sub->val) == "Player")
       {

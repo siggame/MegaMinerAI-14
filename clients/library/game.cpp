@@ -60,6 +60,10 @@ DLLEXPORT Connection* createConnection()
   c->maxPlants = 0;
   c->playerID = 0;
   c->gameNumber = 0;
+  c->bumbleweedSpeed = 0;
+  c->poolDamage = 0;
+  c->poolBuff = 0;
+  c->titanDebuff = 0;
   c->Players = NULL;
   c->PlayerCount = 0;
   c->Mappables = NULL;
@@ -466,6 +470,18 @@ DLLEXPORT int networkLoop(Connection* c)
           c->gameNumber = atoi(sub->val);
           sub = sub->next;
 
+          c->bumbleweedSpeed = atoi(sub->val);
+          sub = sub->next;
+
+          c->poolDamage = atoi(sub->val);
+          sub = sub->next;
+
+          c->poolBuff = atoi(sub->val);
+          sub = sub->next;
+
+          c->titanDebuff = atoi(sub->val);
+          sub = sub->next;
+
         }
         else if(string(sub->val) == "Player")
         {
@@ -624,4 +640,20 @@ DLLEXPORT int getPlayerID(Connection* c)
 DLLEXPORT int getGameNumber(Connection* c)
 {
   return c->gameNumber;
+}
+DLLEXPORT int getBumbleweedSpeed(Connection* c)
+{
+  return c->bumbleweedSpeed;
+}
+DLLEXPORT int getPoolDamage(Connection* c)
+{
+  return c->poolDamage;
+}
+DLLEXPORT int getPoolBuff(Connection* c)
+{
+  return c->poolBuff;
+}
+DLLEXPORT int getTitanDebuff(Connection* c)
+{
+  return c->titanDebuff;
 }
