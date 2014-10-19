@@ -39,6 +39,14 @@ public:
   int playerID();
   ///What number game this is for the server.
   int gameNumber();
+  ///The maximum distance that a bumbleweed can move during an uproot
+  int bumbleweedSpeed();
+  ///The damage taken from standing in a pool
+  int poolDamage();
+  ///The strength buff taken from standing in a pool
+  int poolBuff();
+  ///The strength debuff caused by an enemy Titan
+  int titanDebuff();
   
   BaseAI(Connection* c);
   virtual ~BaseAI();

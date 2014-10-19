@@ -144,6 +144,10 @@ struct GameState
   int maxPlants;
   int playerID;
   int gameNumber;
+  int bumbleweedSpeed;
+  int poolDamage;
+  int poolBuff;
+  int titanDebuff;
 
   std::map< int, std::vector< SmartPointer< Animation > > > animations;
   friend std::ostream& operator<<(std::ostream& stream, GameState obj);

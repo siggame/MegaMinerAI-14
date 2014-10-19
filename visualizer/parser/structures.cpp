@@ -124,6 +124,10 @@ std::ostream& operator<<(std::ostream& stream, GameState ob)
   stream << "maxPlants: " << ob.maxPlants  <<'\n';
   stream << "playerID: " << ob.playerID  <<'\n';
   stream << "gameNumber: " << ob.gameNumber  <<'\n';
+  stream << "bumbleweedSpeed: " << ob.bumbleweedSpeed  <<'\n';
+  stream << "poolDamage: " << ob.poolDamage  <<'\n';
+  stream << "poolBuff: " << ob.poolBuff  <<'\n';
+  stream << "titanDebuff: " << ob.titanDebuff  <<'\n';
 
   stream << "\n\nPlayers:\n";
   for(std::map<int,Player>::iterator i = ob.players.begin(); i != ob.players.end(); i++)
