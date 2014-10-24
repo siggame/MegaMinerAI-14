@@ -167,7 +167,7 @@ namespace visualizer
      	 
      	 string plantTexture = getPlantFromID(plant.mutation);
       
-      	 SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData{Color(1,0.6,0,1), x, y, plant.range, plant.range, plantTexture};
+		 SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(Color(1,0.6,0,1), x, y, plant.range, plant.range, plantTexture);
       	 spriteData->addKeyFrame( new DrawSprite( spriteData ) );
      	 turn.addAnimatable( spriteData );
       }
