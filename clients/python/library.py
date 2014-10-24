@@ -74,6 +74,18 @@ library.getPlayerID.argtypes = [c_void_p]
 library.getGameNumber.restype = c_int
 library.getGameNumber.argtypes = [c_void_p]
 
+library.getBumbleweedSpeed.restype = c_int
+library.getBumbleweedSpeed.argtypes = [c_void_p]
+
+library.getPoolDamage.restype = c_int
+library.getPoolDamage.argtypes = [c_void_p]
+
+library.getPoolBuff.restype = c_int
+library.getPoolBuff.argtypes = [c_void_p]
+
+library.getTitanDebuff.restype = c_int
+library.getTitanDebuff.argtypes = [c_void_p]
+
 library.getPlayer.restype = c_void_p
 library.getPlayer.argtypes = [c_void_p, c_int]
 

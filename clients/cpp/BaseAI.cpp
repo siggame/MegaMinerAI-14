@@ -29,6 +29,22 @@ int BaseAI::gameNumber()
 {
   return getGameNumber(c);
 }
+int BaseAI::bumbleweedSpeed()
+{
+  return getBumbleweedSpeed(c);
+}
+int BaseAI::poolDamage()
+{
+  return getPoolDamage(c);
+}
+int BaseAI::poolBuff()
+{
+  return getPoolBuff(c);
+}
+int BaseAI::titanDebuff()
+{
+  return getTitanDebuff(c);
+}
 
 bool BaseAI::startTurn()
 {

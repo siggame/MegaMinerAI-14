@@ -76,5 +76,25 @@ class BaseAI:
     return library.getGameNumber(self.connection)
   #\endcond
   gameNumber = property(getGameNumber)
+  #\cond
+  def getBumbleweedSpeed(self):
+    return library.getBumbleweedSpeed(self.connection)
+  #\endcond
+  bumbleweedSpeed = property(getBumbleweedSpeed)
+  #\cond
+  def getPoolDamage(self):
+    return library.getPoolDamage(self.connection)
+  #\endcond
+  poolDamage = property(getPoolDamage)
+  #\cond
+  def getPoolBuff(self):
+    return library.getPoolBuff(self.connection)
+  #\endcond
+  poolBuff = property(getPoolBuff)
+  #\cond
+  def getTitanDebuff(self):
+    return library.getTitanDebuff(self.connection)
+  #\endcond
+  titanDebuff = property(getTitanDebuff)
   def __init__(self, connection):
     self.connection = connection

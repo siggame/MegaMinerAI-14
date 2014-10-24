@@ -17,6 +17,10 @@ globals = [
   Variable('maxPlants', int, 'The maximum number of Plants allowed per player.'),
   Variable('playerID', int, 'The id of the current player.'),
   Variable('gameNumber', int, 'What number game this is for the server.'),
+  Variable('bumbleweedSpeed', int, 'The maximum distance that a bumbleweed can move during an uproot'),
+  Variable('poolDamage', int, 'The damage taken from standing in a pool'),
+  Variable('poolBuff', int, 'The strength buff taken from standing in a pool'),
+  Variable('titanDebuff', int, 'The strength debuff caused by an enemy Titan'),
 ]
 
 playerData = [

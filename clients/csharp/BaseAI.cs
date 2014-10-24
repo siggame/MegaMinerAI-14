@@ -152,4 +152,44 @@ public abstract class BaseAI
     int value = Client.getGameNumber(connection);
     return value;
   }
+
+  /// <summary>
+  /// The maximum distance that a bumbleweed can move during an uproot
+  /// </summary>
+  /// <returns>Returns the maximum distance that a bumbleweed can move during an uproot</returns>
+  public int bumbleweedSpeed()
+  {
+    int value = Client.getBumbleweedSpeed(connection);
+    return value;
+  }
+
+  /// <summary>
+  /// The damage taken from standing in a pool
+  /// </summary>
+  /// <returns>Returns the damage taken from standing in a pool</returns>
+  public int poolDamage()
+  {
+    int value = Client.getPoolDamage(connection);
+    return value;
+  }
+
+  /// <summary>
+  /// The strength buff taken from standing in a pool
+  /// </summary>
+  /// <returns>Returns the strength buff taken from standing in a pool</returns>
+  public int poolBuff()
+  {
+    int value = Client.getPoolBuff(connection);
+    return value;
+  }
+
+  /// <summary>
+  /// The strength debuff caused by an enemy Titan
+  /// </summary>
+  /// <returns>Returns the strength debuff caused by an enemy Titan</returns>
+  public int titanDebuff()
+  {
+    int value = Client.getTitanDebuff(connection);
+    return value;
+  }
 }

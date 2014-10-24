@@ -40,6 +40,10 @@ struct Connection
   int maxPlants;
   int playerID;
   int gameNumber;
+  int bumbleweedSpeed;
+  int poolDamage;
+  int poolBuff;
+  int titanDebuff;
 
   _Player* Players;
   int PlayerCount;
@@ -90,6 +94,10 @@ DLLEXPORT int getTurnNumber(Connection* c);
 DLLEXPORT int getMaxPlants(Connection* c);
 DLLEXPORT int getPlayerID(Connection* c);
 DLLEXPORT int getGameNumber(Connection* c);
+DLLEXPORT int getBumbleweedSpeed(Connection* c);
+DLLEXPORT int getPoolDamage(Connection* c);
+DLLEXPORT int getPoolBuff(Connection* c);
+DLLEXPORT int getTitanDebuff(Connection* c);
 
 DLLEXPORT _Player* getPlayer(Connection* c, int num);
 DLLEXPORT int getPlayerCount(Connection* c);

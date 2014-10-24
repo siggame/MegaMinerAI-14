@@ -46,6 +46,14 @@ public class Client {
   public static extern int getPlayerID(IntPtr connection);
   [DllImport("client")]
   public static extern int getGameNumber(IntPtr connection);
+  [DllImport("client")]
+  public static extern int getBumbleweedSpeed(IntPtr connection);
+  [DllImport("client")]
+  public static extern int getPoolDamage(IntPtr connection);
+  [DllImport("client")]
+  public static extern int getPoolBuff(IntPtr connection);
+  [DllImport("client")]
+  public static extern int getTitanDebuff(IntPtr connection);
 
   [DllImport("client")]
   public static extern IntPtr getPlayer(IntPtr connection, int num);

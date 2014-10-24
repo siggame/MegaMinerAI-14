@@ -31,17 +31,29 @@ class Match(DefaultGameWorld):
       self.dictLog = dict(gameName = "Plants", turns = [])
     self.addPlayer(self.scribe, "spectator")
 
-    #TODO: INITIALIZE THESE!
-    self.mapWidth = None
-    self.mapHeight = None
-    self.turnNumber = None
-    self.maxPlants = None
-    self.playerID = None
+    self.turnNumber = -1
+    self.playerID = -1
     self.gameNumber = id
+
+    self.mapWidth = self.mapWidth
+    self.mapHeight = self.mapHeight
+    self.turnNumber = self.turnNumber
+    self.maxPlants = self.maxPlants
+    self.playerID = self.playerID
+    self.bumbleweedSpeed = self.bumbleweedSpeed
+    self.poolDamage = self.poolDamage
+    self.poolBuff = self.poolBuff
+    self.titanDebuff = self.titanDebuff
 
   #this is here to be wrapped
   def __del__(self):
     pass
+
+  def getMutation(self, type):
+    if 0 <= type < len(self.objects.mutations):
+      return self.objects.mutations[type]
+    else:
+      return None
 
   def dist(self, x1, y1, x2, y2):
     return int(math.hypot(x1-x2, y1-y2))
@@ -53,7 +65,8 @@ class Match(DefaultGameWorld):
     if type == "player":
       self.players.append(connection)
       try:
-        self.addObject(Player, [connection.screenName, self.startTime])
+        #handle spores in next turn
+        self.addObject(Player, [connection.screenName, self.startTime, 0])
       except TypeError:
         raise TypeError("Someone forgot to add the extra attributes to the Player object initialization")
     elif type == "spectator":
@@ -72,6 +85,32 @@ class Match(DefaultGameWorld):
     else:
       self.spectators.remove(connection)
 
+  def generatePools(self):
+    #don't spawn near the mother plant
+    pool = self.objects.mutations[7]
+    lowX = 1 + pool.range
+    highX = self.mapWidth/2 - pool.range
+    lowY = 0
+    highY = self.mapHeight - 1
+    num = random.randint(self.minPools, self.maxPools)
+    #make sure there's no overlap
+    spawnedAt = []
+    #generate the pools
+    for amount in range(num):
+      x = random.randint(lowX, highX)
+      y = random.randint(lowY, highY)
+      if (x,y) not in spawnedAt:
+        #add the plant
+        self.addObject(Plant, [x, y, 2, pool.type, 0, pool.maxRads, 0, pool.maxRadiates, pool.range, 0, pool.maxUproots, pool.baseStrength, pool.minStrength, pool.baseStrength, pool.maxStrength])
+        #add the mirror
+        x = self.mapWidth - x
+        self.addObject(Plant, [x, y, 2, pool.type, 0, pool.maxRads, 0, pool.maxRadiates, pool.range, 0, pool.maxUproots, pool.baseStrength, pool.minStrength, pool.baseStrength, pool.maxStrength])
+        spawnedAt.append((x,y))
+      else:
+        #do another loop
+        amount -= 1
+    pass
+
   def start(self):
     if len(self.players) < 2:
       return "Game is not full"
@@ -81,6 +120,28 @@ class Match(DefaultGameWorld):
     #TODO: START STUFF
     self.turn = self.players[-1]
     self.turnNumber = -1
+
+    #make mutation types
+    statList = ['name', 'type', 'spores', 'maxRadiates', 'maxRads', 'range', 'maxUproots', 'minStrength', 'baseStrength', 'maxStrength']
+    mutationsMake = cfgMutations.values()
+    mutationsMake.sort(key=lambda variant: variant['type'])
+    for t in mutationsMake:
+      self.addObject(Mutation, [t[value] for value in statList])
+
+    #make some Mother Weeds
+    mutation = self.objects.mutations[0]
+    #do this later? [Russley says to use static location]
+    #y = random.randint(0, self.mapHeight)
+    #x = random.randint(0, self.mapWidth/10)
+    y = self.mapHeight/2
+    x = 0 + mutation.range + 1
+    self.addObject(Plant, [x, y, 0, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
+    #player 2 plant
+    x = self.mapWidth - x - 1
+    self.addObject(Plant, [x, y, 1, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
+
+    #generate the pools now
+    self.generatePools()
 
     self.nextTurn()
     return True
@@ -116,6 +177,10 @@ class Match(DefaultGameWorld):
           maxPlants = self.maxPlants,
           playerID = self.playerID,
           gameNumber = self.gameNumber,
+          bumbleweedSpeed = self.bumbleweedSpeed,
+          poolDamage = self.poolDamage,
+          poolBuff = self.poolBuff,
+          titanDebuff = self.titanDebuff,
           Players = [i.toJson() for i in self.objects.values() if i.__class__ is Player],
           Mappables = [i.toJson() for i in self.objects.values() if i.__class__ is Mappable],
           Plants = [i.toJson() for i in self.objects.values() if i.__class__ is Plant],
@@ -129,17 +194,18 @@ class Match(DefaultGameWorld):
     return True
 
   def checkWinner(self):
-    # mother dead, mother health, most plants, lowest total rads,
+
+    # Win order: mother dead, lowest mother health, most plants, lowest total rads,
     # total strength, coin flip
-    motherDead1 = True  # true if player 1's mother plant is dead
-    motherDead2 = True  # true if player 2's mother plant is dead
+    motherDead1 = True
+    motherDead2 = True
     random.seed()
 
     # 0 = mother
-    for plant in self.objects.mutations:
-      if plant.owner == 0 and plant.rads <= plant.maxRad and plant.mutation == 0:
+    for plant in self.objects.plants:
+      if plant.owner == 0 and plant.rads < plant.maxRads and plant.mutation == 0:
         motherDead1 = False
-      if plant.owner == 1 and plant.rads <= plant.maxRad and plant.mutation == 0:
+      if plant.owner == 1 and plant.rads < plant.maxRads and plant.mutation == 0:
         motherDead2 = False
 
     if motherDead1:
@@ -155,14 +221,15 @@ class Match(DefaultGameWorld):
       totalRads2 = 0
       totalStrength1 = 0
       totalStrength2 = 0
-      for plant in self.objects.mutations:
+
+      for plant in self.objects.plants:
         if plant.owner == 0:
           totalPlants1 += 1
           totalRads1 += plant.rads
           totalStrength1 += plant.strength
           if plant.mutation == 0:
             motherRad1 = plant.rads
-        if plant.owner == 1:
+        elif plant.owner == 1:
           totalPlants2 += 1
           totalRads2 += plant.rads
           totalStrength2 += plant.strength
@@ -259,7 +326,7 @@ class Match(DefaultGameWorld):
   def status(self):
     msg = ["status"]
 
-    msg.append(["game", self.mapWidth, self.mapHeight, self.turnNumber, self.maxPlants, self.playerID, self.gameNumber])
+    msg.append(["game", self.mapWidth, self.mapHeight, self.turnNumber, self.maxPlants, self.playerID, self.gameNumber, self.bumbleweedSpeed, self.poolDamage, self.poolBuff, self.titanDebuff])
 
     typeLists = []
     typeLists.append(["Player"] + [i.toList() for i in self.objects.values() if i.__class__ is Player])
