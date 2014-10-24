@@ -211,7 +211,7 @@ class Plant(Mappable):
       target_plant.handleDeath()
 
     elif self.mutation in (self.game.tumbleweed, self.game.soaker):
-      if target_plant.plant.owner != self.game.playerID:
+      if target_plant.owner != self.game.playerID:
         return 'Turn {}: Your {} cannot heal opponent\'s plants'.format(self.game.turnNumber, self.id)
       elif target_plant.mutation == self.game.mother:
         return 'Turn {}: Your {} cannot heal or buff the mother weed.'.format(self.game.turnNumber, self.id)
