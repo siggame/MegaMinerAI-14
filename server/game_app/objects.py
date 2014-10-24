@@ -31,10 +31,12 @@ class Player(object):
         if plant.owner == self.game.playerID and plant.mutation == 3:
           plantWorth += plant.strength
 
-      sporesYouShouldHave = self.game.maxSpores
+      sporesYouShouldHave = self.game.maxSpores / 2
 
       sporesYouGet = math.ceil((sporesYouShouldHave - plantWorth) * self.game.sporeRate)
       self.spores += sporesYouGet
+      if self.spores > self.game.maxSpores:
+        self.spores = self.game.maxSpores
     for plantStats in self.toSpawn:
       self.game.addObject(Plant, plantStats)
     #get rid of old spawns
