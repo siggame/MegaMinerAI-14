@@ -167,11 +167,13 @@ namespace visualizer
      	 
      	 string plantTexture = getPlantFromID(plant.mutation);
      	 
-     	 Color playerColor = Color(.2,1,0,1);
+     	 // Coloring plants    
+     	 Color plantColor = Color(0.4, 1, .1, 1);
+     	 // If not radpool
      	 if (plant.mutation != 7)
-			playerColor = (plant.owner == 0) ? Color(1,0,0,1) : Color(0,0,1,1);
-      
-		 SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(playerColor, x, y, plant.range, plant.range, plantTexture);
+     	   plantColor = getPlayerColor(plant.owner);
+     	     
+		 SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(plantColor, x, y, plant.range, plant.range, plantTexture);
       	 spriteData->addKeyFrame( new DrawSprite( spriteData ) );
      	 turn.addAnimatable( spriteData );
       }
