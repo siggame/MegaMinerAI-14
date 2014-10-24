@@ -13,11 +13,13 @@ import random
 
 Scribe = scribe.Scribe
 
+
 def loadClassDefaults(cfgFile = "config/defaults.cfg"):
   cfg = networking.config.config.readConfig(cfgFile)
   for className in cfg.keys():
     for attr in cfg[className]:
       setattr(eval(className), attr, cfg[className][attr])
+
 
 class Match(DefaultGameWorld):
   def __init__(self, id, controller):
@@ -25,7 +27,7 @@ class Match(DefaultGameWorld):
     self.controller = controller
     DefaultGameWorld.__init__(self)
     self.scribe = Scribe(self.logPath())
-    if( self.logJson ):
+    if ( self.logJson ):
       self.jsonLogger = jsonLogger.JsonLogger(self.logPath())
       self.jsonAnimations = []
       self.dictLog = dict(gameName = "Plants", turns = [])
@@ -45,7 +47,7 @@ class Match(DefaultGameWorld):
     self.poolBuff = self.poolBuff
     self.titanDebuff = self.titanDebuff
 
-  #this is here to be wrapped
+  # this is here to be wrapped
   def __del__(self):
     pass
 
@@ -56,9 +58,9 @@ class Match(DefaultGameWorld):
       return None
 
   def dist(self, x1, y1, x2, y2):
-    return int(math.hypot(x1-x2, y1-y2))
+    return int(math.hypot(x1 - x2, y1 - y2))
 
-  def addPlayer(self, connection, type="player"):
+  def addPlayer(self, connection, type = "player"):
     connection.type = type
     if len(self.players) >= 2 and type == "player":
       return "Game is full"
@@ -89,7 +91,7 @@ class Match(DefaultGameWorld):
     #don't spawn near the mother plant
     pool = self.objects.mutations[7]
     lowX = 1 + pool.range
-    highX = self.mapWidth/2 - pool.range
+    highX = self.mapWidth / 2 - pool.range
     lowY = 0
     highY = self.mapHeight - 1
     num = random.randint(self.minPools, self.maxPools)
@@ -99,13 +101,15 @@ class Match(DefaultGameWorld):
     for amount in range(num):
       x = random.randint(lowX, highX)
       y = random.randint(lowY, highY)
-      if (x,y) not in spawnedAt:
+      if (x, y) not in spawnedAt:
         #add the plant
-        self.addObject(Plant, [x, y, 2, pool.type, 0, pool.maxRads, 0, pool.maxRadiates, pool.range, 0, pool.maxUproots, pool.baseStrength, pool.minStrength, pool.baseStrength, pool.maxStrength])
+        self.addObject(Plant, [x, y, 2, pool.type, 0, pool.maxRads, 0, pool.maxRadiates, pool.range, 0, pool.maxUproots,
+                               pool.baseStrength, pool.minStrength, pool.baseStrength, pool.maxStrength])
         #add the mirror
         x = self.mapWidth - x
-        self.addObject(Plant, [x, y, 2, pool.type, 0, pool.maxRads, 0, pool.maxRadiates, pool.range, 0, pool.maxUproots, pool.baseStrength, pool.minStrength, pool.baseStrength, pool.maxStrength])
-        spawnedAt.append((x,y))
+        self.addObject(Plant, [x, y, 2, pool.type, 0, pool.maxRads, 0, pool.maxRadiates, pool.range, 0, pool.maxUproots,
+                               pool.baseStrength, pool.minStrength, pool.baseStrength, pool.maxStrength])
+        spawnedAt.append((x, y))
       else:
         #do another loop
         amount -= 1
@@ -122,9 +126,10 @@ class Match(DefaultGameWorld):
     self.turnNumber = -1
 
     #make mutation types
-    statList = ['name', 'type', 'spores', 'maxRadiates', 'maxRads', 'range', 'maxUproots', 'minStrength', 'baseStrength', 'maxStrength']
+    statList = ['name', 'type', 'spores', 'maxRadiates', 'maxRads', 'range', 'maxUproots', 'minStrength',
+                'baseStrength', 'maxStrength']
     mutationsMake = cfgMutations.values()
-    mutationsMake.sort(key=lambda variant: variant['type'])
+    mutationsMake.sort(key = lambda variant: variant['type'])
     for t in mutationsMake:
       self.addObject(Mutation, [t[value] for value in statList])
 
@@ -133,12 +138,16 @@ class Match(DefaultGameWorld):
     #do this later? [Russley says to use static location]
     #y = random.randint(0, self.mapHeight)
     #x = random.randint(0, self.mapWidth/10)
-    y = self.mapHeight/2
+    y = self.mapHeight / 2
     x = 0 + mutation.range + 1
-    self.addObject(Plant, [x, y, 0, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
+    self.addObject(Plant, [x, y, 0, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0,
+                           mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength,
+                           mutation.maxStrength])
     #player 2 plant
     x = self.mapWidth - x - 1
-    self.addObject(Plant, [x, y, 1, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
+    self.addObject(Plant, [x, y, 1, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0,
+                           mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength,
+                           mutation.maxStrength])
 
     #generate the pools now
     self.generatePools()
@@ -164,11 +173,11 @@ class Match(DefaultGameWorld):
 
     self.checkWinner()
     if self.winner is None:
-      self.sendStatus([self.turn] +  self.spectators)
+      self.sendStatus([self.turn] + self.spectators)
     else:
       self.sendStatus(self.spectators)
 
-    if( self.logJson ):
+    if ( self.logJson ):
       self.dictLog['turns'].append(
         dict(
           mapWidth = self.mapWidth,
@@ -252,19 +261,21 @@ class Match(DefaultGameWorld):
       elif totalStrength1 < totalStrength2:
         self.declareWinner(self.players[1], "Player 2 has more total strength")
       else:
-        self.declareWinner(self.players[random.randint(0, 1)], "Coin flip since players are tied")
+        winner = random.randint(0, 1)
+        self.declareWinner(self.players[winner],
+                           "Coin flip since players are tied, Player {} wins".format(winner + 1))
 
 
-  def declareWinner(self, winner, reason=''):
+  def declareWinner(self, winner, reason = ''):
     print "Player", self.getPlayerIndex(self.winner), "wins game", self.id
     self.winner = winner
 
     msg = ["game-winner", self.id, self.winner.user, self.getPlayerIndex(self.winner), reason]
 
-    if( self.logJson ):
-      self.dictLog["winnerID"] =  self.getPlayerIndex(self.winner)
+    if ( self.logJson ):
+      self.dictLog["winnerID"] = self.getPlayerIndex(self.winner)
       self.dictLog["winReason"] = reason
-      self.jsonLogger.writeLog( self.dictLog )
+      self.jsonLogger.writeLog(self.dictLog)
 
     self.scribe.writeSExpr(msg)
     self.scribe.finalize()
@@ -326,13 +337,14 @@ class Match(DefaultGameWorld):
   def status(self):
     msg = ["status"]
 
-    msg.append(["game", self.mapWidth, self.mapHeight, self.turnNumber, self.maxPlants, self.playerID, self.gameNumber, self.bumbleweedSpeed, self.poolDamage, self.poolBuff, self.titanDebuff])
+    msg.append(["game", self.mapWidth, self.mapHeight, self.turnNumber, self.maxPlants, self.playerID, self.gameNumber,
+                self.bumbleweedSpeed, self.poolDamage, self.poolBuff, self.titanDebuff])
 
     typeLists = []
     typeLists.append(["Player"] + [i.toList() for i in self.objects.values() if i.__class__ is Player])
     typeLists.append(["Mappable"] + [i.toList() for i in self.objects.values() if i.__class__ is Mappable])
     typeLists.append(["Plant"] + [i.toList() for i in self.objects.values() if i.__class__ is Plant])
-    updated = [i for i in self.objects.values() if i.__class__ is Mutation and i.updatedAt > self.turnNumber-3]
+    updated = [i for i in self.objects.values() if i.__class__ is Mutation and i.updatedAt > self.turnNumber - 3]
     if updated:
       typeLists.append(["Mutation"] + [i.toList() for i in updated])
 
@@ -344,9 +356,8 @@ class Match(DefaultGameWorld):
     # generate the sexp
     self.animations.append(anim.toList())
     # generate the json
-    if( self.logJson ):
+    if ( self.logJson ):
       self.jsonAnimations.append(anim.toJson())
-
 
 
 loadClassDefaults()
