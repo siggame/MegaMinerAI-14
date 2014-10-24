@@ -130,7 +130,7 @@ namespace visualizer
   	switch(id)
   	{
   	  case 0: return "mother"; break;
-  	  case 7: return "soaker"; break;
+  	  case 7: return "texture"; break;
   	  default: return "soaker";
   	}
   }
@@ -161,13 +161,17 @@ namespace visualizer
       	 float x = plant.x - plant.range / 2.0;
       	 float y = plant.y - plant.range / 2.0;
       	 
-      	 SmartPointer<DrawCircleData> circleData = new DrawCircleData(Color(0.1,0.6,0.8,0.3), plant.x, plant.y, plant.range * 1.2);
+      	 SmartPointer<DrawCircleData> circleData = new DrawCircleData(Color(0.1,0.6,0.8,0.3), plant.x, plant.y, plant.range);
       	 circleData->addKeyFrame( new DrawCircle( circleData ) );
      	 turn.addAnimatable( circleData );
      	 
      	 string plantTexture = getPlantFromID(plant.mutation);
+     	 
+     	 Color playerColor = Color(.2,1,0,1);
+     	 if (plant.mutation != 7)
+			playerColor = (plant.owner == 0) ? Color(1,0,0,1) : Color(0,0,1,1);
       
-		 SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(Color(1,0.6,0,1), x, y, plant.range, plant.range, plantTexture);
+		 SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(playerColor, x, y, plant.range, plant.range, plantTexture);
       	 spriteData->addKeyFrame( new DrawSprite( spriteData ) );
      	 turn.addAnimatable( spriteData );
       }
