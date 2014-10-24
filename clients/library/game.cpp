@@ -256,6 +256,70 @@ DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
   LOCK( &object->_c->mutex);
   send_string(object->_c->socket, expr.str().c_str());
   UNLOCK( &object->_c->mutex);
+
+  Connection* c = object->_c;
+
+  //Check ownership
+  if (object->owner != getPlayerID(c))
+    return 0;
+
+  //Check radiates left
+  if (object->radiatesLeft <= 0)
+    return 0;
+
+  //Check radiation
+  if (object->rads > object->maxRads)
+    return 0;
+
+  //Check bounds
+  if (x < 0 || x >= getMapWidth(c) || y < 0 || y >= getMapHeight(c))
+    return 0;
+
+  // Check range
+  if (abs(x - object->x) + abs(y - object->y) > object->range)
+    return 0;
+
+  //Target plant
+  _Plant* target = NULL;
+  for (int i = 0; i < getPlantCount(c); ++i)
+  {
+    _Plant* candidate = getPlant(c,i);
+    if (candidate->x == x && candidate->y == y && candidate->mutation != 7 && candidate->rads < candidate->maxRads)
+      target = candidate;
+  }
+
+  //If no target, return
+  if (target == NULL)
+    return 0;
+
+
+  if (object->mutation == 2 || object->mutation == 5)
+  {
+    if (target->owner != (1 - getPlayerID(c)))
+      return 0;
+
+    target->rads += object->strength;
+  }
+  else if (object->mutation == 3 || object->mutation == 4)
+  {
+    if (target->owner != getPlayerID(c))
+      return 0;
+    else if (target->mutation == 0)
+      return 0;
+    else if (object->mutation == 3 && target->mutation == 3)
+      return 0;
+
+
+    if (object->mutation == 4)
+      target->rads = std::max(target->rads - object->strength, 0);
+    else {
+      int buff = static_cast<int>(1 + object->strength/4.0);
+      target->strength = std::max(target->strength + buff, target->maxStrength);
+    }
+  }
+
+  object->radiatesLeft--;
+
   return 1;
 }
 
