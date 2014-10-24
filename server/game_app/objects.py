@@ -1,4 +1,5 @@
 import networking.config.config
+import math
 
 cfgMutations = networking.config.config.readConfig("config/mutations.cfg")
 
@@ -21,14 +22,23 @@ class Player(object):
     return dict(id = self.id, playerName = self.playerName, time = self.time, spores = self.spores, )
   
   def nextTurn(self):
+    #determine how many spores players get
     if self.game.playerID == self.id:
-      #spores to test spawning
-      self.spores += 300
+      plantWorth = 0
+      #determine strength of soakers
+      for plant in self.game.objects.plants:
+        #make sure player owns plant and that plant is a soaker
+        if plant.owner == self.game.playerID and plant.mutation == 3:
+          plantWorth += plant.strength
+
+      sporesYouShouldHave = self.game.maxSpores
+
+      sporesYouGet = math.ceil((sporesYouShouldHave - plantWorth) * self.game.sporeRate)
+      self.spores += sporesYouGet
     for plantStats in self.toSpawn:
       self.game.addObject(Plant, plantStats)
     #get rid of old spawns
     self.toSpawn = []
-    pass
 
   def germinate(self, x, y, mutation):
     mutationNum = mutation
@@ -235,16 +245,22 @@ class Plant(Mappable):
       return 'Turn {}: Your plant {} cannot move off the map.'.format(self.game.turnNumber, self.id)
     #automatically set tumbleweed to be considered in range
     inRange = (self.mutation == tumbleNo)
+    if self.mutation == tumbleNo:
+      if self.game.dist(self.x, self.y, x, y) <= self.game.bumbleweedSpeed:
+        inRange = True
+      else:
+        return 'Turn {}: Your Bumbleweed {} is moving outside it\'s range.'.format(self.game.turnNumber, self.id)
     #make sure there are no plants on the tile
     for plant in self.game.objects.plants:
-      if plant.id != self.id:
-        if (plant.x == x) and (plant.y == y):
-          return 'Turn {}: Your plant {} cannot move on top of another plant.'.format(self.game.turnNumber, self.id)
-        #check if movement location is in the range of an owned spawner too
-        if plant.mutation == spawnerNo and plant.owner == self.game.playerID and not inRange:
-          if self.game.dist(x, y, plant.x, plant.y) <= plant.range:
-            if self.game.dist(self.x, self.y, plant.x, plant.y) <= plant.range:
-              inRange = True
+      if not inRange:
+        if plant.id != self.id:
+          if (plant.x == x) and (plant.y == y):
+            return 'Turn {}: Your plant {} cannot move on top of another plant.'.format(self.game.turnNumber, self.id)
+          #check if movement location is in the range of an owned spawner too
+          if plant.mutation == spawnerNo and plant.owner == self.game.playerID and not inRange:
+            if self.game.dist(x, y, plant.x, plant.y) <= plant.range:
+              if self.game.dist(self.x, self.y, plant.x, plant.y) <= plant.range:
+                inRange = True
 
     if not inRange:
       return 'Turn {}: Your plant {} is trying to move out of the range of a spawner it is in range of.'.format(self.game.turnNumber, self.id)
