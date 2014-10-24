@@ -21,6 +21,8 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
+#include <cmath>
+
 #ifdef _WIN32
 //Doh, namespace collision.
 namespace Windows
@@ -220,6 +222,9 @@ DLLEXPORT void getStatus(Connection* c)
 
 DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
 {
+  const int spawnerNo = 1;
+  const int motherNo = 0;
+
   stringstream expr;
   expr << "(game-germinate " << object->id
        << " " << x
@@ -229,6 +234,51 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
   LOCK( &object->_c->mutex);
   send_string(object->_c->socket, expr.str().c_str());
   UNLOCK( &object->_c->mutex);
+
+  Connection* c = object->_c;
+
+  _Mutation* mut_obj = getMutation(c,mutation);
+
+  if (mut_obj == NULL)
+    return 0;
+  else if (mut_obj->spores == 0)
+    return 0;
+  else if (object->spores < mut_obj->spores)
+    return 0;
+  else if (x < 0 || x >= getMapWidth(c) || y < 0 || y >= getMapHeight(c))
+    return 0;
+
+  //Check Plants Owned
+  int plantsOwned = 0;
+  for (int i = 0; i < getPlantCount(c); i++)
+  {
+    plantsOwned += (getPlant(c,i)->owner == getPlayerID(c));
+  }
+  if (plantsOwned >= getMaxPlants(c))
+    return 0;
+
+  //Check range
+  bool inRange = false;
+  for (int i = 0; i < getPlantCount(c); i++)
+  {
+    _Plant* checking = getPlant(c,i);
+    if (checking->x == x && checking->y == y)
+      return 0;
+
+    if ((checking->mutation == spawnerNo || checking->mutation == motherNo) &&
+        checking->owner == object->id)
+      if (sqrt(pow((x - checking->x), 2) + pow(y - checking->y, 2)) <= checking->range)
+        inRange = true;
+
+  }
+
+  if (!inRange)
+    return 0;
+
+  //TODO: Do some spawning-on-turn stuff with a list
+
+  object->spores -= mut_obj->spores;
+
   return 1;
 }
 
@@ -276,7 +326,7 @@ DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
     return 0;
 
   // Check range
-  if (abs(x - object->x) + abs(y - object->y) > object->range)
+  if (sqrt(pow((x - object->x), 2) + pow(y - object->y, 2)) > object->range)
     return 0;
 
   //Target plant
