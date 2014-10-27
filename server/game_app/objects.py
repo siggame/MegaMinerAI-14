@@ -31,7 +31,7 @@ class Player(object):
         if plant.owner == self.game.playerID and plant.mutation == 3:
           plantWorth += plant.strength
 
-      sporesYouShouldHave = self.game.maxSpores / 2
+      sporesYouShouldHave = self.game.maxSpores
 
       sporesYouGet = math.ceil((sporesYouShouldHave - plantWorth) * self.game.sporeRate)
       self.spores += sporesYouGet
