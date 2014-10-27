@@ -47,7 +47,9 @@ class Match(DefaultGameWorld):
     self.poolBuff = self.poolBuff
     self.titanDebuff = self.titanDebuff
 
-  # this is here to be wrapped
+    self.plantsByPosition = dict()
+
+  # This is here to be wrapped
   def __del__(self):
     pass
 
@@ -89,7 +91,7 @@ class Match(DefaultGameWorld):
 
   def generatePools(self):
     #don't spawn near the mother plant
-    pool = self.objects.mutations[7]
+    pool = self.objects.mutations[self.mother]
     lowX = 1 + pool.range
     highX = self.mapWidth / 2 - pool.range
     lowY = 0
@@ -113,7 +115,7 @@ class Match(DefaultGameWorld):
       else:
         #do another loop
         amount -= 1
-    pass
+    return
 
   def start(self):
     if len(self.players) < 2:

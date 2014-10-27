@@ -14,6 +14,8 @@ class Player(object):
     self.updatedAt = game.turnNumber
     self.toSpawn = []
 
+    self.spawners = []
+
   def toList(self):
     return [self.id, self.playerName, self.time, self.spores, ]
   
@@ -37,39 +39,46 @@ class Player(object):
       self.spores += sporesYouGet
       if self.spores > self.game.maxSpores:
         self.spores = self.game.maxSpores
+
     for plantStats in self.toSpawn:
-      self.game.addObject(Plant, plantStats)
+      plant = self.game.addObject(Plant, plantStats)
+
+      # Update caches
+      self.game.plantsByPosition[plant.x, plant.y] = plant
+      if plant.mutation in (self.game.mother, self.game.spawner):
+        self.spawners.append(plant)
+
     #get rid of old spawns
     self.toSpawn = []
 
   def germinate(self, x, y, mutation):
     mutationNum = mutation
     mutation = self.game.getMutation(mutation)
-    spawnerNo = 1
-    MotherNo = 0
+
     if mutation is None:
       return 'Turn {}: {} is not a valid variant.'.format(self.game.turnNumber, mutationNum)
     elif mutation.spores == 0:
       return 'Turn {}: You cannot germinate a {}.'.format(self.game.turnNumber, mutation.name)
     elif self.spores < mutation.spores:
-      return 'Turn {}: You do not have enough spores to germinate. Need: {} Have: {}'.format(self.game.turnNumber, self.spore, mutationObj.cost)
+      return 'Turn {}: You do not have enough spores to germinate. Need: {} Have: {}'.format(self.game.turnNumber, mutation.spores, self.spores)
     elif not 0 <= x < self.game.mapWidth or not 0 <= y < self.game.mapHeight:
       return 'Turn {}: You are trying to germinate outside of the map.'.format(self.game.turnNumber)
     elif sum(x.owner == self.id for x in self.game.objects.plants) >= self.game.maxPlants:
       return 'Turn {}: You already have the maximum number of plants.'.format(self.game.turnNumber)
-    #check range
+
+    # Make sure there are no plants on the tile
+    if (x, y) in self.game.plantsByPosition:
+      return 'Turn {}: You cannot germinate on top of another plant.'.format(self.game.turnNumber)
+
+    # Check if germinate location is in the range of an owned spawner
     inRange = False
-    #make sure there are no plants on the tile
-    for plant in self.game.objects.plants:
-      if (plant.x == x) and (plant.y == y):
-        return 'Turn {}: You cannot germinate on top of another plant.'.format(self.game.turnNumber)
-      #check if movement location is in the range of an owned spawner too
-      if (plant.mutation == spawnerNo or plant.mutation == MotherNo) and plant.owner == self.id:
-        if self.game.dist(x, y, plant.x, plant.y) <= plant.range:
-          inRange = True
+    for spawner in self.spawners:
+      if self.game.dist(x, y, spawner.x, spawner.y) <= spawner.range:
+        inRange = True
     if not inRange:
       return 'Turn {}: ({}, {}) is not in the range of a Spawner or Mother Weed'.format(self.game.turnNumber, x, y)
-    #make sure nothing is trying to be spawned there
+
+    # Make sure nothing is trying to be spawned there
     for almostPlant in self.toSpawn:
       x2 = almostPlant[0]
       y2 = almostPlant[1]
@@ -143,42 +152,44 @@ class Plant(Mappable):
     if self.rads >= self.maxRads:
       self.game.removeObject(self)
 
+      # Update caches
+      del self.game.plantsByPosition[(self.x, self.y)]
+      if self.mutation in (self.game.mother, self.game.spawner):
+        self.game.objects.players[self.owner].spawners.remove(self)
+
   def nextTurn(self):
+    # Pool damage/buff
+    if self.mutation == self.game.pool:
+      for plant in self.game.objects.plants:
+        # Only affect plants at the beginning of that player's turn
+        if plant.owner == self.game.playerID:
+          if self.game.dist(plant.x, plant.y, self.x, self.y) <= self.range:
+            if plant.mutation != self.game.soaker:
+              plant.rads += self.game.poolDamage
+              plant.strength = min(plant.strength + self.game.poolBuff, plant.maxStrength)
+              plant.handleDeath()
+            self.strength -= 1
+      if self.strength <= 0:
+        self.game.removeObject(self)
+    # Titan debuff
+    elif self.mutation == self.game.titan and self.owner == (1 - self.game.playerID):
+      for plant in self.game.objects.plants:
+        if plant.owner == self.game.playerID:
+          if self.game.dist(plant.x, plant.y, self.x, self.y) <= self.range:
+            plant.strength = max(plant.strength - self.game.titanDebuff, plant.minStrength)
+
     if self.owner == self.game.playerID:
       self.uprootsLeft = self.maxUproots
       self.radiatesLeft = self.maxRadiates
-      #normalize the value
+
+      # Normalize strength
       if self.strength < self.baseStrength:
         self.strength += 1
       elif self.strength > self.baseStrength:
         self.strength -= 1
-      for plant in self.game.objects.plants:
-        if plant.owner != self.game.playerID:
-          #handle titans and pools
-          if plant.mutation == self.game.titan:
-            #get debuffed by a titan
-            if self.game.dist(self.x, self.y, plant.x, plant.y) <= plant.range:
-              self.strength -= self.game.titanDebuff
-          elif plant.mutation == self.game.pool:
-            #get buffed by a pool (and take damage)
-            if self.game.dist(self.x, self.y, plant.x, plant.y) <= plant.range:
-              damage = self.game.poolDamage
-              if self.mutation == self.game.soaker:
-                damage = 0
-              self.rads += damage
-              self.strength += self.game.poolBuff
-              #remove the pool's strength
-              plant.strength -= 1
-              #remove the pool if needed
-              if plant.strength <= 0:
-                self.game.removeObject(plant)
-      if self.strength > self.maxStrength:
-        self.strength = self.maxStrength
-      elif self.strength < self.minStrength:
-        self.strength = self.minStrength
-      #handle death
+
       self.handleDeath()
-    pass
+    return
 
   def talk(self, message):
     pass
@@ -194,9 +205,10 @@ class Plant(Mappable):
       return 'Turn {}: Your {} cannot radiate outside of its range.'.format(self.game.turnNumber, self.id)
 
     target_plant = None
-    for plant in self.game.objects.plants:
-      if (plant.x, plant.y) == (x, y) and plant.mutation != self.game.pool and plant.rads < plant.maxRads:
-        target_plant = plant
+    if (x, y) in self.game.plantsByPosition:
+      target_plant = self.game.plantsByPosition[(x, y)]
+      if target_plant.mutation == self.game.pool:
+        target_plant = None
 
     if not target_plant:
       return 'Turn {}: Your {} must radiate another plant'.format(self.game.turnNumber, self.id)
@@ -236,38 +248,36 @@ class Plant(Mappable):
 
 
   def uproot(self, x, y):
-    #abstract out
-    spawnerNo = 1
-    tumbleNo = 4
     if self.owner != self.game.playerID:
       return 'Turn {}: You cannot uproot the opponent\'s plant {}.'.format(self.game.turnNumber, self.id)
     elif self.uprootsLeft <= 0:
       return 'Turn {}: Your plant {} does not have any uproots left.'.format(self.game.turnNumber, self.id)
     elif not (0 <= x < self.game.mapWidth) or not (0 <= y < self.game.mapHeight):
       return 'Turn {}: Your plant {} cannot move off the map.'.format(self.game.turnNumber, self.id)
-    #automatically set tumbleweed to be considered in range
-    inRange = (self.mutation == tumbleNo)
-    if self.mutation == tumbleNo:
-      if self.game.dist(self.x, self.y, x, y) <= self.game.bumbleweedSpeed:
-        inRange = True
-      else:
-        return 'Turn {}: Your Bumbleweed {} is moving outside it\'s range.'.format(self.game.turnNumber, self.id)
-    #make sure there are no plants on the tile
-    for plant in self.game.objects.plants:
+
+    # Make sure there are no plants on the destination
+    if (x, y) in self.game.plantsByPosition:
+      return 'Turn {}: Your plant {} cannot move on top of another plant.'.format(self.game.turnNumber, self.id)
+
+    # Find a spawner to move with
+    if self.mutation != self.game.tumbleweed:
+      inRange = False
+      for spawner in self.game.objects.players[self.owner].spawners:
+        if spawner.id != self.id:
+          if self.game.dist(x, y, spawner.x, spawner.y) <= spawner.range:
+            if self.game.dist(self.x, self.y, spawner.x, spawner.y) <= spawner.range:
+              inRange = True
+              break
       if not inRange:
-        if plant.id != self.id:
-          if (plant.x == x) and (plant.y == y):
-            return 'Turn {}: Your plant {} cannot move on top of another plant.'.format(self.game.turnNumber, self.id)
-          #check if movement location is in the range of an owned spawner too
-          if plant.mutation == spawnerNo and plant.owner == self.game.playerID and not inRange:
-            if self.game.dist(x, y, plant.x, plant.y) <= plant.range:
-              if self.game.dist(self.x, self.y, plant.x, plant.y) <= plant.range:
-                inRange = True
+        return 'Turn {}: Your plant {} is trying to move out of the range of a spawner it is in range of.'.format(self.game.turnNumber, self.id)
+    elif self.game.dist(self.x, self.y, x, y) > self.game.bumbleweedSpeed:
+      return 'Turn {}: Your bumbleweed {} is trying to move too far.'.format(self.game.turnNumber, self.id)
 
-    if not inRange:
-      return 'Turn {}: Your plant {} is trying to move out of the range of a spawner it is in range of.'.format(self.game.turnNumber, self.id)
+    # Update cache
+    del self.game.plantsByPosition[(self.x, self.y)]
+    self.game.plantsByPosition[(x, y)] = self
 
-    #otherwise it's okay
+    # Update position
     self.x = x
     self.y = y
     self.uprootsLeft -= 1
