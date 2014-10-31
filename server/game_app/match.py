@@ -245,8 +245,8 @@ class Match(DefaultGameWorld):
     self.animations = ["animations"]
 
     delta = time.clock() - genesis
-    if delta > 0.5:
-        print('Turn: {}, Time: {}, Plants: {}'.format(self.turnNumber, delta, len(self.objects.plants)))
+    #if delta > 0.5:
+    #    print('Turn: {}, Time: {}, Plants: {}'.format(self.turnNumber, delta, len(self.objects.plants)))
     return True
 
   def checkWinner(self):
