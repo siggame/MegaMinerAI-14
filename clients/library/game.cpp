@@ -10,6 +10,7 @@
 #include <sstream>
 #include <fstream>
 #include <memory>
+#include <vector>
 
 #include "game.h"
 #include "network.h"
@@ -227,11 +228,19 @@ DLLEXPORT void getStatus(Connection* c)
   UNLOCK( &c->mutex );
 }
 
+struct point
+{
+  int x,y;
+  point(int x, int y):x(x),y(y){}
+};
 
 DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
 {
   const int spawnerNo = 1;
   const int motherNo = 0;
+  //stuff being spawned this turn
+  static std::vector<point> thisTurnPlants;
+  static int turnNo;
 
   stringstream expr;
   expr << "(game-germinate " << object->id
@@ -245,8 +254,14 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
 
   Connection* c = object->_c;
 
+  if(turnNo != c->turnNumber)
+  {
+    thisTurnPlants.clear();
+    turnNo = c->turnNumber;
+  }
+
   //Check for invalid mutation ID
-  if (mutation < 0 || mutation > 7)
+  if (mutation <= 0 || mutation >= 7)
     return 0;
 
   //Get Mutation object
@@ -300,6 +315,16 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
 
   if (!inRange)
     return 0;
+
+  for(int i = 0; i < thisTurnPlants.size(); i++)
+  {
+    if(thisTurnPlants[i].x == x && thisTurnPlants[i].y == y)
+    {
+      return 0;
+    }
+  }
+
+  thisTurnPlants.push_back(point(x, y));
 
   //TODO: Do some spawning-on-turn stuff with a list
 
