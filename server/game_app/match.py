@@ -95,7 +95,8 @@ class Match(DefaultGameWorld):
   def generatePools(self):
     #don't spawn near the mother plant
     pool = self.objects.mutations[self.pool]
-    lowX = 1 + pool.range
+    mother = self.objects.mutations[self.mother]
+    lowX = 5 + mother.range
     highX = self.mapWidth / 2 - pool.range
     lowY = 0
     highY = self.mapHeight - 1
@@ -244,8 +245,8 @@ class Match(DefaultGameWorld):
     self.animations = ["animations"]
 
     delta = time.clock() - genesis
-    if delta > 0.5:
-        print('Turn: {}, Time: {}, Plants: {}'.format(self.turnNumber, delta, len(self.objects.plants)))
+    #if delta > 0.5:
+    #    print('Turn: {}, Time: {}, Plants: {}'.format(self.turnNumber, delta, len(self.objects.plants)))
     return True
 
   def checkWinner(self):

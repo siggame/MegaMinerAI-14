@@ -36,7 +36,7 @@ class Player(object):
 
       sporesYouShouldHave = self.game.maxSpores
 
-      sporesYouGet = math.ceil((sporesYouShouldHave - plantWorth) * self.game.sporeRate)
+      sporesYouGet = math.ceil((sporesYouShouldHave - plantWorth) * self.game.sporeRate / 100)
       self.spores += sporesYouGet
       if self.spores > self.game.maxSpores:
         self.spores = self.game.maxSpores
@@ -203,14 +203,13 @@ class Plant(Mappable):
         return 'Turn {}: Your {} cannot attack your own plants'.format(self.game.turnNumber, self.id)
 
       # Deal damage
-      #TODO: Higher rads affects damage/range
-      damage = self.strength
+      damage = self.strength + int(self.strength * (self.rads / self.maxRads))
       target_plant.rads += damage
       target_plant.handleDeath()
 
     elif self.mutation in (self.game.tumbleweed, self.game.soaker):
       if target_plant.owner != self.game.playerID:
-        return 'Turn {}: Your {} cannot heal opponent\'s plants'.format(self.game.turnNumber, self.id)
+        return 'Turn {}: Your {} cannot heal or buff the opponent\'s plants'.format(self.game.turnNumber, self.id)
       elif target_plant.mutation == self.game.mother:
         return 'Turn {}: Your {} cannot heal or buff the mother weed.'.format(self.game.turnNumber, self.id)
       elif self.mutation == self.game.soaker and target_plant.mutation == self.game.soaker:
