@@ -76,6 +76,8 @@ DLLEXPORT Connection* createConnection()
   c->PlayerCount = 0;
   c->Mappables = NULL;
   c->MappableCount = 0;
+  c->sporeRate = 0;
+  c->maxSpores = 0;
   c->Plants = NULL;
   c->PlantCount = 0;
   c->Mutations = NULL;
@@ -680,6 +682,13 @@ DLLEXPORT int networkLoop(Connection* c)
           c->titanDebuff = atoi(sub->val);
           sub = sub->next;
 
+           c->sporeRate = atoi(sub->val);
+           sub = sub->next;
+
+           c->maxSpores = atoi(sub->val);
+           sub = sub->next;
+
+
         }
         else if(string(sub->val) == "Player")
         {
@@ -854,4 +863,12 @@ DLLEXPORT int getPoolBuff(Connection* c)
 DLLEXPORT int getTitanDebuff(Connection* c)
 {
   return c->titanDebuff;
+}
+DLLEXPORT int getSporeRate(Connection* c)
+{
+  return c->sporeRate;
+}
+DLLEXPORT int getMaxSpores(Connection* c)
+{
+  return c->maxSpores;
 }

@@ -96,7 +96,7 @@ class Match(DefaultGameWorld):
     #don't spawn near the mother plant
     pool = self.objects.mutations[self.pool]
     mother = self.objects.mutations[self.mother]
-    lowX = 5 + mother.range
+    lowX = 1 + mother.range + pool.range
     highX = self.mapWidth / 2 - pool.range
     lowY = 0
     highY = self.mapHeight - 1
