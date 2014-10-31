@@ -5,4 +5,5 @@ texture texture textures/texture.png
 texture mother textures/mothershade.png
 texture soaker textures/soakershade.png
 texture aralia textures/aralia1.png
-texture araliaSpriteSheet textures/araliaSpriteSheet.png
+
+animation aralia_anim textures/animations/araliaSpriteSheet.png
