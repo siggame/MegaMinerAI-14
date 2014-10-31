@@ -63,6 +63,7 @@ class Player(object):
     for spawner in self.spawners:
       if self.game.dist(x, y, spawner.x, spawner.y) <= spawner.range:
         inRange = True
+        break
     if not inRange:
       return 'Turn {}: ({}, {}) is not in the range of a Spawner or Mother Weed'.format(self.game.turnNumber, x, y)
 

@@ -10,6 +10,7 @@ import scribe
 import jsonLogger
 import math
 import random
+import time
 
 Scribe = scribe.Scribe
 
@@ -137,10 +138,14 @@ class Match(DefaultGameWorld):
     #x = random.randint(0, self.mapWidth/10)
     y = self.mapHeight/2
     x = 0 + mutation.range + 1
-    self.addObject(Plant, [x, y, 0, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
+    mother = self.addObject(Plant, [x, y, 0, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
+    self.objects.players[0].spawners.append(mother)
+    self.plantsByPosition[(mother.x, mother.y)] = mother
     #player 2 plant
     x = self.mapWidth - x - 1
-    self.addObject(Plant, [x, y, 1, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
+    mother = self.addObject(Plant, [x, y, 1, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates, mutation.range, 0, mutation.maxUproots, mutation.baseStrength, mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
+    self.objects.players[1].spawners.append(mother)
+    self.plantsByPosition[(mother.x, mother.y)] = mother
 
     #generate the pools now
     self.generatePools()
@@ -150,6 +155,8 @@ class Match(DefaultGameWorld):
 
 
   def nextTurn(self):
+    genesis = time.clock()
+
     self.turnNumber += 1
     if self.turn == self.players[0]:
       self.turn = self.players[1]
@@ -193,6 +200,10 @@ class Match(DefaultGameWorld):
       self.jsonAnimations = []
 
     self.animations = ["animations"]
+
+    delta = time.clock() - genesis
+    if delta > 0.5:
+        print('Turn: {}, Time: {}, Plants: {}'.format(self.turnNumber, delta, len(self.objects.plants)))
     return True
 
   def checkWinner(self):
