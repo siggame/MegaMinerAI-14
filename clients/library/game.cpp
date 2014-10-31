@@ -10,6 +10,7 @@
 #include <sstream>
 #include <fstream>
 #include <memory>
+#include <vector>
 
 #include "game.h"
 #include "network.h"
@@ -76,6 +77,8 @@ DLLEXPORT Connection* createConnection()
   c->PlayerCount = 0;
   c->Mappables = NULL;
   c->MappableCount = 0;
+  c->sporeRate = 0;
+  c->maxSpores = 0;
   c->Plants = NULL;
   c->PlantCount = 0;
   c->Mutations = NULL;
@@ -225,11 +228,19 @@ DLLEXPORT void getStatus(Connection* c)
   UNLOCK( &c->mutex );
 }
 
+struct point
+{
+  int x,y;
+  point(int x, int y):x(x),y(y){}
+};
 
 DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
 {
   const int spawnerNo = 1;
   const int motherNo = 0;
+  //stuff being spawned this turn
+  static std::vector<point> thisTurnPlants;
+  static int turnNo;
 
   stringstream expr;
   expr << "(game-germinate " << object->id
@@ -243,8 +254,14 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
 
   Connection* c = object->_c;
 
+  if(turnNo != c->turnNumber)
+  {
+    thisTurnPlants.clear();
+    turnNo = c->turnNumber;
+  }
+
   //Check for invalid mutation ID
-  if (mutation < 0 || mutation > 7)
+  if (mutation <= 0 || mutation >= 7)
     return 0;
 
   //Get Mutation object
@@ -298,6 +315,16 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
 
   if (!inRange)
     return 0;
+
+  for(int i = 0; i < thisTurnPlants.size(); i++)
+  {
+    if(thisTurnPlants[i].x == x && thisTurnPlants[i].y == y)
+    {
+      return 0;
+    }
+  }
+
+  thisTurnPlants.push_back(point(x, y));
 
   //TODO: Do some spawning-on-turn stuff with a list
 
@@ -680,6 +707,13 @@ DLLEXPORT int networkLoop(Connection* c)
           c->titanDebuff = atoi(sub->val);
           sub = sub->next;
 
+           c->sporeRate = atoi(sub->val);
+           sub = sub->next;
+
+           c->maxSpores = atoi(sub->val);
+           sub = sub->next;
+
+
         }
         else if(string(sub->val) == "Player")
         {
@@ -854,4 +888,12 @@ DLLEXPORT int getPoolBuff(Connection* c)
 DLLEXPORT int getTitanDebuff(Connection* c)
 {
   return c->titanDebuff;
+}
+DLLEXPORT int getSporeRate(Connection* c)
+{
+  return c->sporeRate;
+}
+DLLEXPORT int getMaxSpores(Connection* c)
+{
+  return c->maxSpores;
 }
