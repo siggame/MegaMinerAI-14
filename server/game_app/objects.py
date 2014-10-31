@@ -14,6 +14,7 @@ class Player(object):
     self.updatedAt = game.turnNumber
     self.toSpawn = []
 
+    self.plants = []
     self.spawners = []
 
   def toList(self):
@@ -44,6 +45,7 @@ class Player(object):
       plant = self.game.addObject(Plant, plantStats)
 
       # Update caches
+      self.plants.append(plant)
       self.game.plantsByPosition[plant.x, plant.y] = plant
       if plant.mutation in (self.game.mother, self.game.spawner):
         self.spawners.append(plant)
@@ -154,43 +156,26 @@ class Plant(Mappable):
       self.game.removeObject(self)
 
       # Update caches
+      self.game.objects.players[self.owner].plants.remove(self)
       del self.game.plantsByPosition[(self.x, self.y)]
       if self.mutation in (self.game.mother, self.game.spawner):
         self.game.objects.players[self.owner].spawners.remove(self)
 
-  def nextTurn(self):
-    # Pool damage/buff
-    if self.mutation == self.game.pool:
-      for plant in self.game.objects.plants:
-        # Only affect plants at the beginning of that player's turn
-        if plant.owner == self.game.playerID:
-          if self.game.dist(plant.x, plant.y, self.x, self.y) <= self.range:
-            if plant.mutation != self.game.soaker:
-              plant.rads += self.game.poolDamage
-              plant.strength = min(plant.strength + self.game.poolBuff, plant.maxStrength)
-              plant.handleDeath()
-            self.strength -= 1
-      if self.strength <= 0:
-        self.game.removeObject(self)
-    # Titan debuff
-    elif self.mutation == self.game.titan and self.owner == (1 - self.game.playerID):
-      for plant in self.game.objects.plants:
-        if plant.owner == self.game.playerID:
-          if self.game.dist(plant.x, plant.y, self.x, self.y) <= self.range:
-            plant.strength = max(plant.strength - self.game.titanDebuff, plant.minStrength)
 
+  def nextTurn(self):
     if self.owner == self.game.playerID:
       self.uprootsLeft = self.maxUproots
       self.radiatesLeft = self.maxRadiates
 
       # Normalize strength
       if self.strength < self.baseStrength:
-        self.strength += 1
+        self.strength = max(self.strength + 1, self.minStrength)
       elif self.strength > self.baseStrength:
-        self.strength -= 1
+        self.strength = min(self.strength - 1, self.maxStrength)
 
       self.handleDeath()
     return
+
 
   def talk(self, message):
     pass

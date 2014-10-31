@@ -47,8 +47,8 @@ class Match(DefaultGameWorld):
     self.poolDamage = self.poolDamage
     self.poolBuff = self.poolBuff
     self.titanDebuff = self.titanDebuff
-    self.sporeRate = None
-    self.maxSpores = None
+    self.sporeRate = self.sporeRate
+    self.maxSpores = self.maxSpores
 
     self.plantsByPosition = dict()
 
@@ -94,7 +94,7 @@ class Match(DefaultGameWorld):
 
   def generatePools(self):
     #don't spawn near the mother plant
-    pool = self.objects.mutations[self.mother]
+    pool = self.objects.mutations[self.pool]
     lowX = 1 + pool.range
     highX = self.mapWidth / 2 - pool.range
     lowY = 0
@@ -108,17 +108,20 @@ class Match(DefaultGameWorld):
       y = random.randint(lowY, highY)
       if (x, y) not in spawnedAt:
         #add the plant
-        self.addObject(Plant, [x, y, 2, pool.type, 0, pool.maxRads, 0, pool.maxRadiates, pool.range, 0, pool.maxUproots,
-                               pool.baseStrength, pool.minStrength, pool.baseStrength, pool.maxStrength])
+        newPlant = self.addObject(Plant, [x, y, 2, pool.type, 0, pool.maxRads, 0, pool.maxRadiates, pool.range, 0,
+                                   pool.maxUproots, pool.baseStrength, pool.minStrength, pool.baseStrength,
+                                   pool.maxStrength])
+        self.plantsByPosition[(x, y)] = newPlant
         #add the mirror
         x = self.mapWidth - x
-        self.addObject(Plant, [x, y, 2, pool.type, 0, pool.maxRads, 0, pool.maxRadiates, pool.range, 0, pool.maxUproots,
-                               pool.baseStrength, pool.minStrength, pool.baseStrength, pool.maxStrength])
+        newPlant = self.addObject(Plant, [x, y, 2, pool.type, 0, pool.maxRads, 0, pool.maxRadiates, pool.range, 0,
+                                  pool.maxUproots, pool.baseStrength, pool.minStrength, pool.baseStrength,
+                                  pool.maxStrength])
+        self.plantsByPosition[(x, y)] = newPlant
         spawnedAt.append((x, y))
       else:
         #do another loop
         amount -= 1
-    return
 
   def start(self):
     if len(self.players) < 2:
@@ -148,6 +151,7 @@ class Match(DefaultGameWorld):
     mother = self.addObject(Plant, [x, y, 0, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates,
                                     mutation.range, 0, mutation.maxUproots, mutation.baseStrength,
                                     mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
+    self.objects.players[0].plants.append(mother)
     self.objects.players[0].spawners.append(mother)
     self.plantsByPosition[(mother.x, mother.y)] = mother
     #player 2 plant
@@ -155,6 +159,7 @@ class Match(DefaultGameWorld):
     mother = self.addObject(Plant, [x, y, 1, mutation.type, 0, mutation.maxRads, 0, mutation.maxRadiates,
                                     mutation.range, 0, mutation.maxUproots, mutation.baseStrength,
                                     mutation.minStrength, mutation.baseStrength, mutation.maxStrength])
+    self.objects.players[1].plants.append(mother)
     self.objects.players[1].spawners.append(mother)
     self.plantsByPosition[(mother.x, mother.y)] = mother
 
@@ -163,6 +168,28 @@ class Match(DefaultGameWorld):
 
     self.nextTurn()
     return True
+
+
+  def areaEffects(self):
+    for plant in self.objects.plants:
+      # Pool damage/buff
+      if plant.mutation == self.pool:
+        # Only affect plants at the beginning of that player's turn
+        for target in self.objects.players[self.playerID].plants:
+          if self.dist(target.x, target.y, plant.x, plant.y) <= plant.range:
+            if target.mutation != self.soaker:
+              target.rads += self.poolDamage
+              target.strength += self.poolBuff
+              target.handleDeath()
+            plant.strength -= 1
+        if plant.strength <= 0:
+          del self.plantsByPosition[(plant.x, plant.y)]
+          self.removeObject(plant)
+      # Titan debuff
+      elif plant.mutation == self.titan and plant.owner == (1 - self.playerID):
+        for target in self.objects.players[self.playerID].plants:
+          if self.dist(target.x, target.y, plant.x, plant.y) <= plant.range:
+            target.strength -= self.titanDebuff
 
 
   def nextTurn(self):
@@ -178,6 +205,8 @@ class Match(DefaultGameWorld):
 
     else:
       return "Game is over."
+
+    self.areaEffects()
 
     for obj in self.objects.values():
       obj.nextTurn()
