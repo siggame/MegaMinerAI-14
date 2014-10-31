@@ -259,6 +259,15 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
   else if (x < 0 || x >= getMapWidth(c) || y < 0 || y >= getMapHeight(c))
     return 0;
 
+  //Make sure there are no plants on the tile
+  _Plant* a_plant;
+  for (int i = 0; i < getPlantCount(c); i++)
+  {
+    a_plant = getPlant(c,i);
+    if (a_plant->x == x && a_plant->y == y)
+      return 0;
+  }
+
   //Check Plants Owned
   int plantsOwned = 0;
   for (int i = 0; i < getPlantCount(c); i++)
@@ -351,8 +360,11 @@ DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
     _Plant* candidate = getPlant(c,i);
     if (candidate->x == x && candidate->y == y && candidate->mutation != 7 && candidate->rads < candidate->maxRads) 
     {
-      target = candidate;
-      break;
+      if (candidate->mutation != 7) //if pool mutation
+      {
+        target = candidate;
+        break;
+      }
     }
   }
 
@@ -378,9 +390,9 @@ DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
       return 0;
 
 
-    if (object->mutation == 4)
+    if (object->mutation == 4)  //heal if tumbleweed
       target->rads = std::max(target->rads - object->strength, 0);
-    else {
+    else if (object->mutation == 3) { //buff if soaker
       int buff = static_cast<int>(1 + object->strength/4.0);
       target->strength = std::max(target->strength + buff, target->maxStrength);
     }
