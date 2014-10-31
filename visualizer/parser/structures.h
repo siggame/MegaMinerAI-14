@@ -19,6 +19,7 @@ const int UPROOT = 1;
 const int HEAL = 2;
 const int ATTACK = 3;
 const int GERMINATE = 4;
+const int PLANTTALK = 5;
 
 struct Player
 {
@@ -108,6 +109,14 @@ struct heal : public Animation
   friend std::ostream& operator<<(std::ostream& stream, heal obj);
 };
 
+struct plantTalk : public Animation
+{
+  int actingID;
+  char* message;
+
+  friend std::ostream& operator<<(std::ostream& stream, plantTalk obj);
+};
+
 struct attack : public Animation
 {
   int actingID;
@@ -148,6 +157,8 @@ struct GameState
   int poolDamage;
   int poolBuff;
   int titanDebuff;
+  int sporeRate;
+  int maxSpores;
 
   std::map< int, std::vector< SmartPointer< Animation > > > animations;
   friend std::ostream& operator<<(std::ostream& stream, GameState obj);

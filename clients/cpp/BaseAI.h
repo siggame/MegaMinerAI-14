@@ -47,6 +47,10 @@ public:
   int poolBuff();
   ///The strength debuff caused by an enemy Titan
   int titanDebuff();
+  ///The rate which your spores return to maxSpores
+  int sporeRate();
+  ///The maximum number of spores a player can have
+  int maxSpores();
   
   BaseAI(Connection* c);
   virtual ~BaseAI();

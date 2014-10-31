@@ -21,6 +21,8 @@ globals = [
   Variable('poolDamage', int, 'The damage taken from standing in a pool'),
   Variable('poolBuff', int, 'The strength buff taken from standing in a pool'),
   Variable('titanDebuff', int, 'The strength debuff caused by an enemy Titan'),
+  Variable('sporeRate', int, 'The rate which your spores return to maxSpores'),
+  Variable('maxSpores', int, 'The maximum number of spores a player can have'),
 ]
 
 playerData = [
@@ -139,5 +141,12 @@ germinate = Animation('germinate',
     Variable('actingID', int),
     Variable('x', int),
     Variable('y', int)
+  ],
+  )
+
+plantTalk = Animation('plantTalk',
+  data=[
+    Variable('actingID', int),
+    Variable('message', str)
   ],
   )

@@ -34,6 +34,8 @@ public interface Client extends Library {
   int getPoolDamage(Pointer connection);
   int getPoolBuff(Pointer connection);
   int getTitanDebuff(Pointer connection);
+  int getSporeRate(Pointer connection);
+  int getMaxSpores(Pointer connection);
 
   Pointer getPlayer(Pointer connection, int num);
   int getPlayerCount(Pointer connection);
