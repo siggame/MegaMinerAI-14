@@ -237,6 +237,11 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
 
   Connection* c = object->_c;
 
+  //Check for invalid mutation ID
+  if (mutation < 0 || mutation > 7)
+    return 0;
+
+  //Get Mutation object
   _Mutation* mut_obj = getMutation(c,mutation);
 
   if (mut_obj == NULL)
@@ -267,9 +272,13 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
 
     if ((checking->mutation == spawnerNo || checking->mutation == motherNo) &&
         checking->owner == object->id)
+    {
       if (sqrt(pow((x - checking->x), 2) + pow(y - checking->y, 2)) <= checking->range)
+      {
         inRange = true;
-
+        break;       
+      }
+    }
   }
 
   if (!inRange)
@@ -334,8 +343,11 @@ DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
   for (int i = 0; i < getPlantCount(c); ++i)
   {
     _Plant* candidate = getPlant(c,i);
-    if (candidate->x == x && candidate->y == y && candidate->mutation != 7 && candidate->rads < candidate->maxRads)
+    if (candidate->x == x && candidate->y == y && candidate->mutation != 7 && candidate->rads < candidate->maxRads) 
+    {
       target = candidate;
+      break;
+    }
   }
 
   //If no target, return
