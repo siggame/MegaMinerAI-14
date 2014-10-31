@@ -36,7 +36,7 @@ class Player(object):
 
       sporesYouShouldHave = self.game.maxSpores
 
-      sporesYouGet = math.ceil((sporesYouShouldHave - plantWorth) * self.game.sporeRate)
+      sporesYouGet = math.ceil((sporesYouShouldHave - plantWorth) * self.game.sporeRate / 100)
       self.spores += sporesYouGet
       if self.spores > self.game.maxSpores:
         self.spores = self.game.maxSpores
