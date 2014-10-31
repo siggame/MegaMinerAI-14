@@ -128,4 +128,14 @@ public abstract class BaseAI
   {
     return Client.INSTANCE.getTitanDebuff(connection);
   }
+  ///The rate which your spores return to maxSpores
+  int sporeRate()
+  {
+    return Client.INSTANCE.getSporeRate(connection);
+  }
+  ///The maximum number of spores a player can have
+  int maxSpores()
+  {
+    return Client.INSTANCE.getMaxSpores(connection);
+  }
 }

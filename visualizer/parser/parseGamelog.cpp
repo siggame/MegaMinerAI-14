@@ -461,6 +461,31 @@ static bool parseHeal(heal& object, sexp_t* expression)
   return true;
 
 }
+static bool parsePlantTalk(plantTalk& object, sexp_t* expression)
+{
+  sexp_t* sub;
+  if ( !expression ) return false;
+  object.type = PLANTTALK;
+  sub = expression->list->next;
+  if( !sub ) 
+  {
+    cerr << "Error in parseplantTalk.\n Parsing: " << *expression << endl;
+    return false;
+  }
+  object.actingID = atoi(sub->val);
+  sub = sub->next;
+  if( !sub ) 
+  {
+    cerr << "Error in parseplantTalk.\n Parsing: " << *expression << endl;
+    return false;
+  }
+  object.message = new char[strlen(sub->val)+1];
+  strncpy(object.message, sub->val, strlen(sub->val));
+  object.message[strlen(sub->val)] = 0;
+  sub = sub->next;
+  return true;
+
+}
 static bool parseAttack(attack& object, sexp_t* expression)
 {
   sexp_t* sub;
@@ -562,6 +587,12 @@ static bool parseSexp(Game& game, sexp_t* expression)
           if ( !sub ) return false;
           gs.titanDebuff = atoi(sub->val);
           sub = sub->next;
+          if ( !sub ) return false;
+          gs.sporeRate = atoi(sub->val);
+          sub = sub->next;
+          if ( !sub ) return false;
+          gs.maxSpores = atoi(sub->val);
+          sub = sub->next;
       }
       else if(string(sub->val) == "Player")
       {
@@ -646,6 +677,14 @@ static bool parseSexp(Game& game, sexp_t* expression)
       {
         SmartPointer<heal> animation = new heal;
         if ( !parseHeal(*animation, expression) )
+          return false;
+
+        animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
+      }
+      if(string(ToLower( sub->val ) ) == "plant-talk")
+      {
+        SmartPointer<plantTalk> animation = new plantTalk;
+        if ( !parsePlantTalk(*animation, expression) )
           return false;
 
         animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
