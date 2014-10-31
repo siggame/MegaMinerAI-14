@@ -46,6 +46,7 @@ namespace visualizer
             
             int getWidth()const { return m_game->states[0].mapWidth; }
             int getHeight()const { return m_game->states[0].mapHeight; }
+            Color getPlayerColor(int id)const { return (id == 1) ? Color(1,0,0,1) : Color(0,0,1,1); }
             string getPlantFromID(int id) const;
     }; 
 

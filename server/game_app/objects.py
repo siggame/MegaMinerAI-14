@@ -1,4 +1,5 @@
 import networking.config.config
+import math
 
 cfgMutations = networking.config.config.readConfig("config/mutations.cfg")
 
@@ -23,9 +24,21 @@ class Player(object):
     return dict(id = self.id, playerName = self.playerName, time = self.time, spores = self.spores, )
   
   def nextTurn(self):
+    #determine how many spores players get
     if self.game.playerID == self.id:
-      #spores to test spawning
-      self.spores += 300
+      plantWorth = 0
+      #determine strength of soakers
+      for plant in self.game.objects.plants:
+        #make sure player owns plant and that plant is a soaker
+        if plant.owner == self.game.playerID and plant.mutation == 3:
+          plantWorth += plant.strength
+
+      sporesYouShouldHave = self.game.maxSpores
+
+      sporesYouGet = math.ceil((sporesYouShouldHave - plantWorth) * self.game.sporeRate)
+      self.spores += sporesYouGet
+      if self.spores > self.game.maxSpores:
+        self.spores = self.game.maxSpores
 
     for plantStats in self.toSpawn:
       plant = self.game.addObject(Plant, plantStats)
@@ -37,7 +50,6 @@ class Player(object):
 
     #get rid of old spawns
     self.toSpawn = []
-    return
 
   def germinate(self, x, y, mutation):
     mutationNum = mutation
@@ -212,7 +224,7 @@ class Plant(Mappable):
       target_plant.handleDeath()
 
     elif self.mutation in (self.game.tumbleweed, self.game.soaker):
-      if target_plant.plant.owner != self.game.playerID:
+      if target_plant.owner != self.game.playerID:
         return 'Turn {}: Your {} cannot heal opponent\'s plants'.format(self.game.turnNumber, self.id)
       elif target_plant.mutation == self.game.mother:
         return 'Turn {}: Your {} cannot heal or buff the mother weed.'.format(self.game.turnNumber, self.id)
@@ -257,9 +269,10 @@ class Plant(Mappable):
             if self.game.dist(self.x, self.y, spawner.x, spawner.y) <= spawner.range:
               inRange = True
               break
-
       if not inRange:
         return 'Turn {}: Your plant {} is trying to move out of the range of a spawner it is in range of.'.format(self.game.turnNumber, self.id)
+    elif self.game.dist(self.x, self.y, x, y) > self.game.bumbleweedSpeed:
+      return 'Turn {}: Your bumbleweed {} is trying to move too far.'.format(self.game.turnNumber, self.id)
 
     # Update cache
     del self.game.plantsByPosition[(self.x, self.y)]
