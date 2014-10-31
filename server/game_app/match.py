@@ -47,6 +47,8 @@ class Match(DefaultGameWorld):
     self.poolDamage = self.poolDamage
     self.poolBuff = self.poolBuff
     self.titanDebuff = self.titanDebuff
+    self.sporeRate = None
+    self.maxSpores = None
 
     self.plantsByPosition = dict()
 
@@ -199,6 +201,8 @@ class Match(DefaultGameWorld):
           poolDamage = self.poolDamage,
           poolBuff = self.poolBuff,
           titanDebuff = self.titanDebuff,
+          sporeRate = self.sporeRate,
+          maxSpores = self.maxSpores,
           Players = [i.toJson() for i in self.objects.values() if i.__class__ is Player],
           Mappables = [i.toJson() for i in self.objects.values() if i.__class__ is Mappable],
           Plants = [i.toJson() for i in self.objects.values() if i.__class__ is Plant],
@@ -351,7 +355,7 @@ class Match(DefaultGameWorld):
     msg = ["status"]
 
     msg.append(["game", self.mapWidth, self.mapHeight, self.turnNumber, self.maxPlants, self.playerID, self.gameNumber,
-                self.bumbleweedSpeed, self.poolDamage, self.poolBuff, self.titanDebuff])
+                self.bumbleweedSpeed, self.poolDamage, self.poolBuff, self.titanDebuff, self.sporeRate, self.maxSpores])
 
     typeLists = []
     typeLists.append(["Player"] + [i.toList() for i in self.objects.values() if i.__class__ is Player])

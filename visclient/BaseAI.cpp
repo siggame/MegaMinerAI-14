@@ -48,6 +48,14 @@ int BaseAI::titanDebuff()
 {
   return getTitanDebuff(c);
 }
+int BaseAI::sporeRate()
+{
+  return getSporeRate(c);
+}
+int BaseAI::maxSpores()
+{
+  return getMaxSpores(c);
+}
 
 bool BaseAI::startTurn()
 {

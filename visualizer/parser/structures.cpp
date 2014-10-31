@@ -97,6 +97,15 @@ std::ostream& operator<<(std::ostream& stream, heal ob)
 }
 
 
+std::ostream& operator<<(std::ostream& stream, plantTalk ob)
+{
+  stream << "plantTalk" << "\n";
+  stream << "actingID: " << ob.actingID  <<'\n';
+  stream << "message: " << ob.message  <<'\n';
+  return stream;
+}
+
+
 std::ostream& operator<<(std::ostream& stream, attack ob)
 {
   stream << "attack" << "\n";
@@ -128,6 +137,8 @@ std::ostream& operator<<(std::ostream& stream, GameState ob)
   stream << "poolDamage: " << ob.poolDamage  <<'\n';
   stream << "poolBuff: " << ob.poolBuff  <<'\n';
   stream << "titanDebuff: " << ob.titanDebuff  <<'\n';
+  stream << "sporeRate: " << ob.sporeRate  <<'\n';
+  stream << "maxSpores: " << ob.maxSpores  <<'\n';
 
   stream << "\n\nPlayers:\n";
   for(std::map<int,Player>::iterator i = ob.players.begin(); i != ob.players.end(); i++)
@@ -157,6 +168,8 @@ std::ostream& operator<<(std::ostream& stream, GameState ob)
 //      stream << *((uproot*)*i) << "\n";
 //    if((*(*i)).type == HEAL)
 //      stream << *((heal*)*i) << "\n";
+//    if((*(*i)).type == PLANTTALK)
+//      stream << *((plantTalk*)*i) << "\n";
 //    if((*(*i)).type == ATTACK)
 //      stream << *((attack*)*i) << "\n";
 //    if((*(*i)).type == GERMINATE)

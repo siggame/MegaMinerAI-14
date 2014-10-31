@@ -361,6 +361,17 @@ class HealAnimation:
   def toJson(self):
     return dict(type = "heal", actingID = self.actingID, targetID = self.targetID)
 
+class PlantTalkAnimation:
+  def __init__(self, actingID, message):
+    self.actingID = actingID
+    self.message = message
+
+  def toList(self):
+    return ["plantTalk", self.actingID, self.message, ]
+
+  def toJson(self):
+    return dict(type = "plantTalk", actingID = self.actingID, message = self.message)
+
 class AttackAnimation:
   def __init__(self, actingID, targetID):
     self.actingID = actingID
