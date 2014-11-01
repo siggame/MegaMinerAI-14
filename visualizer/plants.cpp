@@ -6,10 +6,22 @@
 #include <utility>
 #include <time.h>
 #include <list>
+#include <glm/glm.hpp>
 
 namespace visualizer
 {
-  const float Plants::GRID_OFFSET = 50.0f;
+	// Returns true if the circle(center with radius r) intersects with the rectangle R.
+	// Todo: move this function somewhere else?
+	bool Intersects(const glm::vec2& center, float r, const Rect& R)
+	{
+		glm::vec2 closest = glm::vec2(glm::clamp(center.x, (float)R.left, (float)R.right),glm::clamp(center.y, (float)R.top, (float)R.bottom));
+		glm::vec2 distance = center - closest;
+
+		// If the distance is less than the circle's radius, an intersection occurs
+		return (distance.x * distance.x + distance.y * distance.y) < (r * r);
+	}
+
+  const float Plants::GRID_OFFSET = 20.0f;
   Plants::Plants()
   {
     m_game = 0;
@@ -161,8 +173,7 @@ namespace visualizer
 			  {
 				  const auto& unit = iter.second;
 
-				  if(R.left <= unit.x && R.right >= unit.x &&
-					 R.top <= unit.y && R.bottom >= unit.y )
+				  if(Intersects(glm::vec2(unit.x, unit.y), unit.range, R))
 				  {
 					  m_SelectedUnits.push_back(unit.id);
 				  }

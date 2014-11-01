@@ -17,16 +17,16 @@ using namespace std;
 
 namespace visualizer
 {
+	struct Rect
+	{
+		int left;
+		int top;
+		int right;
+		int bottom;
+	};
+
     class Plants: public QThread, public AnimSequence, public IGame
     {
-		struct Rect
-		{
-			int left;
-			int top;
-			int right;
-			int bottom;
-		};
-
         Q_OBJECT;
         Q_INTERFACES( visualizer::IGame );
         public: 
@@ -55,7 +55,7 @@ namespace visualizer
             
 			int getWidth() const { return m_game->states[0].mapWidth; }
 			int getHeight() const { return m_game->states[0].mapHeight; }
-			Color getPlayerColor(int id) const { return (id == 1) ? Color(1,0,0,1) : Color(0,0,1,1); }
+			Color getPlayerColor(int id) const { return (id == 1) ? Color(0.9,0.2,0.2,1) : Color(0.2,0.2,0.9,1); }
             string getPlantFromID(int id) const;
 			void ProcessInput();
 			void GetSelectedRect(Rect &out) const;
