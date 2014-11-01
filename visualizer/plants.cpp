@@ -12,7 +12,7 @@ namespace visualizer
 {
 	// Returns true if the circle(center with radius r) intersects with the rectangle R.
 	// Todo: move this function somewhere else?
-	bool Intersects(const glm::vec2& center, float r, const Rect& R)
+	bool Intersects(const glm::vec2& center, float r, const Plants::Rect& R)
 	{
 		glm::vec2 closest = glm::vec2(glm::clamp(center.x, (float)R.left, (float)R.right),glm::clamp(center.y, (float)R.top, (float)R.bottom));
 		glm::vec2 distance = center - closest;
