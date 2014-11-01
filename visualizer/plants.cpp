@@ -9,6 +9,7 @@
 
 namespace visualizer
 {
+  const float Plants::GRID_OFFSET = 50.0f;
   Plants::Plants()
   {
     m_game = 0;
@@ -39,6 +40,11 @@ namespace visualizer
   void Plants::preDraw()
   {
     const Input& input = gui->getInput();
+
+	ProcessInput();
+
+	renderer->push();
+	renderer->translate(GRID_OFFSET, GRID_OFFSET);
     
     // Handle player input here
     renderer->setColor(Color(0.5,0.5,0.5,1));
@@ -56,6 +62,8 @@ namespace visualizer
 #endif
 
     }
+
+	renderer->pop();
   }
 
 
@@ -79,11 +87,9 @@ namespace visualizer
     resourceManager->loadResourceFile( "./plugins/plants/resources.r" );
   }
   
-  // Give the Debug Info widget the selected object IDs in the Gamelog
-  list<int> Plants::getSelectedUnits()
+  std::list<int> Plants::getSelectedUnits()
   {
-    // TODO Selection logic
-    return list<int>();  // return the empty list
+	  return m_SelectedUnits;
   }
 
   void Plants::loadGamelog( std::string gamelog )
@@ -134,6 +140,65 @@ namespace visualizer
   	  default: return "soaker";
   	}
   }
+
+  void Plants::ProcessInput()
+  {
+	  const Input& input = gui->getInput();
+	  int turn = timeManager->getTurn();
+	  int unitSelectable = gui->getDebugOptionState("Units Selectable");
+	  //int tilesSelectable = gui->getDebugOptionState("Tiles Selectable");
+
+	  if(input.leftRelease && turn < (int) m_game->states.size())
+	  {
+		  Rect R;
+		  GetSelectedRect(R);
+
+		  m_SelectedUnits.clear();
+
+		  if(unitSelectable)
+		  {
+			  for(auto& iter : m_game->states[turn].plants)
+			  {
+				  const auto& unit = iter.second;
+
+				  if(R.left <= unit.x && R.right >= unit.x &&
+					 R.top <= unit.y && R.bottom >= unit.y )
+				  {
+					  m_SelectedUnits.push_back(unit.id);
+				  }
+			  }
+		  }
+
+		  gui->updateDebugWindow();
+		  gui->updateDebugUnitFocus();
+	  }
+  }
+
+  void Plants::GetSelectedRect(Rect &out) const
+  {
+	  const Input& input = gui->getInput();
+
+	  int x = input.x - GRID_OFFSET;
+	  int y = input.y - GRID_OFFSET;
+	  int width = input.sx - x - GRID_OFFSET;
+	  int height = input.sy - y - GRID_OFFSET;
+
+	  int right = x + width;
+	  int bottom = y + height;
+
+	  out.left = min(x,right);
+	  out.top = min(y,bottom);
+	  out.right = max(x,right);
+	  out.bottom = max(y,bottom);
+  }
+
+  std::list<IGUI::DebugOption> Plants::getDebugOptions()
+  {
+	  return std::list<IGUI::DebugOption>({{"Units Selectable", true},
+										  {"Tiles Selectable", false}
+										 });
+
+  }
   
   // The "main" function
   void Plants::run()
@@ -176,6 +241,11 @@ namespace visualizer
 		 SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(plantColor, x, y, plant.range, plant.range, plantTexture);
       	 spriteData->addKeyFrame( new DrawSprite( spriteData ) );
      	 turn.addAnimatable( spriteData );
+
+		 turn[plant.id]["id"] = plant.id;
+		 turn[plant.id]["X"] = plant.x;
+		 turn[plant.id]["Y"] = plant.y;
+		 turn[plant.id]["owner"] = plant.owner;
       }
       
       animationEngine->buildAnimations(turn);
