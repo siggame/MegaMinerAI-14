@@ -256,7 +256,19 @@ namespace visualizer
 		 turn[plant.id]["id"] = plant.id;
 		 turn[plant.id]["X"] = plant.x;
 		 turn[plant.id]["Y"] = plant.y;
-		 turn[plant.id]["owner"] = plant.owner;
+		 turn[plant.id]["mutation"] = plant.mutation;
+		 turn[plant.id]["radiatesLeft"] = plant.radiatesLeft;
+		 turn[plant.id]["rads"] = plant.rads;
+		 turn[plant.id]["strength"] = plant.strength;
+		 turn[plant.id]["uprootsLeft"] = plant.uprootsLeft;
+		 turn[plant.id]["range"] = plant.range;
+		 turn[plant.id]["baseStrength"] = plant.baseStrength;
+		 turn[plant.id]["maxRadiates"] = plant.maxRadiates;
+		 turn[plant.id]["maxRads"] = plant.maxRads;
+		 turn[plant.id]["maxStrength"] = plant.maxStrength;
+		 turn[plant.id]["maxUproots"] = plant.maxUproots;
+		 turn[plant.id]["minStrength"] = plant.minStrength;
+
       }
       
       animationEngine->buildAnimations(turn);
