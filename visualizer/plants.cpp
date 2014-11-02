@@ -21,280 +21,309 @@ namespace visualizer
 		return (distance.x * distance.x + distance.y * distance.y) < (r * r);
 	}
 
-  const float Plants::GRID_OFFSET = 20.0f;
-  Plants::Plants()
-  {
-    m_game = 0;
-    m_suicide=false;
-  } // Plants::Plants()
+	const float Plants::GRID_OFFSET = 20.0f;
+	Plants::Plants()
+	{
+		m_game = 0;
+		m_suicide=false;
+	} // Plants::Plants()
 
-  Plants::~Plants()
-  {
-    destroy();
-  }
+	Plants::~Plants()
+	{
+		destroy();
+	}
 
-  void Plants::destroy()
-  {
-    m_suicide=true;
-    wait();
-    animationEngine->registerGame(0, 0);
+	void Plants::destroy()
+	{
+		m_suicide=true;
+		wait();
+		animationEngine->registerGame(0, 0);
 
-    clear();
-    delete m_game;
-    m_game = 0;
-    
-    // Clear your memory here
-    
-    programs.clear();
+		clear();
+		delete m_game;
+		m_game = 0;
 
-  } // Plants::~Plants()
+		// Clear your memory here
 
-  void Plants::preDraw()
-  {
-    const Input& input = gui->getInput();
+		programs.clear();
 
-	ProcessInput();
+	} // Plants::~Plants()
 
-	renderer->push();
-	renderer->translate(GRID_OFFSET, GRID_OFFSET);
-    
-    // Handle player input here
-    renderer->setColor(Color(0.5,0.5,0.5,1));
-    renderer->drawQuad(0,0, getWidth(), getHeight());
-  }
+	void Plants::preDraw()
+	{
+		const Input& input = gui->getInput();
 
-  void Plants::postDraw()
-  {
-    if( renderer->fboSupport() )
-    {
-#if 0
-      renderer->useShader( programs["post"] ); 
-      renderer->swapFBO();
-      renderer->useShader( 0 );
-#endif
+		ProcessInput();
 
-    }
+		renderer->push();
+		renderer->translate(GRID_OFFSET, GRID_OFFSET);
 
-	renderer->pop();
-  }
+		// Handle player input here
+		renderer->setColor(Color(0.5,0.5,0.5,1));
+		renderer->drawQuad(0,0, getWidth(), getHeight());
+	}
 
+	void Plants::postDraw()
+	{
+		if( renderer->fboSupport() )
+		{
+			#if 0
+			renderer->useShader( programs["post"] );
+			renderer->swapFBO();
+			renderer->useShader( 0 );
+			#endif
 
-  PluginInfo Plants::getPluginInfo()
-  {
-    PluginInfo i;
-    i.searchLength = 1000;
-    i.gamelogRegexPattern = "Plants";
-    i.returnFilename = false;
-    i.spectateMode = false;
-    i.pluginName = "MegaMinerAI: Plants Plugin";
+		}
+
+		renderer->pop();
+	}
 
 
-    return i;
-  } // PluginInfo Plants::getPluginInfo()
+	PluginInfo Plants::getPluginInfo()
+	{
+		PluginInfo i;
+		i.searchLength = 1000;
+		i.gamelogRegexPattern = "Plants";
+		i.returnFilename = false;
+		i.spectateMode = false;
+		i.pluginName = "MegaMinerAI: Plants Plugin";
 
-  void Plants::setup()
-  {
-    gui->checkForUpdate( "Plants", "./plugins/plants/checkList.md5", VERSION_FILE );
-    options->loadOptionFile( "./plugins/plants/plants.xml", "plants" );
-    resourceManager->loadResourceFile( "./plugins/plants/resources.r" );
-  }
-  
-  std::list<int> Plants::getSelectedUnits()
-  {
-	  return m_SelectedUnits;
-  }
 
-  void Plants::loadGamelog( std::string gamelog )
-  {
-    if(isRunning())
-    {
-      m_suicide = true;
-      wait();
-    }
-    m_suicide = false;
+		return i;
+	} // PluginInfo Plants::getPluginInfo()
 
-    // BEGIN: Initial Setup
-    setup();
+	void Plants::setup()
+	{
+		gui->checkForUpdate( "Plants", "./plugins/plants/checkList.md5", VERSION_FILE );
+		options->loadOptionFile( "./plugins/plants/plants.xml", "plants" );
+		resourceManager->loadResourceFile( "./plugins/plants/resources.r" );
+	}
 
-    delete m_game;
-    m_game = new parser::Game;
+	std::list<int> Plants::getSelectedUnits()
+	{
+		return m_SelectedUnits;
+	}
 
-    if( !parser::parseGameFromString( *m_game, gamelog.c_str() ) )
-    {
-      delete m_game;
-      m_game = 0;
-      WARNING(
-          "Cannot load gamelog, %s", 
-          gamelog.c_str()
-          );
-    }
-    // END: Initial Setup
-    
-    int width = getWidth();
-    int height = getHeight();
-    
-    cout << "Width: " << width << " Height: " << height << endl;
-    // Setup the renderer as a 4 x 4 map by default
-    // TODO: Change board size to something useful
-    renderer->setCamera( 0, 0, width, height );
-    renderer->setGridDimensions( width, height );
- 
-    start();
-  } // Plants::loadGamelog()
-  
-  string Plants::getPlantFromID(int id) const
-  {
-    // TODO: correctly match ids with string
-  	switch(id)
-  	{
-  	  case 0: return "mother"; break;
-  	  case 7: return "texture"; break;
-  	  default: return "soaker";
-  	}
-  }
+	void Plants::loadGamelog( std::string gamelog )
+	{
+		if(isRunning())
+		{
+			m_suicide = true;
+			wait();
+		}
+		m_suicide = false;
 
-  void Plants::ProcessInput()
-  {
-	  const Input& input = gui->getInput();
-	  int turn = timeManager->getTurn();
-	  int unitSelectable = gui->getDebugOptionState("Units Selectable");
-	  //int tilesSelectable = gui->getDebugOptionState("Tiles Selectable");
+		// BEGIN: Initial Setup
+		setup();
 
-	  if(input.leftRelease && turn < (int) m_game->states.size())
-	  {
-		  Rect R;
-		  GetSelectedRect(R);
+		delete m_game;
+		m_game = new parser::Game;
 
-		  m_SelectedUnits.clear();
+		if( !parser::parseGameFromString( *m_game, gamelog.c_str() ) )
+		{
+			delete m_game;
+			m_game = 0;
+			WARNING(
+			"Cannot load gamelog, %s",
+			gamelog.c_str()
+			);
+		}
+		// END: Initial Setup
 
-		  if(unitSelectable)
-		  {
-			  for(auto& iter : m_game->states[turn].plants)
-			  {
-				  const auto& unit = iter.second;
+		int width = getWidth();
+		int height = getHeight();
 
-				  if(Intersects(glm::vec2(unit.x, unit.y), unit.range, R))
-				  {
-					  m_SelectedUnits.push_back(unit.id);
-				  }
-			  }
-		  }
+		cout << "Width: " << width << " Height: " << height << endl;
+		// Setup the renderer as a 4 x 4 map by default
+		// TODO: Change board size to something useful
+		renderer->setCamera( 0, 0, width, height );
+		renderer->setGridDimensions( width, height );
 
-		  gui->updateDebugWindow();
-		  gui->updateDebugUnitFocus();
-	  }
-  }
+		start();
+	} // Plants::loadGamelog()
 
-  void Plants::GetSelectedRect(Rect &out) const
-  {
-	  const Input& input = gui->getInput();
+	string Plants::getPlantFromID(int id) const
+	{
+		// TODO: correctly match ids with string
+		switch(id)
+		{
+		case 0: return "mother"; break;
+		case 7: return "texture"; break;
+		default: return "soaker";
+		}
+	}
 
-	  int x = input.x - GRID_OFFSET;
-	  int y = input.y - GRID_OFFSET;
-	  int width = input.sx - x - GRID_OFFSET;
-	  int height = input.sy - y - GRID_OFFSET;
+	void Plants::ProcessInput()
+	{
+		const Input& input = gui->getInput();
+		int turn = timeManager->getTurn();
+		int unitSelectable = gui->getDebugOptionState("Units Selectable");
+		//int tilesSelectable = gui->getDebugOptionState("Tiles Selectable");
 
-	  int right = x + width;
-	  int bottom = y + height;
+		if(input.leftRelease && turn < (int) m_game->states.size())
+		{
+			Rect R;
+			GetSelectedRect(R);
 
-	  out.left = min(x,right);
-	  out.top = min(y,bottom);
-	  out.right = max(x,right);
-	  out.bottom = max(y,bottom);
-  }
+			m_SelectedUnits.clear();
 
-  std::list<IGUI::DebugOption> Plants::getDebugOptions()
-  {
-	  return std::list<IGUI::DebugOption>({{"Units Selectable", true},
-										  {"Tiles Selectable", false}
-										 });
+			if(unitSelectable)
+			{
+				for(auto& iter : m_game->states[turn].plants)
+				{
+					const auto& unit = iter.second;
 
-  }
-  
-  // The "main" function
-  void Plants::run()
-  {
-    
-    // Build the Debug Table's Headers
-    QStringList header;
-    header << "one" << "two" << "three";
-    //gui->setDebugHeader( header );
-    timeManager->setNumTurns( 0 );
+					if(Intersects(glm::vec2(unit.x, unit.y), unit.range, R))
+					{
+						m_SelectedUnits.push_back(unit.id);
+					}
+				}
+			}
 
-    animationEngine->registerGame(0, 0);
+			gui->updateDebugWindow();
+			gui->updateDebugUnitFocus();
+		}
+	}
 
-    // Look through each turn in the gamelog
-    for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
-    {
-      Frame turn;  // The frame that will be drawn
-      
-      for(auto iter : m_game->states[state].plants)
-      {
-      	 const parser::Plant& plant = iter.second;
-      	 
-      	 cout << plant.mutation << endl;
-      	 
-      	 float x = plant.x - plant.range / 2.0;
-      	 float y = plant.y - plant.range / 2.0;
-      	 
-      	 SmartPointer<DrawCircleData> circleData = new DrawCircleData(Color(0.1,0.6,0.8,0.3), plant.x, plant.y, plant.range);
-      	 circleData->addKeyFrame( new DrawCircle( circleData ) );
-     	 turn.addAnimatable( circleData );
-     	 
-     	 string plantTexture = getPlantFromID(plant.mutation);
-     	 
-     	 // Coloring plants    
-     	 Color plantColor = Color(0.4, 1, .1, 1);
-     	 // If not radpool
-     	 if (plant.mutation != 7)
-     	   plantColor = getPlayerColor(plant.owner);
-     	     
-		 SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(plantColor, x, y, plant.range, plant.range, plantTexture);
-      	 spriteData->addKeyFrame( new DrawSprite( spriteData ) );
-     	 turn.addAnimatable( spriteData );
+	void Plants::GetSelectedRect(Rect &out) const
+	{
+		const Input& input = gui->getInput();
 
-		 turn[plant.id]["id"] = plant.id;
-		 turn[plant.id]["X"] = plant.x;
-		 turn[plant.id]["Y"] = plant.y;
-		 turn[plant.id]["mutation"] = plant.mutation;
-		 turn[plant.id]["radiatesLeft"] = plant.radiatesLeft;
-		 turn[plant.id]["rads"] = plant.rads;
-		 turn[plant.id]["strength"] = plant.strength;
-		 turn[plant.id]["uprootsLeft"] = plant.uprootsLeft;
-		 turn[plant.id]["range"] = plant.range;
-		 turn[plant.id]["baseStrength"] = plant.baseStrength;
-		 turn[plant.id]["maxRadiates"] = plant.maxRadiates;
-		 turn[plant.id]["maxRads"] = plant.maxRads;
-		 turn[plant.id]["maxStrength"] = plant.maxStrength;
-		 turn[plant.id]["maxUproots"] = plant.maxUproots;
-		 turn[plant.id]["minStrength"] = plant.minStrength;
+		int x = input.x - GRID_OFFSET;
+		int y = input.y - GRID_OFFSET;
+		int width = input.sx - x - GRID_OFFSET;
+		int height = input.sy - y - GRID_OFFSET;
 
-      }
-      
-      animationEngine->buildAnimations(turn);
-      addFrame(turn);
-      
-      // Register the game and begin playing delayed due to multithreading
-      if(state > 5)
-      {
-        timeManager->setNumTurns(state - 5);
-        animationEngine->registerGame( this, this );
-        if(state == 6)
-        {
-          animationEngine->registerGame(this, this);
-          timeManager->setTurn(0);
-          timeManager->play();
-        }
-      }
-    }
-    
-    if(!m_suicide)
-    {
-      timeManager->setNumTurns( m_game->states.size() );
-      timeManager->play();
-    }
+		int right = x + width;
+		int bottom = y + height;
 
-  } // Plants::run()
+		out.left = min(x,right);
+		out.top = min(y,bottom);
+		out.right = max(x,right);
+		out.bottom = max(y,bottom);
+	}
+
+	std::list<IGUI::DebugOption> Plants::getDebugOptions()
+	{
+		return std::list<IGUI::DebugOption>({{"Units Selectable", true},
+											 {"Tiles Selectable", false}});
+	}
+
+	// The "main" function
+	void Plants::run()
+	{
+
+		// Build the Debug Table's Headers
+		QStringList header;
+		header << "one" << "two" << "three";
+		//gui->setDebugHeader( header );
+		timeManager->setNumTurns( 0 );
+
+		animationEngine->registerGame(0, 0);
+
+		// Look through each turn in the gamelog
+		for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
+		{
+			Frame turn;  // The frame that will be drawn
+
+			for(auto iter : m_game->states[state].plants)
+			{
+				const parser::Plant& plant = iter.second;
+
+				float x = plant.x - plant.range / 2.0;
+				float y = plant.y - plant.range / 2.0;
+
+				SmartPointer<DrawCircleData> circleData = new DrawCircleData(Color(0.1,0.6,0.8,0.2), plant.x, plant.y, plant.range);
+				circleData->addKeyFrame( new DrawCircle( circleData ) );
+				turn.addAnimatable( circleData );
+
+				string plantTexture = getPlantFromID(plant.mutation);
+
+				// Coloring plants
+				Color plantColor = Color(0.4, 1, .1, 1);
+				// If not radpool
+				if (plant.mutation != 7)
+					plantColor = getPlayerColor(plant.owner);
+
+				SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(plantColor, x, y, plant.range, plant.range, plantTexture);
+				spriteData->addKeyFrame( new DrawSprite( spriteData ) );
+				turn.addAnimatable( spriteData );
+
+				// Render animations for this plant
+				for(const SmartPointer< parser::Animation >& animation : m_game->states[state].animations[plant.id])
+				{
+					switch(animation->type)
+					{
+						case parser::ATTACK:
+						{
+							const parser::attack& atkAnim = static_cast<const parser::attack&>(*animation);
+							cout << "Attack actingID, targetID: " << atkAnim.actingID << ", " << atkAnim.targetID << endl;
+							break;
+						}
+						case parser::GERMINATE:
+							cout << "Germinate" << endl;
+							break;
+						case parser::HEAL:
+							cout << "Heal" << endl;
+							break;
+						case parser::PLANTTALK:
+							cout << "Talk" << endl;
+							break;
+						case parser::SOAK:
+							cout << "Soak" << endl;
+							break;
+						case parser::UPROOT:
+							cout << "UpRoot" << endl;
+							break;
+						default:
+							assert(false && "Unknown animation");
+							break;
+
+					}
+				}
+
+				turn[plant.id]["id"] = plant.id;
+				turn[plant.id]["X"] = plant.x;
+				turn[plant.id]["Y"] = plant.y;
+				turn[plant.id]["mutation"] = plant.mutation;
+				turn[plant.id]["radiatesLeft"] = plant.radiatesLeft;
+				turn[plant.id]["rads"] = plant.rads;
+				turn[plant.id]["strength"] = plant.strength;
+				turn[plant.id]["uprootsLeft"] = plant.uprootsLeft;
+				turn[plant.id]["range"] = plant.range;
+				turn[plant.id]["baseStrength"] = plant.baseStrength;
+				turn[plant.id]["maxRadiates"] = plant.maxRadiates;
+				turn[plant.id]["maxRads"] = plant.maxRads;
+				turn[plant.id]["maxStrength"] = plant.maxStrength;
+				turn[plant.id]["maxUproots"] = plant.maxUproots;
+				turn[plant.id]["minStrength"] = plant.minStrength;
+
+			}
+
+			animationEngine->buildAnimations(turn);
+			addFrame(turn);
+
+			// Register the game and begin playing delayed due to multithreading
+			if(state > 5)
+			{
+				timeManager->setNumTurns(state - 5);
+				animationEngine->registerGame( this, this );
+				if(state == 6)
+				{
+					animationEngine->registerGame(this, this);
+					timeManager->setTurn(0);
+					timeManager->play();
+				}
+			}
+		}
+
+		if(!m_suicide)
+		{
+			timeManager->setNumTurns( m_game->states.size() );
+			timeManager->play();
+		}
+
+	} // Plants::run()
 
 } // visualizer
 
