@@ -6,23 +6,23 @@
 namespace visualizer
 {
 
-    struct StartAnim: public Anim
-    {
-      public:
-        void animate( const float& t, AnimData *d, IGame* game );
+	class DrawFadedObject : public Anim
+	{
+	public:
+		DrawFadedObject(const Color& color, FadeFlag fade) : m_color(color), m_fade(fade) {}
 
-    };
+		void animate(const float &t, AnimData *d, IGame *game);
+	private:
+		Color m_color;
+		FadeFlag m_fade;
+	};
 
 #define DRAW_OBJECT(nameClass, dataClass) \
-	class nameClass: public Anim \
+	class nameClass: public DrawFadedObject \
     { \
         public: \
-            nameClass( dataClass* data ) { m_data = data; } \
+			nameClass( dataClass* data, const Color& color, FadeFlag fade = None ) : DrawFadedObject(color, fade) { m_data = data; } \
             void animate( const float& t, AnimData* d, IGame* game ); \
-            float controlDuration() const \
-            { return 0; } \
-            float totalDuration() const \
-            { return 0; } \
         private: \
             dataClass *m_data; \
     };

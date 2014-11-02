@@ -212,19 +212,35 @@ namespace visualizer
 	// The "main" function
 	void Plants::run()
 	{
-
-		// Build the Debug Table's Headers
-		QStringList header;
-		header << "one" << "two" << "three";
-		//gui->setDebugHeader( header );
 		timeManager->setNumTurns( 0 );
 
 		animationEngine->registerGame(0, 0);
+
+		std::set<int> spawnedPlants;
 
 		// Look through each turn in the gamelog
 		for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
 		{
 			Frame turn;  // The frame that will be drawn
+
+			for(auto iter : m_game->states[state].players)
+			{
+				const parser::Player& player = iter.second;
+
+
+				// Render animations for this player
+				for(const SmartPointer< parser::Animation >& animation : m_game->states[state].animations[player.id])
+				{
+					switch(animation->type)
+					{
+						case parser::GERMINATE:
+							cout << "Germinate" << endl;
+							break;
+						default:
+							assert(false && "Unknown animation");
+					}
+				}
+			}
 
 			for(auto iter : m_game->states[state].plants)
 			{
@@ -232,9 +248,10 @@ namespace visualizer
 
 				float x = plant.x - plant.range / 2.0;
 				float y = plant.y - plant.range / 2.0;
+				bool bSpawned = spawnedPlants.insert(plant.id).second;
 
-				SmartPointer<DrawCircleData> circleData = new DrawCircleData(Color(0.1,0.6,0.8,0.2), plant.x, plant.y, plant.range);
-				circleData->addKeyFrame( new DrawCircle( circleData ) );
+				SmartPointer<DrawCircleData> circleData = new DrawCircleData(plant.x, plant.y, plant.range);
+				circleData->addKeyFrame( new DrawCircle( circleData, Color(0.1,0.6,0.8,0.2), bSpawned ? FadeIn : None ) );
 				turn.addAnimatable( circleData );
 
 				string plantTexture = getPlantFromID(plant.mutation);
@@ -245,8 +262,8 @@ namespace visualizer
 				if (plant.mutation != 7)
 					plantColor = getPlayerColor(plant.owner);
 
-				SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(plantColor, x, y, plant.range, plant.range, plantTexture);
-				spriteData->addKeyFrame( new DrawSprite( spriteData ) );
+				SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plant.range, plant.range, plantTexture);
+				spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
 				turn.addAnimatable( spriteData );
 
 				// Render animations for this plant
@@ -257,12 +274,9 @@ namespace visualizer
 						case parser::ATTACK:
 						{
 							const parser::attack& atkAnim = static_cast<const parser::attack&>(*animation);
-							cout << "Attack actingID, targetID: " << atkAnim.actingID << ", " << atkAnim.targetID << endl;
+							//cout << "Attack actingID, targetID: " << atkAnim.actingID << ", " << atkAnim.targetID << endl;
 							break;
 						}
-						case parser::GERMINATE:
-							cout << "Germinate" << endl;
-							break;
 						case parser::HEAL:
 							cout << "Heal" << endl;
 							break;

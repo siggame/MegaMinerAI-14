@@ -3,32 +3,46 @@
 
 namespace visualizer
 {
-  void StartAnim::animate( const float& /* t */, AnimData * /* d */, IGame* /*game*/ )
-  {
-  }
+	void DrawFadedObject::animate(const float &t, AnimData *d, IGame *game)
+	{
+		// Set the color to red
+		float scalar = t;
+		if(m_fade == FadeIn)
+		{
+			scalar = t;
+		}
+		else if(m_fade == FadeOut)
+		{
+			scalar = 1 - t;
+		}
+		else
+		{
+			scalar = 1.0f;
+		}
 
-  void DrawQuad::animate( const float& /*t*/, AnimData * /*d*/, IGame* game )
-  {
-    // Set the color to red
-    game->renderer->setColor( m_data->color);
-    // Draw a 2x2 rectangle at (1,1), with the top left corner of the screen being the origin 
-    game->renderer->drawQuad( m_data->x, m_data->y, m_data->width, m_data->height );
-  }
-  
-  void DrawCircle::animate( const float& /*t*/, AnimData * /*d*/, IGame* game )
-  {
-    // Set the color to red
-    game->renderer->setColor( m_data->color);
-    // Draw a 2x2 rectangle at (1,1), with the top left corner of the screen being the origin 
-    game->renderer->drawCircle( m_data->x, m_data->y, m_data->radius, 1, 100 );
-  }
-  
-  void DrawSprite::animate( const float& /*t*/, AnimData * /*d*/, IGame* game )
-  {
-    // Set the color to red
-    game->renderer->setColor( m_data->color);
-    // Draw a 2x2 rectangle at (1,1), with the top left corner of the screen being the origin 
-    game->renderer->drawTexturedQuad( m_data->x, m_data->y, m_data->width, m_data->height, 1, m_data->texture );
-  }
+		//float color = m_data->fade
+		game->renderer->setColor(Color(m_color.r, m_color.g, m_color.b, m_color.a * scalar));
+	}
+
+	void DrawQuad::animate( const float& t, AnimData* d, IGame* game )
+	{
+		DrawFadedObject::animate(t, d, game);
+
+		game->renderer->drawQuad( m_data->x, m_data->y, m_data->width, m_data->height );
+	}
+
+	void DrawCircle::animate( const float& t, AnimData* d, IGame* game )
+	{
+		DrawFadedObject::animate(t, d, game);
+
+		game->renderer->drawCircle( m_data->x, m_data->y, m_data->radius, 1, 100 );
+	}
+
+	void DrawSprite::animate( const float& t, AnimData* d, IGame* game )
+	{
+		DrawFadedObject::animate(t, d, game);
+
+		game->renderer->drawTexturedQuad( m_data->x, m_data->y, m_data->width, m_data->height, 1, m_data->texture );
+	}
 
 }
