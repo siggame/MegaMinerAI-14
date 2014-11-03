@@ -52,6 +52,11 @@ namespace visualizer
 
 	void Plants::preDraw()
 	{
+        const float x = getWidth() / 2;
+        const float y = getHeight() + 2;
+        const float boxOffset = 980;
+        const float boxWidth = 0;
+
 		const Input& input = gui->getInput();
 
 		ProcessInput();
@@ -61,6 +66,18 @@ namespace visualizer
 
 		renderer->setColor(Color(0.9f,0.9f,0.9f,1));
 		renderer->drawTexturedQuad(0, 0, getWidth(), getHeight(), 2, "grid");
+
+        // Draw Names
+        for (int owner : {0,1})
+        {
+            int namePos = (owner == 0) ? (x - boxOffset) : (x + boxOffset);
+            IRenderer::Alignment alignment = (owner == 0) ? IRenderer::Left : IRenderer::Right;
+            renderer->setColor(getPlayerColor(owner));
+
+            std::stringstream stream;
+            stream << m_game->states[0].players[owner].playerName << string("Spores: ") << m_game->states[timeManager->getTurn()].players[owner].spores;
+            renderer->drawText(namePos, y, "Roboto", stream.str(), 200.0f, alignment);
+        }
 	}
 
 	void Plants::postDraw()
@@ -208,7 +225,7 @@ namespace visualizer
 		return std::list<IGUI::DebugOption>({{"Units Selectable", true},
 											 {"Tiles Selectable", false}});
 	}
-
+	
 	// The "main" function
 	void Plants::run()
 	{
@@ -242,7 +259,7 @@ namespace visualizer
 					}
 				}
 			}
-
+			
 			// TODO: clean this up
 			for(auto iter : m_game->states[state].plants)
 			{
@@ -264,7 +281,7 @@ namespace visualizer
 					turn.addAnimatable( circleData );
 				}
 
-				// Only scale the mother plant and the rad pools
+                // Only scale the mother plant and the rad pools
 				float plantSize = 40.0f;
 				if(plant.mutation == 0 || plant.mutation == 7)
 				{
@@ -298,7 +315,7 @@ namespace visualizer
 					{
 						case parser::ATTACK:
 						{
-							const parser::attack& atkAnim = static_cast<const parser::attack&>(*animation);
+                            const parser::attack& atkAnim = static_cast<const parser::attack&>(*animation);
 							//cout << "Attack actingID, targetID: " << atkAnim.actingID << ", " << atkAnim.targetID << endl;
 							break;
 						}
