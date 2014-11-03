@@ -40,8 +40,12 @@ namespace visualizer
 
 	void DrawTexturedCircle::animate(const float &t, AnimData *d, IGame *game)
 	{
+		// TODO: move this logic to offset the circle out of here
+		static float dt = 0.0f;
+		dt += game->timeManager->getDt();
+
 		DrawFadedObject::animate(t, d, game);
-		game->renderer->drawTexturedCircle(m_data->x, m_data->y, m_data->radius, 1, 100, m_data->texture);
+		game->renderer->drawTexturedCircle(m_data->x, m_data->y, m_data->radius, 1, 100, m_data->texture, 0.0f, 0.1 * cos(0.02*dt), 0.1 * sin(0.02*dt));
 	}
 
 	void DrawSprite::animate( const float& t, AnimData* d, IGame* game )
