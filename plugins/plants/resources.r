@@ -7,6 +7,7 @@ texture soaker textures/soakershade.png
 texture aralia textures/aralia1.png
 texture spawner textures/dandelion.png
 texture grid textures/ground.jpg
+texture rad_pool textures/rad_pool.jpg
 
 texture seed textures/seed.png
 

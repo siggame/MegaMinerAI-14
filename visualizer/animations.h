@@ -30,6 +30,7 @@ namespace visualizer
     DRAW_OBJECT(DrawQuad, DrawQuadData)
     DRAW_OBJECT(DrawCircle, DrawCircleData)
     DRAW_OBJECT(DrawSprite, DrawSpriteData)
+	DRAW_OBJECT(DrawTexturedCircle, DrawTexturedCircleData)
 }
 
 #endif // ANIMATION_H

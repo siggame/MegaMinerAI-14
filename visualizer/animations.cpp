@@ -38,11 +38,16 @@ namespace visualizer
 		game->renderer->drawCircle( m_data->x, m_data->y, m_data->radius, 1, 100 );
 	}
 
+	void DrawTexturedCircle::animate(const float &t, AnimData *d, IGame *game)
+	{
+		DrawFadedObject::animate(t, d, game);
+		game->renderer->drawTexturedCircle(m_data->x, m_data->y, m_data->radius, 1, 100, m_data->texture);
+	}
+
 	void DrawSprite::animate( const float& t, AnimData* d, IGame* game )
 	{
 		DrawFadedObject::animate(t, d, game);
 
 		game->renderer->drawTexturedQuad( m_data->x, m_data->y, m_data->width, m_data->height, 1, m_data->texture );
 	}
-
 }

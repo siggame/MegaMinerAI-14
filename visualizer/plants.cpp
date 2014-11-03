@@ -146,9 +146,9 @@ namespace visualizer
 		// TODO: correctly match ids with string
 		switch(id)
 		{
-		case 0: return "mother"; break;
-		case 7: return "texture"; break;
-		default: return "soaker";
+			case 0: return "mother"; break;
+			case 7: return "rad_pool"; break;
+			default: return "soaker";
 		}
 	}
 
@@ -244,26 +244,49 @@ namespace visualizer
 			for(auto iter : m_game->states[state].plants)
 			{
 				const parser::Plant& plant = iter.second;
+				float plantSize = 40.0f;
+				if(plant.mutation == 0 || plant.mutation == 7)
+				{
+					plantSize = plant.range;
+				}
 
-				float x = plant.x - plant.range / 2.0;
-				float y = plant.y - plant.range / 2.0;
+				float x = plant.x - plantSize / 2.0;
+				float y = plant.y - plantSize / 2.0;
 				bool bSpawned = spawnedPlants.insert(plant.id).second;
-
-				SmartPointer<DrawCircleData> circleData = new DrawCircleData(plant.x, plant.y, plant.range);
-				circleData->addKeyFrame( new DrawCircle( circleData, Color(0.1,0.6,0.8,0.2), bSpawned ? FadeIn : None ) );
-				turn.addAnimatable( circleData );
 
 				string plantTexture = getPlantFromID(plant.mutation);
 
 				// Coloring plants
-				Color plantColor = Color(0.4, 1, .1, 1);
+				Color plantColor = Color(1, 1, 1, 1);
+
 				// If not radpool
 				if (plant.mutation != 7)
+				{
 					plantColor = getPlayerColor(plant.owner);
 
-				SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plant.range, plant.range, plantTexture);
-				spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
-				turn.addAnimatable( spriteData );
+					SmartPointer<DrawCircleData> circleData = new DrawCircleData(plant.x, plant.y, plant.range);
+					circleData->addKeyFrame( new DrawCircle( circleData, Color(0.1,0.6,0.8,0.2), bSpawned ? FadeIn : None ) );
+					turn.addAnimatable( circleData );
+				}
+
+				SmartPointer<Animatable> anim;
+
+				if (plant.mutation != 7)
+				{
+					SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, plantTexture);
+					spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
+
+					anim = spriteData;
+				}
+				else
+				{
+					SmartPointer<DrawTexturedCircleData> spriteData = new DrawTexturedCircleData(x, y, plantSize, plantTexture);
+					spriteData->addKeyFrame( new DrawTexturedCircle( spriteData, plantColor, bSpawned ? FadeIn : None ) );
+
+					anim = spriteData;
+				}
+
+				turn.addAnimatable( anim );
 
 				// Render animations for this plant
 				for(const SmartPointer< parser::Animation >& animation : m_game->states[state].animations[plant.id])

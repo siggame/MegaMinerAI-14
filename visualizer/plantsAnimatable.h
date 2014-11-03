@@ -46,6 +46,14 @@ namespace visualizer
     	
     };
 
+	struct DrawTexturedCircleData : DrawCircleData
+	{
+		DrawTexturedCircleData(float x, float y, float radius, const std::string& texture) :
+			DrawCircleData(x, y, radius), texture(texture) {}
+
+		std::string texture;
+	};
+
 } // visualizer
 
 #endif // PLANTS_ANIMATABLE_H
