@@ -174,11 +174,11 @@ class Plant(Mappable):
         self.strength = min(self.strength - 1, self.maxStrength)
 
       self.handleDeath()
-    return
 
 
   def talk(self, message):
-    pass
+    self.game.addAnimation(PlantTalkAnimation(self.id, message))
+
 
   def radiate(self, x, y):
     if self.owner != self.game.playerID:
