@@ -6,6 +6,7 @@
 #include <utility>
 #include <time.h>
 #include <list>
+#include <queue>
 #include <glm/glm.hpp>
 
 namespace visualizer
@@ -216,6 +217,7 @@ namespace visualizer
 		animationEngine->registerGame(0, 0);
 
 		std::set<int> spawnedPlants;
+		std::queue<SmartPointer<Animatable>> animationQueue;
 
 		// Look through each turn in the gamelog
 		for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
@@ -287,7 +289,7 @@ namespace visualizer
 					anim = spriteData;
 				}
 
-				turn.addAnimatable( anim );
+				animationQueue.push(anim);
 
 				// Render animations for this plant
 				for(const SmartPointer< parser::Animation >& animation : m_game->states[state].animations[plant.id])
@@ -335,6 +337,12 @@ namespace visualizer
 				turn[plant.id]["maxUproots"] = plant.maxUproots;
 				turn[plant.id]["minStrength"] = plant.minStrength;
 
+			}
+
+			while(!animationQueue.empty())
+			{
+				turn.addAnimatable( animationQueue.front() );
+				animationQueue.pop();
 			}
 
 			animationEngine->buildAnimations(turn);
