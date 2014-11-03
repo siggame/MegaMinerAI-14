@@ -58,9 +58,8 @@ namespace visualizer
 		renderer->push();
 		renderer->translate(GRID_OFFSET, GRID_OFFSET);
 
-		// Handle player input here
-		renderer->setColor(Color(0.5,0.5,0.5,1));
-		renderer->drawQuad(0,0, getWidth(), getHeight());
+		renderer->setColor(Color(0.9f,0.9f,0.9f,1));
+		renderer->drawTexturedQuad(0, 0, getWidth(), getHeight(), 2, "grid");
 	}
 
 	void Plants::postDraw()
