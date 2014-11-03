@@ -241,17 +241,10 @@ namespace visualizer
 				}
 			}
 
+			// TODO: clean this up
 			for(auto iter : m_game->states[state].plants)
 			{
 				const parser::Plant& plant = iter.second;
-				float plantSize = 40.0f;
-				if(plant.mutation == 0 || plant.mutation == 7)
-				{
-					plantSize = plant.range;
-				}
-
-				float x = plant.x - plantSize / 2.0;
-				float y = plant.y - plantSize / 2.0;
 				bool bSpawned = spawnedPlants.insert(plant.id).second;
 
 				string plantTexture = getPlantFromID(plant.mutation);
@@ -259,7 +252,7 @@ namespace visualizer
 				// Coloring plants
 				Color plantColor = Color(1, 1, 1, 1);
 
-				// If not radpool
+				// Render circle around plants
 				if (plant.mutation != 7)
 				{
 					plantColor = getPlayerColor(plant.owner);
@@ -269,10 +262,18 @@ namespace visualizer
 					turn.addAnimatable( circleData );
 				}
 
-				SmartPointer<Animatable> anim;
+				// Only scale the mother plant and the rad pools
+				float plantSize = 40.0f;
+				if(plant.mutation == 0 || plant.mutation == 7)
+				{
+					plantSize = plant.range;
+				}
 
+				SmartPointer<Animatable> anim;
 				if (plant.mutation != 7)
 				{
+					float x = plant.x - plantSize / 2.0;
+					float y = plant.y - plantSize / 2.0;
 					SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, plantTexture);
 					spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
 
@@ -280,7 +281,7 @@ namespace visualizer
 				}
 				else
 				{
-					SmartPointer<DrawTexturedCircleData> spriteData = new DrawTexturedCircleData(x, y, plantSize, plantTexture);
+					SmartPointer<DrawTexturedCircleData> spriteData = new DrawTexturedCircleData(plant.x, plant.y, plantSize, plantTexture);
 					spriteData->addKeyFrame( new DrawTexturedCircle( spriteData, plantColor, bSpawned ? FadeIn : None ) );
 
 					anim = spriteData;
