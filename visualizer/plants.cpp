@@ -361,6 +361,13 @@ namespace visualizer
 				turn.addAnimatable( animationQueue.front() );
 				animationQueue.pop();
 			}
+			
+			if(state == (int)m_game->states.size() - 1)
+			{
+				SmartPointer<DrawWinningData> winningData = new DrawWinningData(0, 0, getWidth(), getHeight(), m_game->winReason);
+				winningData->addKeyFrame( new DrawWinningScreen( winningData, Color(0.1,0.6,0.8,0.2), None ) );
+				turn.addAnimatable( winningData );
+			}
 
 			animationEngine->buildAnimations(turn);
 			addFrame(turn);
