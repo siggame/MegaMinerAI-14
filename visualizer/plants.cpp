@@ -165,6 +165,7 @@ namespace visualizer
 		switch(id)
 		{
 			case 0: return "mother"; break;
+			case 1: return "spawner"; break;
 			case 7: return "rad_pool"; break;
 			default: return "soaker";
 		}
