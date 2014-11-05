@@ -54,7 +54,14 @@ namespace visualizer
 		dt += game->timeManager->getDt();
 
 		DrawFadedObject::animate(t, d, game);
-		game->renderer->drawTexturedCircle(m_data->x, m_data->y, m_data->radius, 1, 100, m_data->texture, 0.0f, 0.1 * cos(0.02*dt), 0.1 * sin(0.02*dt));
+
+		float dx = 0.3 * cos(0.01*dt);
+		float dy = 0.3 * sin(0.01*dt);
+		game->renderer->drawTexturedCircle(m_data->x, m_data->y, m_data->radius, 1, 100, m_data->texture, 0.0f, dx, dy);
+
+		dx = 0.1 * cos(0.012*dt);
+		dy = 0.1 * sin(0.012*dt);
+		game->renderer->drawTexturedCircle(m_data->x, m_data->y, m_data->radius, 1, 100, m_data->texture, 0.0f, 4*dx, 4*dy, -20*dy, -20*dx);
 	}
 
 	void DrawSprite::animate( const float& t, AnimData* d, IGame* game )

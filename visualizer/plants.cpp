@@ -75,23 +75,13 @@ namespace visualizer
             renderer->setColor(getPlayerColor(owner));
 
             std::stringstream stream;
-            stream << m_game->states[0].players[owner].playerName << string("Spores: ") << m_game->states[timeManager->getTurn()].players[owner].spores;
+			stream << m_game->states[0].players[owner].playerName << " Spores: " << m_game->states[timeManager->getTurn()].players[owner].spores;
             renderer->drawText(namePos, y, "Roboto", stream.str(), 200.0f, alignment);
         }
 	}
 
 	void Plants::postDraw()
 	{
-		if( renderer->fboSupport() )
-		{
-			#if 0
-			renderer->useShader( programs["post"] );
-			renderer->swapFBO();
-			renderer->useShader( 0 );
-			#endif
-
-		}
-
 		renderer->pop();
 	}
 
@@ -301,7 +291,7 @@ namespace visualizer
 				else
 				{
 					SmartPointer<DrawTexturedCircleData> spriteData = new DrawTexturedCircleData(plant.x, plant.y, plantSize, plantTexture);
-					spriteData->addKeyFrame( new DrawTexturedCircle( spriteData, plantColor, bSpawned ? FadeIn : None ) );
+					spriteData->addKeyFrame( new DrawTexturedCircle( spriteData, Color(1, 1, 1, 0.7), bSpawned ? FadeIn : None ) );
 
 					anim = spriteData;
 				}
