@@ -151,12 +151,18 @@ namespace visualizer
 
 	string Plants::getPlantFromID(int id) const
 	{
-		// TODO: correctly match ids with string
+		// TODO: correctly match ids with string and team color
 		switch(id)
 		{
 			case 0: return "mother"; break;
+			case 1: return "spawner"; break;
+			case 2: return "choke1"; break;
+			case 3: return "soaker"; break;
+			case 4: return "bumbleweed1"; break;
+			case 5: return "aralia"; break;
+			//case 6: return "titan"; break;
 			case 7: return "rad_pool"; break;
-			default: return "soaker";
+			default: return "spawner";
 		}
 	}
 
