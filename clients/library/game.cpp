@@ -291,7 +291,8 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
   {
     _Plant* checking = getPlant(c,i);
     // Check to make sure there is not a plant on that tile already.
-    if (checking->x == x && checking->y == y)
+    // Make sure that plant is still alive
+    if (checking->x == x && checking->y == y && checking->rads < checking->maxRads)
       return 0;
 
     if ((checking->mutation == spawnerNo || checking->mutation == motherNo) &&
