@@ -54,8 +54,10 @@ namespace visualizer
             bool m_suicide;
 			list<int> m_SelectedUnits;
             
+			//getWidth & getHeight return the number of tiles in each dimension respectively
 			int getWidth() const { return m_game->states[0].mapWidth; }
 			int getHeight() const { return m_game->states[0].mapHeight; }
+
 			Color getPlayerColor(int id) const { return (id == 1) ? Color(0.9,0.5,0.5,1) : Color(0.5,0.5,0.9,1); }
             string getPlantFromID(int id) const;
 			void ProcessInput();

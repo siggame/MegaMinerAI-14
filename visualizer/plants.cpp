@@ -78,10 +78,13 @@ namespace visualizer
 			stream << m_game->states[0].players[owner].playerName << " Spores: " << m_game->states[timeManager->getTurn()].players[owner].spores;
             renderer->drawText(namePos, y, "Roboto", stream.str(), 200.0f, alignment);
         }
+
+		renderer->enableScissor(0, getHeight() + GRID_OFFSET, getWidth(), getHeight());
 	}
 
 	void Plants::postDraw()
 	{
+		renderer->disableScissor();
 		renderer->pop();
 	}
 
