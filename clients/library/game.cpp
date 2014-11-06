@@ -434,6 +434,7 @@ DLLEXPORT int plantUproot(_Plant* object, int x, int y)
 {
   const int spawnerNo = 1;
   const int tumbleNo = 4;
+  const int motherNo = 0;
 
   stringstream expr;
   expr << "(game-uproot " << object->id
@@ -473,7 +474,7 @@ DLLEXPORT int plantUproot(_Plant* object, int x, int y)
     for (int i = 0; i < getPlantCount(c); i++)
     {
       checking_plant = getPlant(c,i);
-      if ((checking->mutation == spawnerNo || checking->mutation == motherNo) && checking_plant->owner == getPlayerID(c) && checking_plant->id != object->id)
+      if ((checking_plant->mutation == spawnerNo || checking_plant->mutation == motherNo) && checking_plant->owner == getPlayerID(c) && checking_plant->id != object->id)
       {
         if (dist(object->x, object->y, checking_plant->x, checking_plant->y) <= checking_plant->range)
         {
