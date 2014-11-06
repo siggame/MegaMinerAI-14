@@ -182,6 +182,9 @@ class Match(DefaultGameWorld):
               target.rads += self.poolDamage
               target.strength += self.poolBuff
               target.handleDeath()
+            else:
+              #Soakers benefit from pools but don't take the damage
+              target.strength += self.poolBuff
             plant.strength -= 1
         if plant.strength <= 0:
           del self.plantsByPosition[(plant.x, plant.y)]
