@@ -276,22 +276,13 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
   else if (x < 0 || x >= getMapWidth(c) || y < 0 || y >= getMapHeight(c))
     return 0;
 
-  //Make sure there are no plants on the tile
-  _Plant* a_plant;
-  for (int i = 0; i < getPlantCount(c); i++)
-  {
-    a_plant = getPlant(c,i);
-    if (a_plant->x == x && a_plant->y == y)
-      return 0;
-  }
-
   //Check Plants Owned
   int plantsOwned = 0;
   for (int i = 0; i < getPlantCount(c); i++)
   {
     plantsOwned += (getPlant(c,i)->owner == getPlayerID(c));
   }
-  if (plantsOwned >= getMaxPlants(c))
+  if (plantsOwned+thisTurnPlants.size() >= getMaxPlants(c))
     return 0;
 
   //Check range
@@ -299,7 +290,9 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
   for (int i = 0; i < getPlantCount(c); i++)
   {
     _Plant* checking = getPlant(c,i);
-    if (checking->x == x && checking->y == y)
+    // Check to make sure there is not a plant on that tile already.
+    // Make sure that plant is still alive
+    if (checking->x == x && checking->y == y && checking->rads < checking->maxRads)
       return 0;
 
     if ((checking->mutation == spawnerNo || checking->mutation == motherNo) &&
