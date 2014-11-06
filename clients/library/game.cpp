@@ -276,22 +276,13 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
   else if (x < 0 || x >= getMapWidth(c) || y < 0 || y >= getMapHeight(c))
     return 0;
 
-  //Make sure there are no plants on the tile
-  _Plant* a_plant;
-  for (int i = 0; i < getPlantCount(c); i++)
-  {
-    a_plant = getPlant(c,i);
-    if (a_plant->x == x && a_plant->y == y)
-      return 0;
-  }
-
   //Check Plants Owned
   int plantsOwned = 0;
   for (int i = 0; i < getPlantCount(c); i++)
   {
     plantsOwned += (getPlant(c,i)->owner == getPlayerID(c));
   }
-  if (plantsOwned >= getMaxPlants(c))
+  if (plantsOwned+thisTurnPlants.size() >= getMaxPlants(c))
     return 0;
 
   //Check range
@@ -299,7 +290,9 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
   for (int i = 0; i < getPlantCount(c); i++)
   {
     _Plant* checking = getPlant(c,i);
-    if (checking->x == x && checking->y == y)
+    // Check to make sure there is not a plant on that tile already.
+    // Make sure that plant is still alive
+    if (checking->x == x && checking->y == y && checking->rads < checking->maxRads)
       return 0;
 
     if ((checking->mutation == spawnerNo || checking->mutation == motherNo) &&
@@ -434,6 +427,7 @@ DLLEXPORT int plantUproot(_Plant* object, int x, int y)
 {
   const int spawnerNo = 1;
   const int tumbleNo = 4;
+  const int motherNo = 0;
 
   stringstream expr;
   expr << "(game-uproot " << object->id
@@ -458,7 +452,7 @@ DLLEXPORT int plantUproot(_Plant* object, int x, int y)
   for (int i = 0; i < getPlantCount(c); i++)
   {
     a_plant = getPlant(c,i);
-    if (a_plant->x == x && a_plant->y == y)
+    if (a_plant->x == x && a_plant->y == y && a_plant->rads < a_plant->maxRads)
       return 0;
   }
 
@@ -473,7 +467,7 @@ DLLEXPORT int plantUproot(_Plant* object, int x, int y)
     for (int i = 0; i < getPlantCount(c); i++)
     {
       checking_plant = getPlant(c,i);
-      if (checking_plant->mutation == spawnerNo && checking_plant->owner == getPlayerID(c) && checking_plant->id != object->id)
+      if ((checking_plant->mutation == spawnerNo || checking_plant->mutation == motherNo) && checking_plant->owner == getPlayerID(c) && checking_plant->id != object->id)
       {
         if (dist(object->x, object->y, checking_plant->x, checking_plant->y) <= checking_plant->range)
         {
