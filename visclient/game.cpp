@@ -61,7 +61,6 @@ DLLEXPORT Connection* createConnection()
   c->bumbleweedSpeed = 0;
   c->poolDamage = 0;
   c->poolBuff = 0;
-  c->titanDebuff = 0;
   c->sporeRate = 0;
   c->maxSpores = 0;
   c->Players = NULL;
@@ -471,9 +470,6 @@ DLLEXPORT int networkLoop(Connection* c)
           c->poolBuff = atoi(sub->val);
           sub = sub->next;
 
-          c->titanDebuff = atoi(sub->val);
-          sub = sub->next;
-
           c->sporeRate = atoi(sub->val);
           sub = sub->next;
 
@@ -637,10 +633,6 @@ DLLEXPORT int getPoolDamage(Connection* c)
 DLLEXPORT int getPoolBuff(Connection* c)
 {
   return c->poolBuff;
-}
-DLLEXPORT int getTitanDebuff(Connection* c)
-{
-  return c->titanDebuff;
 }
 DLLEXPORT int getSporeRate(Connection* c)
 {

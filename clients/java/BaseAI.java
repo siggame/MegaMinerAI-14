@@ -123,11 +123,6 @@ public abstract class BaseAI
   {
     return Client.INSTANCE.getPoolBuff(connection);
   }
-  ///The strength debuff caused by an enemy Titan
-  int titanDebuff()
-  {
-    return Client.INSTANCE.getTitanDebuff(connection);
-  }
   ///The rate which your spores return to maxSpores
   int sporeRate()
   {
