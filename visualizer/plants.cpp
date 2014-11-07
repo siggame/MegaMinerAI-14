@@ -75,23 +75,16 @@ namespace visualizer
             renderer->setColor(getPlayerColor(owner));
 
             std::stringstream stream;
-            stream << m_game->states[0].players[owner].playerName << string("Spores: ") << m_game->states[timeManager->getTurn()].players[owner].spores;
+			stream << m_game->states[0].players[owner].playerName << " Spores: " << m_game->states[timeManager->getTurn()].players[owner].spores;
             renderer->drawText(namePos, y, "Roboto", stream.str(), 200.0f, alignment);
         }
+
+		renderer->enableScissor(GRID_OFFSET, getHeight() + GRID_OFFSET, getWidth(), getHeight());
 	}
 
 	void Plants::postDraw()
 	{
-		if( renderer->fboSupport() )
-		{
-			#if 0
-			renderer->useShader( programs["post"] );
-			renderer->swapFBO();
-			renderer->useShader( 0 );
-			#endif
-
-		}
-
+		renderer->disableScissor();
 		renderer->pop();
 	}
 
@@ -161,13 +154,18 @@ namespace visualizer
 
 	string Plants::getPlantFromID(int id) const
 	{
-		// TODO: correctly match ids with string
+		// TODO: correctly match ids with string and team color
 		switch(id)
 		{
 			case 0: return "mother"; break;
 			case 1: return "spawner"; break;
+			case 2: return "choke1"; break;
+			case 3: return "soaker"; break;
+			case 4: return "bumbleweed1"; break;
+			case 5: return "aralia"; break;
+			//case 6: return "titan"; break;
 			case 7: return "rad_pool"; break;
-			default: return "soaker";
+			default: return "spawner";
 		}
 	}
 
@@ -182,6 +180,9 @@ namespace visualizer
 		{
 			Rect R;
 			GetSelectedRect(R);
+
+			// todo: this causes the game to hang
+			//renderer->setCamera( R.left, R.top, R.right, R.bottom );
 
 			m_SelectedUnits.clear();
 
@@ -202,6 +203,35 @@ namespace visualizer
 			gui->updateDebugUnitFocus();
 		}
 	}
+
+	void Plants::pruneSelection()
+	  {
+		  int turn = timeManager->getTurn();
+		  bool changed = false;
+		  int focus = gui->getCurrentUnitFocus();
+
+		  if(turn < (int) m_game->states.size())
+		  {
+			  auto iter = m_SelectedUnits.begin();
+
+			  while(iter != m_SelectedUnits.end())
+			  {
+				  if(m_game->states[turn].plants.find(*iter) == m_game->states[turn].plants.end())
+				  {
+					  iter = m_SelectedUnits.erase(iter);
+					  changed = true;
+				  }
+				  else
+					  iter++;
+
+				  if(changed == true)
+					gui->updateDebugWindow();
+
+				  if(std::find(m_SelectedUnits.begin(), m_SelectedUnits.end(), focus) == m_SelectedUnits.end())
+					gui->updateDebugUnitFocus();
+			  }
+		  }
+	  }
 
 	void Plants::GetSelectedRect(Rect &out) const
 	{
@@ -302,7 +332,7 @@ namespace visualizer
 				else
 				{
 					SmartPointer<DrawTexturedCircleData> spriteData = new DrawTexturedCircleData(plant.x, plant.y, plantSize, plantTexture);
-					spriteData->addKeyFrame( new DrawTexturedCircle( spriteData, plantColor, bSpawned ? FadeIn : None ) );
+					spriteData->addKeyFrame( new DrawTexturedCircle( spriteData, Color(1, 1, 1, 0.7), bSpawned ? FadeIn : None ) );
 
 					anim = spriteData;
 				}
@@ -361,6 +391,13 @@ namespace visualizer
 			{
 				turn.addAnimatable( animationQueue.front() );
 				animationQueue.pop();
+			}
+			
+			if(state == (int)m_game->states.size() - 1)
+			{
+				SmartPointer<DrawWinningData> winningData = new DrawWinningData(0, 0, getWidth(), getHeight(), m_game->winReason);
+				winningData->addKeyFrame( new DrawWinningScreen( winningData, Color(0.1,0.6,0.8,0.2), None ) );
+				turn.addAnimatable( winningData );
 			}
 
 			animationEngine->buildAnimations(turn);

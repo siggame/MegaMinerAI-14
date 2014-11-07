@@ -26,6 +26,15 @@ namespace visualizer
     	float width, height;
     };
     
+    struct DrawWinningData : public DrawQuadData
+    {
+		DrawWinningData(float x, float y, float width, float height, string winner) :
+			DrawQuadData(x, y, width, height), winner(winner){}
+		
+		string winner;
+	};
+    
+    
     struct DrawSpriteData : public Animatable
     {
 		DrawSpriteData(float x, float y, float width, float height, string texture) :
@@ -35,6 +44,18 @@ namespace visualizer
     	float width, height;
     	string texture;
     };
+
+	struct DrawAnimatedSpriteData : public DrawSpriteData
+	{
+		DrawAnimatedSpriteData(int startFrame, int endFrame,
+							   float x, float y,
+							   float width, float height, string texture) :
+			DrawSpriteData(x, y, width, height, texture), startFrame(startFrame), endFrame(endFrame) {}
+
+		int startFrame;
+		int endFrame;
+
+	};
     
     struct DrawCircleData : public Animatable
     {

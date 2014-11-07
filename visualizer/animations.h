@@ -28,8 +28,10 @@ namespace visualizer
     };
   
     DRAW_OBJECT(DrawQuad, DrawQuadData)
+    DRAW_OBJECT(DrawWinningScreen, DrawWinningData)
     DRAW_OBJECT(DrawCircle, DrawCircleData)
     DRAW_OBJECT(DrawSprite, DrawSpriteData)
+	DRAW_OBJECT(DrawAnimatedSprite, DrawAnimatedSpriteData)
 	DRAW_OBJECT(DrawTexturedCircle, DrawTexturedCircleData)
 }
 

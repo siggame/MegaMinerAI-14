@@ -12,8 +12,8 @@ class Player(object):
     self.time = time
     self.spores = spores
     self.updatedAt = game.turnNumber
-    self.toSpawn = []
 
+    self.toSpawn = []
     self.plants = []
     self.spawners = []
 
@@ -65,7 +65,7 @@ class Player(object):
       return 'Turn {}: You do not have enough spores to germinate. Need: {} Have: {}'.format(self.game.turnNumber, mutation.spores, self.spores)
     elif not 0 <= x < self.game.mapWidth or not 0 <= y < self.game.mapHeight:
       return 'Turn {}: You are trying to germinate outside of the map.'.format(self.game.turnNumber)
-    elif sum(x.owner == self.id for x in self.game.objects.plants) >= self.game.maxPlants:
+    elif len(self.plants) + len(self.toSpawn) >= self.game.maxPlants:
       return 'Turn {}: You already have the maximum number of plants.'.format(self.game.turnNumber)
 
     # Make sure there are no plants on the tile
@@ -243,6 +243,13 @@ class Plant(Mappable):
     # Make sure there are no plants on the destination
     if (x, y) in self.game.plantsByPosition:
       return 'Turn {}: Your plant {} cannot move on top of another plant.'.format(self.game.turnNumber, self.id)
+
+    # Make sure nothing is trying to be spawned there
+    for almostPlant in self.game.objects.players[self.owner].toSpawn:
+      x2 = almostPlant[0]
+      y2 = almostPlant[1]
+      if (x2 == x) and (y2 == y):
+        return 'Turn {}: Your plant {} cannot move on top of a germinating plant at ({}, {}).'.format(self.game.turnNumber, self.id, x, y)
 
     # Find a spawner to move with
     if self.mutation != self.game.tumbleweed:
