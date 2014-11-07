@@ -181,6 +181,9 @@ namespace visualizer
 			Rect R;
 			GetSelectedRect(R);
 
+			// todo: this causes the game to hang
+			//renderer->setCamera( R.left, R.top, R.right, R.bottom );
+
 			m_SelectedUnits.clear();
 
 			if(unitSelectable)
@@ -200,6 +203,35 @@ namespace visualizer
 			gui->updateDebugUnitFocus();
 		}
 	}
+
+	void Plants::pruneSelection()
+	  {
+		  int turn = timeManager->getTurn();
+		  bool changed = false;
+		  int focus = gui->getCurrentUnitFocus();
+
+		  if(turn < (int) m_game->states.size())
+		  {
+			  auto iter = m_SelectedUnits.begin();
+
+			  while(iter != m_SelectedUnits.end())
+			  {
+				  if(m_game->states[turn].plants.find(*iter) == m_game->states[turn].plants.end())
+				  {
+					  iter = m_SelectedUnits.erase(iter);
+					  changed = true;
+				  }
+				  else
+					  iter++;
+
+				  if(changed == true)
+					gui->updateDebugWindow();
+
+				  if(std::find(m_SelectedUnits.begin(), m_SelectedUnits.end(), focus) == m_SelectedUnits.end())
+					gui->updateDebugUnitFocus();
+			  }
+		  }
+	  }
 
 	void Plants::GetSelectedRect(Rect &out) const
 	{

@@ -49,6 +49,17 @@ using std::stringstream;
 using std::string;
 using std::ofstream;
 
+
+struct point
+{
+  int x,y;
+  point(int x, int y):x(x),y(y){}
+};
+
+//stuff being spawned this turn
+static std::vector<point> thisTurnPlants;
+static int turnNo;
+
 //distance helper function
 int dist(int x1, int y1, int x2, int y2)
 {
@@ -72,7 +83,6 @@ DLLEXPORT Connection* createConnection()
   c->bumbleweedSpeed = 0;
   c->poolDamage = 0;
   c->poolBuff = 0;
-  c->titanDebuff = 0;
   c->Players = NULL;
   c->PlayerCount = 0;
   c->Mappables = NULL;
@@ -228,19 +238,11 @@ DLLEXPORT void getStatus(Connection* c)
   UNLOCK( &c->mutex );
 }
 
-struct point
-{
-  int x,y;
-  point(int x, int y):x(x),y(y){}
-};
 
 DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
 {
   const int spawnerNo = 1;
   const int motherNo = 0;
-  //stuff being spawned this turn
-  static std::vector<point> thisTurnPlants;
-  static int turnNo;
 
   stringstream expr;
   expr << "(game-germinate " << object->id
@@ -284,17 +286,22 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
   }
   if (plantsOwned+thisTurnPlants.size() >= getMaxPlants(c))
     return 0;
+  
+  // Check to make sure there is not a plant on that tile already.
+  // Make sure that plant is still alive
+  for (int i = 0; i < getPlantCount(c); i++)
+  {
+    _Plant* checking = getPlant(c,i);
+    if (checking->x == x && checking->y == y && checking->rads < checking->maxRads)
+      return 0;
+  }
 
   //Check range
   bool inRange = false;
   for (int i = 0; i < getPlantCount(c); i++)
   {
     _Plant* checking = getPlant(c,i);
-    // Check to make sure there is not a plant on that tile already.
-    // Make sure that plant is still alive
-    if (checking->x == x && checking->y == y && checking->rads < checking->maxRads)
-      return 0;
-
+    // Check to make sure the target is in the range of the spawner
     if ((checking->mutation == spawnerNo || checking->mutation == motherNo) &&
         checking->owner == object->id)
     {
@@ -429,6 +436,13 @@ DLLEXPORT int plantUproot(_Plant* object, int x, int y)
   const int tumbleNo = 4;
   const int motherNo = 0;
 
+  //Clear thisTurnPlants if it is from the last turn.
+  if(turnNo != object->_c->turnNumber)
+  {
+    thisTurnPlants.clear();
+    turnNo = object->_c->turnNumber;
+  }
+
   stringstream expr;
   expr << "(game-uproot " << object->id
        << " " << x
@@ -456,12 +470,20 @@ DLLEXPORT int plantUproot(_Plant* object, int x, int y)
       return 0;
   }
 
+  //Make sure we aren't moving on to a plant about to spawn:
+  for(int i = 0; i < thisTurnPlants.size(); i++)
+  {
+    if(thisTurnPlants[i].x == x && thisTurnPlants[i].y == y)
+    {
+      return 0;
+    }
+  }
+
   //Find a spawner to move with
   bool inRange;
   if (object->mutation != tumbleNo)
   {
     inRange = false;
-
     //identify and check every possible spawner
     _Plant* checking_plant;
     for (int i = 0; i < getPlantCount(c); i++)
@@ -469,10 +491,13 @@ DLLEXPORT int plantUproot(_Plant* object, int x, int y)
       checking_plant = getPlant(c,i);
       if ((checking_plant->mutation == spawnerNo || checking_plant->mutation == motherNo) && checking_plant->owner == getPlayerID(c) && checking_plant->id != object->id)
       {
-        if (dist(object->x, object->y, checking_plant->x, checking_plant->y) <= checking_plant->range)
+        if (dist(x, y, checking_plant->x, checking_plant->y) <= checking_plant->range)
         {
-          inRange = true;
-          break;
+          if (dist(object->x, object->y, checking_plant->x, checking_plant->y) <= checking_plant->range)
+          {
+            inRange = true;
+            break;
+          }
         }
       }
     }
@@ -698,15 +723,11 @@ DLLEXPORT int networkLoop(Connection* c)
           c->poolBuff = atoi(sub->val);
           sub = sub->next;
 
-          c->titanDebuff = atoi(sub->val);
+          c->sporeRate = atoi(sub->val);
           sub = sub->next;
 
-           c->sporeRate = atoi(sub->val);
-           sub = sub->next;
-
-           c->maxSpores = atoi(sub->val);
-           sub = sub->next;
-
+          c->maxSpores = atoi(sub->val);
+          sub = sub->next;
 
         }
         else if(string(sub->val) == "Player")
@@ -878,10 +899,6 @@ DLLEXPORT int getPoolDamage(Connection* c)
 DLLEXPORT int getPoolBuff(Connection* c)
 {
   return c->poolBuff;
-}
-DLLEXPORT int getTitanDebuff(Connection* c)
-{
-  return c->titanDebuff;
 }
 DLLEXPORT int getSporeRate(Connection* c)
 {

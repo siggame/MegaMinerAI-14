@@ -243,6 +243,13 @@ class Plant(Mappable):
     if (x, y) in self.game.plantsByPosition:
       return 'Turn {}: Your plant {} cannot move on top of another plant.'.format(self.game.turnNumber, self.id)
 
+    # Make sure nothing is trying to be spawned there
+    for almostPlant in self.game.objects.players[self.owner].toSpawn:
+      x2 = almostPlant[0]
+      y2 = almostPlant[1]
+      if (x2 == x) and (y2 == y):
+        return 'Turn {}: Your plant {} cannot move on top of a germinating plant at ({}, {}).'.format(self.game.turnNumber, self.id, x, y)
+
     # Find a spawner to move with
     if self.mutation != self.game.tumbleweed:
       inRange = False

@@ -92,11 +92,6 @@ class BaseAI:
   #\endcond
   poolBuff = property(getPoolBuff)
   #\cond
-  def getTitanDebuff(self):
-    return library.getTitanDebuff(self.connection)
-  #\endcond
-  titanDebuff = property(getTitanDebuff)
-  #\cond
   def getSporeRate(self):
     return library.getSporeRate(self.connection)
   #\endcond

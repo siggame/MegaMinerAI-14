@@ -44,6 +44,18 @@ namespace visualizer
     	float width, height;
     	string texture;
     };
+
+	struct DrawAnimatedSpriteData : public DrawSpriteData
+	{
+		DrawAnimatedSpriteData(int startFrame, int endFrame,
+							   float x, float y,
+							   float width, float height, string texture) :
+			DrawSpriteData(x, y, width, height, texture), startFrame(startFrame), endFrame(endFrame) {}
+
+		int startFrame;
+		int endFrame;
+
+	};
     
     struct DrawCircleData : public Animatable
     {

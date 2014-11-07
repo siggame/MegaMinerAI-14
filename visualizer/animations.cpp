@@ -70,4 +70,14 @@ namespace visualizer
 
 		game->renderer->drawTexturedQuad( m_data->x, m_data->y, m_data->width, m_data->height, 1, m_data->texture );
 	}
+
+	void DrawAnimatedSprite::animate(const float &t, AnimData *d, IGame *game)
+	{
+		DrawFadedObject::animate(t, d, game);
+
+		int currentFrame = (m_data->endFrame - m_data->startFrame) * t + m_data->startFrame;
+		game->renderer->drawAnimQuad(m_data->x, m_data->y,
+									 m_data->width, m_data->height,
+									 m_data->texture, false, currentFrame);
+	}
 }

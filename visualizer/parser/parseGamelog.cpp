@@ -585,9 +585,6 @@ static bool parseSexp(Game& game, sexp_t* expression)
           gs.poolBuff = atoi(sub->val);
           sub = sub->next;
           if ( !sub ) return false;
-          gs.titanDebuff = atoi(sub->val);
-          sub = sub->next;
-          if ( !sub ) return false;
           gs.sporeRate = atoi(sub->val);
           sub = sub->next;
           if ( !sub ) return false;

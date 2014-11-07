@@ -184,16 +184,6 @@ public abstract class BaseAI
   }
 
   /// <summary>
-  /// The strength debuff caused by an enemy Titan
-  /// </summary>
-  /// <returns>Returns the strength debuff caused by an enemy Titan</returns>
-  public int titanDebuff()
-  {
-    int value = Client.getTitanDebuff(connection);
-    return value;
-  }
-
-  /// <summary>
   /// The rate which your spores return to maxSpores
   /// </summary>
   /// <returns>Returns the rate which your spores return to maxSpores</returns>
