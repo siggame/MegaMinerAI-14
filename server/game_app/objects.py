@@ -30,8 +30,8 @@ class Player(object):
       plantWorth = 0
       #determine strength of soakers
       for plant in self.plants:
-        if plant.mutation not in (self.game.SOAKER, self.game.SPAWNER, self.game.MOTHER):
-          plantWorth += self.game.mutations[plant.mutation].spores
+        if plant.mutation not in (self.game.soaker, self.game.spawner, self.game.mother):
+          plantWorth += self.game.objects.mutations[plant.mutation].spores
 
       sporesYouShouldHave = self.game.maxSpores
 
