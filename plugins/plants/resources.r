@@ -6,6 +6,7 @@ texture mother textures/mothershade.png
 texture soaker textures/soakershade.png
 texture aralia textures/aralia1.png
 texture spawner textures/dandelion.png
+texture spawner2 textures/dandelion2.png
 texture grid textures/ground.jpg
 texture rad_pool textures/rad_pool.png
 texture bumbleweed1 textures/bumbleweed1.png
