@@ -203,7 +203,7 @@ class Plant(Mappable):
         return 'Turn {}: Your {} cannot attack your own plants'.format(self.game.turnNumber, self.id)
 
       # Deal damage
-      damage = self.strength + int(self.strength * (self.rads / self.maxRads))
+      damage = self.strength + int(self.strength * (float(self.rads) / float(self.maxRads)))
       target_plant.rads += damage
       target_plant.handleDeath()
 
