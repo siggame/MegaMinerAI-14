@@ -181,6 +181,9 @@ namespace visualizer
 			Rect R;
 			GetSelectedRect(R);
 
+			// todo: this causes the game to hang
+			//renderer->setCamera( R.left, R.top, R.right, R.bottom );
+
 			m_SelectedUnits.clear();
 
 			if(unitSelectable)
