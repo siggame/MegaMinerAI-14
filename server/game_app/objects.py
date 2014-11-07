@@ -29,10 +29,9 @@ class Player(object):
     if self.game.playerID == self.id:
       plantWorth = 0
       #determine strength of soakers
-      for plant in self.game.objects.plants:
-        #make sure player owns plant and that plant is a soaker
-        if plant.owner == self.game.playerID and plant.mutation == 3:
-          plantWorth += plant.strength
+      for plant in self.plants:
+        if plant.mutation not in (self.game.soaker, self.game.spawner, self.game.mother):
+          plantWorth += self.game.objects.mutations[plant.mutation].spores
 
       sporesYouShouldHave = self.game.maxSpores
 
