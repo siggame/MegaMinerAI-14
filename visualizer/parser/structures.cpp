@@ -136,7 +136,6 @@ std::ostream& operator<<(std::ostream& stream, GameState ob)
   stream << "bumbleweedSpeed: " << ob.bumbleweedSpeed  <<'\n';
   stream << "poolDamage: " << ob.poolDamage  <<'\n';
   stream << "poolBuff: " << ob.poolBuff  <<'\n';
-  stream << "titanDebuff: " << ob.titanDebuff  <<'\n';
   stream << "sporeRate: " << ob.sporeRate  <<'\n';
   stream << "maxSpores: " << ob.maxSpores  <<'\n';
 

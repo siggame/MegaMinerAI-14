@@ -40,7 +40,6 @@ struct Connection
   int bumbleweedSpeed;
   int poolDamage;
   int poolBuff;
-  int titanDebuff;
   int sporeRate;
   int maxSpores;
 
@@ -96,7 +95,6 @@ DLLEXPORT int getGameNumber(Connection* c);
 DLLEXPORT int getBumbleweedSpeed(Connection* c);
 DLLEXPORT int getPoolDamage(Connection* c);
 DLLEXPORT int getPoolBuff(Connection* c);
-DLLEXPORT int getTitanDebuff(Connection* c);
 DLLEXPORT int getSporeRate(Connection* c);
 DLLEXPORT int getMaxSpores(Connection* c);
 

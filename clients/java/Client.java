@@ -33,7 +33,6 @@ public interface Client extends Library {
   int getBumbleweedSpeed(Pointer connection);
   int getPoolDamage(Pointer connection);
   int getPoolBuff(Pointer connection);
-  int getTitanDebuff(Pointer connection);
   int getSporeRate(Pointer connection);
   int getMaxSpores(Pointer connection);
 
