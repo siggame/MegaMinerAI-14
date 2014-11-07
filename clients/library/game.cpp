@@ -405,7 +405,8 @@ DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
     if (target->owner != (1 - getPlayerID(c)))
       return 0;
 
-    target->rads += object->strength;
+    int damage = object->strength + int(object->strength * ((float)object->rads / (float)object->maxRads));
+    target->rads += damage;
   }
   else if (object->mutation == 3 || object->mutation == 4)
   {
