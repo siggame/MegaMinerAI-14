@@ -53,8 +53,6 @@ public class Client {
   [DllImport("client")]
   public static extern int getPoolBuff(IntPtr connection);
   [DllImport("client")]
-  public static extern int getTitanDebuff(IntPtr connection);
-  [DllImport("client")]
   public static extern int getSporeRate(IntPtr connection);
   [DllImport("client")]
   public static extern int getMaxSpores(IntPtr connection);
