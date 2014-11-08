@@ -37,4 +37,4 @@ animation choke_anim2 textures/animations/chokesheet2.png
 animation titan_anim1 textures/animations/wiggle1.png
 animation titan_anim2 textures/animations/wiggle2.png
 
-animation death_anim textures/animations/death.png
+animation death textures/animations/death.png

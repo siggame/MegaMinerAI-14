@@ -89,7 +89,7 @@ namespace visualizer
 		int currentFrame = (m_data->endFrame - m_data->startFrame) * t + m_data->startFrame;
 		game->renderer->drawAnimQuad(m_data->x, m_data->y,
 									 m_data->width, m_data->height,
-                                     m_data->texture, m_data->flip, currentFrame);
+									 m_data->texture, m_data->flip, currentFrame);
 	
                 // pop the zoom matrix herer
         }
