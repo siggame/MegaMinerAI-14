@@ -14,7 +14,7 @@ class AI : BaseAI
              SPAWNER = 1,
              CHOKER = 2,
              SOAKER = 3,
-             TUMBLEWEED = 4,
+             BUMBLEWEED = 4,
              ARALIA = 5,
              TITAN = 6,
              POOL = 7;
@@ -43,39 +43,74 @@ class AI : BaseAI
     for (int j = 0; j < myPlants.Count; j++)
     {
       Plant plant = myPlants[j];
-      //move them if we can
+      //only try radiating if it's possible
+      if(plant.RadiatesLeft > 0)
+      {
+        //only heal or buff allies and attack enemies
+        int targetOwner = 1 - playerID();
+        if(plant.Mutation == BUMBLEWEED || plant.Mutation == SOAKER)
+        {
+          targetOwner = playerID();
+        }
+        for (int i = 0; i < plants.Length; i++)
+        {
+          Plant foe = plants[i];
+
+          //if it's dead skip it
+          if(foe.Rads >= foe.MaxRads)
+          {
+            continue;
+          }
+
+          //don't mess with pools
+          if(foe.Mutation == POOL)
+          {
+            continue;
+          }
+
+          //if it's not the right target
+          if(foe.Owner != targetOwner)
+          {
+            continue;
+          }
+
+          //if a healer or soaker can't effect the mother weed
+          if(targetOwner == playerID() && foe.Mutation == MOTHER)
+          {
+            continue;
+          }
+
+          //if a soaker can't effect other soakers
+          if(plant.Mutation == SOAKER && foe.Mutation == SOAKER)
+          {
+            continue;
+          }
+
+          //if we're within range...
+          if (distance(plant.X, plant.Y, foe.X, foe.Y) < plant.Range)
+          {
+            //get 'im!
+            plant.radiate(foe.X, foe.Y);
+            break;
+          }
+        }
+      }
+      //move them straight to the other side. no regrets.
+      //move as far as possible, as long as it's not off the map
+      int wantedX = plant.X;
+      if(plant.Mutation == BUMBLEWEED)
+      {
+        wantedX += directionOfEnemy * bumbleweedSpeed();
+      }
+      else
+      {
+        wantedX += directionOfEnemy * uprootRange();
+      }
       if (plant.UprootsLeft > 0 &&
-          getPlantAt(plant.X+directionOfEnemy, plant.Y) == null &&
-          withinSpawnerRange(plant.X+directionOfEnemy, plant.Y))
+          getPlantAt(wantedX, plant.Y) == null &&
+          wantedX >= 0 && wantedX < mapWidth())
       {
-        //move them straight to the other side. no regrets.
-        plant.uproot(plant.X+directionOfEnemy, plant.Y);
-      }
-  
-      //if we can't attack, don't bother trying.
-      if (plant.RadiatesLeft == 0)
-      {
-        continue;
-      }
-  
-      //if there's anyone around, attaaaaaaaaaaack!!
-      for (int i = 0; i < plants.Length; i++)
-      {
-        Plant foe = plants[i];
-  
-        //let's not kill our own men, shall we?
-        //also no pools
-        if (foe.Owner == me.Id && foe.Mutation != POOL)
-        {
-          continue;
-        }
-  
-        //if we're within range...
-        if (distance(plant.X, plant.Y, foe.X, foe.Y) < plant.Range)
-        {
-          //get 'im!
-          plant.radiate(foe.X, foe.Y);
-        }
+        plant.uproot(wantedX, plant.Y);
       }
     }
   
