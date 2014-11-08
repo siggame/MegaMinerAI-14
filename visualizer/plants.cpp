@@ -175,7 +175,7 @@ namespace visualizer
 			case 3: stream << "soaker"; break;
 			case 4: stream << "bumbleweed"; break;
 			case 5: stream << "aralia"; break;
-			//case 6: return "titan"; break;
+			case 6: stream << "titan"; break;
 			default: stream << "spawner";
 		}
 
@@ -188,7 +188,6 @@ namespace visualizer
 		const Input& input = gui->getInput();
 		int turn = timeManager->getTurn();
 		int unitSelectable = gui->getDebugOptionState("Units Selectable");
-		//int tilesSelectable = gui->getDebugOptionState("Tiles Selectable");
 
 		if(input.leftRelease && turn < (int) m_game->states.size())
 		{

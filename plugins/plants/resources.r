@@ -1,6 +1,5 @@
 font DroidSansMono textures/fonts/DroidSansMono.png DroidSansMono.dat
 font Roboto textures/fonts/Roboto.png Roboto.dat
-texture texture textures/texture.png
 
 texture soaker1 textures/soaker1.png
 texture soaker2 textures/soaker2.png
@@ -19,6 +18,9 @@ texture bumbleweed2 textures/bumblesheet2.png
 
 texture choke1 textures/choke1.png
 texture choke2 textures/choke2.png
+
+texture titan1 textures/titan1.png
+texture titan2 textures/titan2.png
 
 texture seed textures/seed.png
 
