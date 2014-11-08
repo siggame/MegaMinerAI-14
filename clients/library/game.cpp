@@ -83,6 +83,7 @@ DLLEXPORT Connection* createConnection()
   c->bumbleweedSpeed = 0;
   c->poolDamage = 0;
   c->poolBuff = 0;
+  c->uprootRange = 0;
   c->Players = NULL;
   c->PlayerCount = 0;
   c->Mappables = NULL;
@@ -422,7 +423,7 @@ DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
       target->rads = std::max(target->rads - object->strength, 0);
     else if (object->mutation == 3) { //buff if soaker
       int buff = static_cast<int>(1 + object->strength/4.0);
-      target->strength = std::max(target->strength + buff, target->maxStrength);
+      target->strength = std::min(target->strength + buff, target->maxStrength);
     }
   }
 
@@ -484,25 +485,7 @@ DLLEXPORT int plantUproot(_Plant* object, int x, int y)
   bool inRange;
   if (object->mutation != tumbleNo)
   {
-    inRange = false;
-    //identify and check every possible spawner
-    _Plant* checking_plant;
-    for (int i = 0; i < getPlantCount(c); i++)
-    {
-      checking_plant = getPlant(c,i);
-      if ((checking_plant->mutation == spawnerNo || checking_plant->mutation == motherNo) && checking_plant->owner == getPlayerID(c) && checking_plant->id != object->id)
-      {
-        if (dist(x, y, checking_plant->x, checking_plant->y) <= checking_plant->range)
-        {
-          if (dist(object->x, object->y, checking_plant->x, checking_plant->y) <= checking_plant->range)
-          {
-            inRange = true;
-            break;
-          }
-        }
-      }
-    }
-    if (!inRange)
+    if (dist(object->x, object->y, x, y) > getUprootRange(c))
       return 0;
   }
   else if (dist(object->x, object->y, x, y) > getBumbleweedSpeed(c))
@@ -730,6 +713,9 @@ DLLEXPORT int networkLoop(Connection* c)
           c->maxSpores = atoi(sub->val);
           sub = sub->next;
 
+          c->uprootRange = atoi(sub->val);
+          sub = sub->next;
+
         }
         else if(string(sub->val) == "Player")
         {
@@ -908,4 +894,8 @@ DLLEXPORT int getSporeRate(Connection* c)
 DLLEXPORT int getMaxSpores(Connection* c)
 {
   return c->maxSpores;
+}
+DLLEXPORT int getUprootRange(Connection* c)
+{
+  return c->uprootRange;
 }

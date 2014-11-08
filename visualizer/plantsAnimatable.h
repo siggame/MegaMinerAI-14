@@ -37,23 +37,25 @@ namespace visualizer
     
     struct DrawSpriteData : public Animatable
     {
-		DrawSpriteData(float x, float y, float width, float height, string texture) :
-			x(x), y(y), width(width), height(height), texture(texture) {}
+        DrawSpriteData(float x, float y, float width, float height, string texture, bool flip) :
+            x(x), y(y), width(width), height(height), texture(texture), flip(flip){}
     
     	float x, y;
     	float width, height;
     	string texture;
+        bool flip;
     };
 
 	struct DrawAnimatedSpriteData : public DrawSpriteData
 	{
 		DrawAnimatedSpriteData(int startFrame, int endFrame,
 							   float x, float y,
-							   float width, float height, string texture) :
-			DrawSpriteData(x, y, width, height, texture), startFrame(startFrame), endFrame(endFrame) {}
+                               float width, float height, string texture, bool flip) :
+            DrawSpriteData(x, y, width, height, texture, flip), startFrame(startFrame), endFrame(endFrame){}
 
 		int startFrame;
 		int endFrame;
+
 
 	};
     

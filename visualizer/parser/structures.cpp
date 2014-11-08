@@ -138,6 +138,7 @@ std::ostream& operator<<(std::ostream& stream, GameState ob)
   stream << "poolBuff: " << ob.poolBuff  <<'\n';
   stream << "sporeRate: " << ob.sporeRate  <<'\n';
   stream << "maxSpores: " << ob.maxSpores  <<'\n';
+  stream << "uprootRange: " << ob.uprootRange  <<'\n';
 
   stream << "\n\nPlayers:\n";
   for(std::map<int,Player>::iterator i = ob.players.begin(); i != ob.players.end(); i++)

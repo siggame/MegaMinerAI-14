@@ -590,6 +590,9 @@ static bool parseSexp(Game& game, sexp_t* expression)
           if ( !sub ) return false;
           gs.maxSpores = atoi(sub->val);
           sub = sub->next;
+          if ( !sub ) return false;
+          gs.uprootRange = atoi(sub->val);
+          sub = sub->next;
       }
       else if(string(sub->val) == "Player")
       {

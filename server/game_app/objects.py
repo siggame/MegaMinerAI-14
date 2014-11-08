@@ -221,7 +221,7 @@ class Plant(Mappable):
       else:
         # Soaker; buff
         buff = int(1 + self.strength/4)
-        target_plant.strength = max(target_plant.strength + buff, target_plant.maxStrength)
+        target_plant.strength = min(target_plant.strength + buff, target_plant.maxStrength)
 
     self.radiatesLeft -= 1
     if self.mutation == self.game.tumbleweed:
@@ -251,17 +251,9 @@ class Plant(Mappable):
       if (x2 == x) and (y2 == y):
         return 'Turn {}: Your plant {} cannot move on top of a germinating plant at ({}, {}).'.format(self.game.turnNumber, self.id, x, y)
 
-    # Find a spawner to move with
     if self.mutation != self.game.tumbleweed:
-      inRange = False
-      for spawner in self.game.objects.players[self.owner].spawners:
-        if spawner.id != self.id:
-          if self.game.dist(x, y, spawner.x, spawner.y) <= spawner.range:
-            if self.game.dist(self.x, self.y, spawner.x, spawner.y) <= spawner.range:
-              inRange = True
-              break
-      if not inRange:
-        return 'Turn {}: Your plant {} is trying to move out of the range of a spawner it is in range of.'.format(self.game.turnNumber, self.id)
+      if self.game.dist(self.x, self.y, x, y) > self.game.uprootRange:
+        return 'Turn {}: Your plant {} is trying to move too far.'.format(self.game.turnNumber, self.id)
     elif self.game.dist(self.x, self.y, x, y) > self.game.bumbleweedSpeed:
       return 'Turn {}: Your bumbleweed {} is trying to move too far.'.format(self.game.turnNumber, self.id)
 

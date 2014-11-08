@@ -202,4 +202,14 @@ public abstract class BaseAI
     int value = Client.getMaxSpores(connection);
     return value;
   }
+
+  /// <summary>
+  /// The maximum range which a plant can move
+  /// </summary>
+  /// <returns>Returns the maximum range which a plant can move</returns>
+  public int uprootRange()
+  {
+    int value = Client.getUprootRange(connection);
+    return value;
+  }
 }
