@@ -25,9 +25,10 @@ namespace visualizer
 	}
 
 	const float Plants::GRID_OFFSET = 20.0f;
-    const float Plants::PLANT_SIZE = 60.0f;
+        const float Plants::PLANT_SIZE = 60.0f;
 	Plants::Plants()
 	{
+                m_zoomFactor = 1;
 		m_game = 0;
 		m_suicide=false;
 	} // Plants::Plants()
@@ -160,11 +161,6 @@ namespace visualizer
 		// TODO: Change board size to something useful
 		renderer->setCamera( 0, 0, width, height );
 		renderer->setGridDimensions( width, height );
-
-                m_zoomRect.left = 0
-                m_zoomRect.top = 0
-                m_zoomRect.right = width
-                m_zoomRect.bottom = height
                 
 		start();
 	} // Plants::loadGamelog()
@@ -397,6 +393,17 @@ namespace visualizer
         
     }
 
+    void Plants::pushZoomMatrix() const 
+    {
+            renderer->push();
+            renderer->scale(m_zoomFactor, m_zoomFactor);
+    }
+      
+    void Plants::popZoomMatrix() const 
+    {
+            renderer->pop();
+    }
+    
 	std::list<IGUI::DebugOption> Plants::getDebugOptions()
 	{
 		return std::list<IGUI::DebugOption>({{"Units Selectable", true},

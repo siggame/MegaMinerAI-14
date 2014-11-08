@@ -28,29 +28,29 @@ namespace visualizer
 	{
 		DrawFadedObject::animate(t, d, game);
 
-                // push the zoom matrix here
+                game->pushZoomMatrix();
 		game->renderer->drawQuad( m_data->x, m_data->y, m_data->width, m_data->height );
-                // pop the zoom matrix here
+                game->popZoomMatrix();
         }
 	
 	void DrawWinningScreen::animate( const float& t, AnimData* d, IGame* game )
 	{
 		DrawFadedObject::animate(t, d, game);
 
-                // push the zoom matrix here
-		game->renderer->drawQuad( m_data->x, m_data->y, m_data->width, m_data->height );
+                game->pushZoomMatrix();
+                game->renderer->drawQuad( m_data->x, m_data->y, m_data->width, m_data->height );
 		game->renderer->setColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
 		game->renderer->drawText( m_data->x + (m_data->width)/2, m_data->y + (m_data->height)/2, "Roboto", m_data->winner, 200.0f, IRenderer::Center);
-                // pop the zoom matrix here
+                game->popZoomMatrix();
         }
 
 	void DrawCircle::animate( const float& t, AnimData* d, IGame* game )
 	{
 		DrawFadedObject::animate(t, d, game);
 
-                // push the zoom matrix here
+                game->pushZoomMatrix();
 		game->renderer->drawCircle( m_data->x, m_data->y, m_data->radius, 1, 100 );
-                // pop the zoom matrix here
+                game->popZoomMatrix();
         }
 
 	void DrawTexturedCircle::animate(const float &t, AnimData *d, IGame *game)
@@ -61,7 +61,7 @@ namespace visualizer
 
 		DrawFadedObject::animate(t, d, game);
 
-                // push the zoom matrix here
+                game->pushZoomMatrix();
 		float dx = 0.3 * cos(0.01*dt);
 		float dy = 0.3 * sin(0.01*dt);
 		game->renderer->drawTexturedCircle(m_data->x, m_data->y, m_data->radius, 1, 100, m_data->texture, 0.0f, dx, dy);
@@ -69,28 +69,30 @@ namespace visualizer
 		dx = 0.1 * cos(0.012*dt);
 		dy = 0.1 * sin(0.012*dt);
 		game->renderer->drawTexturedCircle(m_data->x, m_data->y, m_data->radius, 1, 100, m_data->texture, 0.0f, 4*dx, 4*dy, -20*dy, -20*dx);
-                // pop the zoom matrix here
+                game->popZoomMatrix();
             
         }
 
 	void DrawSprite::animate( const float& t, AnimData* d, IGame* game )
 	{
-		DrawFadedObject::animate(t, d, game);
-            // push the zoom matrix here
+            DrawFadedObject::animate(t, d, game);
+            
+            game->pushZoomMatrix();
             game->renderer->drawTexturedQuad( m_data->x, m_data->y, m_data->width, m_data->height, 1.0f, m_data->texture, m_data->flip );
-            // pop the zoom matrix here
+            game->popZoomMatrix();
             
         }
 
 	void DrawAnimatedSprite::animate(const float &t, AnimData *d, IGame *game)
 	{
 		DrawFadedObject::animate(t, d, game);
-                // push the zoom matrix here
+                
+                game->pushZoomMatrix();
 		int currentFrame = (m_data->endFrame - m_data->startFrame) * t + m_data->startFrame;
 		game->renderer->drawAnimQuad(m_data->x, m_data->y,
 									 m_data->width, m_data->height,
                                      m_data->texture, m_data->flip, currentFrame);
 	
-                // pop the zoom matrix herer
+                game->popZoomMatrix();
         }
 }
