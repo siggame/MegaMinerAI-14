@@ -42,6 +42,7 @@ struct Connection
   int poolBuff;
   int sporeRate;
   int maxSpores;
+  int uprootRange;
 
   _Player* Players;
   int PlayerCount;
@@ -97,6 +98,7 @@ DLLEXPORT int getPoolDamage(Connection* c);
 DLLEXPORT int getPoolBuff(Connection* c);
 DLLEXPORT int getSporeRate(Connection* c);
 DLLEXPORT int getMaxSpores(Connection* c);
+DLLEXPORT int getUprootRange(Connection* c);
 
 DLLEXPORT _Player* getPlayer(Connection* c, int num);
 DLLEXPORT int getPlayerCount(Connection* c);

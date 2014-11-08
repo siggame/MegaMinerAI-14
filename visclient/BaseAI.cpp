@@ -52,6 +52,10 @@ int BaseAI::maxSpores()
 {
   return getMaxSpores(c);
 }
+int BaseAI::uprootRange()
+{
+  return getUprootRange(c);
+}
 
 bool BaseAI::startTurn()
 {
