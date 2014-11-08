@@ -46,7 +46,6 @@ class Match(DefaultGameWorld):
     self.bumbleweedSpeed = self.bumbleweedSpeed
     self.poolDamage = self.poolDamage
     self.poolBuff = self.poolBuff
-    self.titanDebuff = self.titanDebuff
     self.sporeRate = self.sporeRate
     self.maxSpores = self.maxSpores
 
@@ -193,7 +192,7 @@ class Match(DefaultGameWorld):
       elif plant.mutation == self.titan and plant.owner == (1 - self.playerID):
         for target in self.objects.players[self.playerID].plants:
           if self.dist(target.x, target.y, plant.x, plant.y) <= plant.range:
-            target.strength -= self.titanDebuff
+            target.strength -= plant.strength
 
 
   def nextTurn(self):
@@ -233,7 +232,6 @@ class Match(DefaultGameWorld):
           bumbleweedSpeed = self.bumbleweedSpeed,
           poolDamage = self.poolDamage,
           poolBuff = self.poolBuff,
-          titanDebuff = self.titanDebuff,
           sporeRate = self.sporeRate,
           maxSpores = self.maxSpores,
           Players = [i.toJson() for i in self.objects.values() if i.__class__ is Player],
@@ -388,7 +386,7 @@ class Match(DefaultGameWorld):
     msg = ["status"]
 
     msg.append(["game", self.mapWidth, self.mapHeight, self.turnNumber, self.maxPlants, self.playerID, self.gameNumber,
-                self.bumbleweedSpeed, self.poolDamage, self.poolBuff, self.titanDebuff, self.sporeRate, self.maxSpores])
+                self.bumbleweedSpeed, self.poolDamage, self.poolBuff, self.sporeRate, self.maxSpores])
 
     typeLists = []
     typeLists.append(["Player"] + [i.toList() for i in self.objects.values() if i.__class__ is Player])

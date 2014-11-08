@@ -83,7 +83,6 @@ DLLEXPORT Connection* createConnection()
   c->bumbleweedSpeed = 0;
   c->poolDamage = 0;
   c->poolBuff = 0;
-  c->titanDebuff = 0;
   c->Players = NULL;
   c->PlayerCount = 0;
   c->Mappables = NULL;
@@ -406,7 +405,8 @@ DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
     if (target->owner != (1 - getPlayerID(c)))
       return 0;
 
-    target->rads += object->strength;
+    int damage = object->strength + int(object->strength * ((float)object->rads / (float)object->maxRads));
+    target->rads += damage;
   }
   else if (object->mutation == 3 || object->mutation == 4)
   {
@@ -724,15 +724,11 @@ DLLEXPORT int networkLoop(Connection* c)
           c->poolBuff = atoi(sub->val);
           sub = sub->next;
 
-          c->titanDebuff = atoi(sub->val);
+          c->sporeRate = atoi(sub->val);
           sub = sub->next;
 
-           c->sporeRate = atoi(sub->val);
-           sub = sub->next;
-
-           c->maxSpores = atoi(sub->val);
-           sub = sub->next;
-
+          c->maxSpores = atoi(sub->val);
+          sub = sub->next;
 
         }
         else if(string(sub->val) == "Player")
@@ -904,10 +900,6 @@ DLLEXPORT int getPoolDamage(Connection* c)
 DLLEXPORT int getPoolBuff(Connection* c)
 {
   return c->poolBuff;
-}
-DLLEXPORT int getTitanDebuff(Connection* c)
-{
-  return c->titanDebuff;
 }
 DLLEXPORT int getSporeRate(Connection* c)
 {

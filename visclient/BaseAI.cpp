@@ -44,10 +44,6 @@ int BaseAI::poolBuff()
 {
   return getPoolBuff(c);
 }
-int BaseAI::titanDebuff()
-{
-  return getTitanDebuff(c);
-}
 int BaseAI::sporeRate()
 {
   return getSporeRate(c);
