@@ -45,9 +45,9 @@ bool AI::run()
   std::vector<Plant*> myPlants = getMyPlants();
 
   //for every plant we own, move them forward and attack if it finds an enemy
-  for (int i = 0; i < myPlants.size(); i++)
+  for (int j = 0; j < myPlants.size(); j++)
   {
-    Plant& plant = *myPlants[i];
+    Plant& plant = *myPlants[j];
     //move them if we can
     if (plant.uprootsLeft() > 0 &&
         getPlantAt(plant.x()+directionOfEnemy, plant.y()) == NULL &&
