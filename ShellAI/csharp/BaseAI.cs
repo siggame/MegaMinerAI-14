@@ -212,4 +212,14 @@ public abstract class BaseAI
     int value = Client.getMaxSpores(connection);
     return value;
   }
+
+  /// <summary>
+  /// The range of uproot
+  /// </summary>
+  /// <returns>Returns the range of uproot</returns>
+  public int uprootRange()
+  {
+    int value = Client.getUprootRange(connection);
+    return value;
+  }
 }

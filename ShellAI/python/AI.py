@@ -17,8 +17,8 @@ class AI(BaseAI):
   MOTHER = 0
   SPAWNER = 1
   CHOKER = 2
-  SOAKER = 3,
-  TUMBLEWEED = 4
+  SOAKER = 3
+  BUMBLEWEED = 4
   ARALIA = 5
   TITAN = 6
   POOL = 7
@@ -49,26 +49,49 @@ class AI(BaseAI):
     myPlants = self.getMyPlants()
     #for every plant we own, move them forward and attack if it finds an enemy
     for plant in myPlants:
-      #move them if we can
-      if plant.uprootsLeft > 0 and self.getPlantAt(plant.x + self.directionOfEnemy, plant.y) is None and \
-                      self.withinSpawnerRange(plant.x + self.directionOfEnemy, plant.y):
-        #move them straight to the other side. no regrets.
-        plant.uproot(plant.x + self.directionOfEnemy, plant.y)
-      #if we can't attack, don't bother trying.
-      if plant.radiatesLeft == 0:
-        continue
+      #only try radiating if it's possible
+      if plant.radiatesLeft > 0:
+        #only heal or buff allies and attack enemies
+        targetOwner = 1 - self.playerID
+        if plant.mutation == self.BUMBLEWEED or plant.mutation == self.SOAKER:
+          targetOwner = self.playerID
 
-      #if there's anyone around, attaaaaaaaaaaack!!
-      for foe in self.plants:
-        #let's not kill our own men, shall we?
-        #also no pools
-        if foe.owner == self.me.id and foe.mutation != self.POOL:
-          continue
+        for foe in self.plants:
+          #if it's dead skip it
+          if foe.rads >= foe.maxRads:
+            continue
 
-        #if we're within range...
-        if self.distance(plant.x, plant.y, foe.x, foe.y) < plant.range:
-          #get 'im!
-          plant.radiate(foe.x, foe.y)
+          #don't mess with pools
+          if foe.mutation == self.POOL:
+            continue
+
+          #if it's not the right target
+          if foe.owner != targetOwner:
+            continue
+
+          #if a healer or soaker can't effect the mother weed
+          if targetOwner == self.playerID and foe.mutation == self.MOTHER:
+            continue
+
+          #if a soaker can't effect other soakers
+          if plant.mutation == self.SOAKER and foe.mutation == self.SOAKER:
+            continue
+
+          #if we're within range...
+          if self.distance(plant.x, plant.y, foe.x, foe.y) < plant.range:
+            #get 'im!
+            plant.radiate(foe.x, foe.y)
+            break
+
+      #move them straight to the other side. no regrets.
+      #move as far as possible, as long as it's not off the map
+      wantedX = plant.x
+      if plant.mutation == self.BUMBLEWEED:
+        wantedX += self.directionOfEnemy * self.bumbleweedSpeed
+      else:
+        wantedX += self.directionOfEnemy * self.uprootRange
+      if plant.uprootsLeft > 0 and self.getPlantAt(wantedX, plant.y) is None and  0 <= wantedX < self.mapWidth:
+        plant.uproot(wantedX, plant.y)
 
     #make a new plant every turn, because why not?
     #first, check if we can actually do that
@@ -79,7 +102,8 @@ class AI(BaseAI):
     spawnX = -1
     spawnY = -1
     angle = 0
-    for plant in self.plants:
+    loc = 0
+    for plant in myPlants:
       #remove all plants in our list except for mothers and spawners
       if not (plant.mutation == self.MOTHER or plant.mutation == self.SPAWNER):
         myPlants.remove(plant)
@@ -113,7 +137,8 @@ class AI(BaseAI):
   def getMyPlants(self):
     myPlants = []
     for plant in self.plants:
-      myPlants.append(plant)
+      if plant.owner == self.playerID:
+        myPlants.append(plant)
     return myPlants
 
   #Helper function to get distance as a whole number
