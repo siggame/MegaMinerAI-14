@@ -397,9 +397,31 @@ namespace visualizer
 			IRenderer::Alignment alignment = (owner == 0) ? IRenderer::Left : IRenderer::Right;
 			renderer->setColor(getPlayerColor(owner));
 
+			// Todo: add player time
 			std::stringstream stream;
-			stream << m_game->states[0].players[owner].playerName << " Spores: " << m_game->states[currentTurn].players[owner].spores;
+			stream << m_game->states[0].players[owner].playerName;
 			renderer->drawText(namePos, y, "Roboto", stream.str(), 200.0f, alignment);
+		}
+
+		// Draw Pie chart of spores!
+		for (int i : {0,1})
+		{
+			std::stringstream stream;
+			float sporeCount = m_game->states[currentTurn].players[i].spores;
+			float xPos = 400 + i * getWidth() * 0.60f;
+			float yPos = getHeight() + 50;
+
+			stream << sporeCount;
+
+			renderer->setColor(Color(0.4f, 0.6f, 0.4f, 1.0f));
+			renderer->drawCircle(xPos, yPos, 50, 1, 10);
+
+			renderer->setColor(Color(0.3f, 0.9f, 0.3f, 1.0f));
+			renderer->drawCircle(xPos, yPos, 50, sporeCount /
+															m_game->states[currentTurn].maxSpores, 10, 90);
+
+			renderer->setColor(Color(0, 0, 0, 1));
+			renderer->drawText(xPos, yPos, "Roboto", stream.str(), 150.0f, IRenderer::Center);
 		}
 
 		// Render Progress bar
