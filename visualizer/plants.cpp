@@ -162,6 +162,9 @@ namespace visualizer
 		renderer->setCamera( 0, 0, width, height );
 		renderer->setGridDimensions( width, height );
                 
+                m_zoomPoint.x = width*.5;
+                m_zoomPoint.y = height*.5;
+                
 		start();
 	} // Plants::loadGamelog()
 
@@ -395,8 +398,17 @@ namespace visualizer
 
     void Plants::pushZoomMatrix() const 
     {
+            int width = (1/m_zoomFactor) * getWidth();
+            int height = (1/m_zoomFactor) * getHeight();
+            
+            int x = (m_zoomPoint.x/getWidth()) * width;
+            int y = (m_zoomPoint.y/getHeight()) * height;
+            
+            std::cout << -(x - (width/2)) << "   " << -(y - (height/2)) << std::endl;
+            
             renderer->push();
             renderer->scale(m_zoomFactor, m_zoomFactor);
+            renderer->translate( -(m_zoomPoint.x - (width/2)), -(m_zoomPoint.y - (height/2)));
     }
       
     void Plants::popZoomMatrix() const 

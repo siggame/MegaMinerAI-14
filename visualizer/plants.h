@@ -30,6 +30,12 @@ namespace visualizer
 			    int right;
 			    int bottom;
 		    };
+                    
+                    struct Point
+                    {
+                        float x;
+                        float y;
+                    };
 
             Plants();
             ~Plants();
@@ -78,6 +84,7 @@ namespace visualizer
 			void DrawQuadAroundObj(const parser::Mappable& obj, const glm::vec4& color) const;
 
             float m_zoomFactor;
+            Point m_zoomPoint;
 	};
 
 } // visualizer
