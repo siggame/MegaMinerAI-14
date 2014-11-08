@@ -13,6 +13,19 @@
 
 namespace visualizer
 {
+	//ENUMERATION FOR PLANT MUTATIONS
+	enum
+	{
+	   Mother,
+	   Spawner,
+	   Choker,
+	   Soaker,
+	   Bumbleweed,
+	   Aralia,
+	   Titan,
+	   Pool
+	};
+
 	// Returns true if the circle(center with radius r) intersects with the rectangle R.
 	// Todo: move this function somewhere else?
 	bool Intersects(const glm::vec2& center, float r, const Plants::Rect& R)
@@ -57,17 +70,16 @@ namespace visualizer
 
 	void Plants::preDraw()
 	{
-                const float x = getWidth() / 2;
-                const float y = getHeight() + 2;
-                const float boxOffset = 980;
-                const float boxWidth = 0;
-
-		const Input& input = gui->getInput();
-
 		ProcessInput();
                 
 		renderer->push();
 		renderer->translate(GRID_OFFSET, GRID_OFFSET);
+
+		static float d = 0.0f;
+		d += timeManager->getDt() * 0.5f;
+
+		renderer->setColor(Color(0.4,0.4,0.4,1));
+		renderer->drawRotatedTexturedQuad(-getWidth(), -getHeight(), 3*getWidth(), 3*getHeight(), 1.0f, d, "background");
                 
 		renderer->setColor(Color(0.9f,0.9f,0.9f,1));
 		renderer->drawTexturedQuad(0, 0, getWidth(), getHeight(), 2, "grid");
@@ -78,17 +90,7 @@ namespace visualizer
 		//renderer->drawSubTexturedQuad(0, 0, getWidth(), getHeight(), offset, offset, getWidth(), getHeight(), "noise");
 		renderer->drawTexturedQuad(0, 0, getWidth(), getHeight(), 1, "noise");
 
-		// Draw Names
-		for (int owner : {0,1})
-		{
-			int namePos = (owner == 0) ? (x - boxOffset) : (x + boxOffset);
-			IRenderer::Alignment alignment = (owner == 0) ? IRenderer::Left : IRenderer::Right;
-			renderer->setColor(getPlayerColor(owner));
-
-			std::stringstream stream;
-						stream << m_game->states[0].players[owner].playerName << " Spores: " << m_game->states[timeManager->getTurn()].players[owner].spores;
-			renderer->drawText(namePos, y, "Roboto", stream.str(), 200.0f, alignment);
-		}
+		DrawGUI();
 
 		renderer->enableScissor(GRID_OFFSET, getHeight() + GRID_OFFSET, getWidth(), getHeight());
 	}
@@ -436,25 +438,90 @@ namespace visualizer
             
     }
     
+	void Plants::DrawGUI() const
+	{
+		const float x = getWidth() / 2;
+		const float y = getHeight() + 2;
+		const float boxOffset = 980;
+		int currentTurn = timeManager->getTurn();
+
+		renderer->setColor(Color(0.54, 0.27, 0.07, 1));
+		renderer->drawQuad(0, getHeight(), 500, 400);
+		renderer->drawQuad(1550, getHeight(), 500, 400);
+
+		// Draw Names
+		for (int owner : {0,1})
+		{
+			int namePos = (owner == 0) ? (x - boxOffset) : (x + boxOffset);
+			IRenderer::Alignment alignment = (owner == 0) ? IRenderer::Left : IRenderer::Right;
+			renderer->setColor(getPlayerColor(owner));
+
+			// Todo: add player time
+			std::stringstream stream;
+			stream << m_game->states[0].players[owner].playerName;
+			renderer->drawText(namePos, y, "Roboto", stream.str(), 200.0f, alignment);
+		}
+
+		// Draw Pie chart of spores!
+		for (int i : {0,1})
+		{
+			std::stringstream stream;
+			float sporeCount = m_game->states[currentTurn].players[i].spores;
+			float xPos = 400 + i * getWidth() * 0.60f;
+			float yPos = getHeight() + 50;
+
+			stream << sporeCount;
+
+			renderer->setColor(Color(0.4f, 0.6f, 0.4f, 1.0f));
+			renderer->drawCircle(xPos, yPos, 50, 1, 10);
+
+			renderer->setColor(Color(0.3f, 0.9f, 0.3f, 1.0f));
+			renderer->drawCircle(xPos, yPos, 50, sporeCount /
+															m_game->states[currentTurn].maxSpores, 10, 90);
+
+			renderer->setColor(Color(0, 0, 0, 1));
+			renderer->drawText(xPos, yPos, "Roboto", stream.str(), 150.0f, IRenderer::Center);
+		}
+
+		// Render Progress bar
+		for(int i : {0, 1})
+		{
+			const parser::Plant& plant = m_game->states[currentTurn].plants.at(m_motherPlantID[i]);
+			float health = (plant.maxRads - plant.rads) / (float)plant.maxRads;
+
+			renderer->setColor(Color(1.0f, 0.0f, 0.5f, 1.0f));
+			renderer->drawTexturedQuad(50 + i * getWidth() * 0.7f, getHeight() + 100, 500.0f, 150.0f, 1.0f, "vine", i);
+
+			renderer->setColor(Color(0.0f, 1.0f, 1.0f, 1.0f));
+			renderer->drawTexturedQuad(50 + i * getWidth() * 0.7f, getHeight() + 100, health * 500.0f, 150.0f, 1.0f, "vine", i);
+		}
+
+	}
+
+	void Plants::LoadMotherPlants()
+	{
+		unsigned int counter = 0;
+		for(auto& iter : m_game->states[0].plants)
+		{
+			const parser::Plant& plant = iter.second;
+			if(plant.mutation == Mother)
+			{
+				m_motherPlantID[plant.owner] = plant.id;
+				++counter;
+
+				if(counter >= 2)
+				{
+					break;
+				}
+			}
+		}
+	}
+
 	std::list<IGUI::DebugOption> Plants::getDebugOptions()
 	{
 		return std::list<IGUI::DebugOption>({{"Units Selectable", true},
 											 {"Tiles Selectable", true}});
 	}
-	
-    //ENUMERATION FOR PLANT MUTATIONS
-    enum
-    {
-       Mother,
-       Spawner,
-       Choker,
-       Soaker,
-       Bumbleweed,
-       Aralia,
-       Titan,
-       Pool
-    };
-
 
 	// The "main" function
 	void Plants::run()
@@ -468,6 +535,8 @@ namespace visualizer
 
 		Frame * turn = new Frame;
 		Frame * nextTurn = new Frame;
+
+		LoadMotherPlants();
 
 		// Look through each turn in the gamelog
 		for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)

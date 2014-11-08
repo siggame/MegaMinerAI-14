@@ -74,13 +74,17 @@ namespace visualizer
             bool m_suicide;
 			list<int> m_SelectedUnits;
 
+			int m_motherPlantID[2];
+
+			static const float GRID_OFFSET;
+			static const float PLANT_SIZE;
+
+
 			Color getPlayerColor(int id) const { return (id == 1) ? Color(0.9,0.5,0.5,1) : Color(0.5,0.5,0.9,1); }
             string getPlantFromID(int id, int owner, int actionState = -1) const;
 
 			void GetSelectedRect(Rect &out) const;
 			std::list<IGUI::DebugOption> getDebugOptions();
-			static const float GRID_OFFSET;
-			static const float PLANT_SIZE;
 
 			void DrawObjectSelection() const;
 			void DrawBoxAroundObj(const parser::Mappable& obj, const glm::vec4& color) const;
@@ -88,6 +92,10 @@ namespace visualizer
 
             float m_zoomFactor;
             Point m_zoomPoint;
+			void DrawGUI() const;
+
+			void LoadMotherPlants();
+
 	};
 
 } // visualizer
