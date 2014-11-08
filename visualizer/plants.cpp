@@ -445,9 +445,9 @@ namespace visualizer
 		const float boxOffset = 980;
 		int currentTurn = timeManager->getTurn();
 
-		renderer->setColor(Color(0.54, 0.27, 0.07, 1));
-		renderer->drawQuad(0, getHeight(), 500, 400);
-		renderer->drawQuad(1550, getHeight(), 500, 400);
+		renderer->setColor(Color(1, 1, 1, 1));
+		renderer->drawTexturedQuad(0, getHeight(), 500, 400, 1, "guibg");
+		renderer->drawTexturedQuad(1550, getHeight(), 500, 400, 1, "guibg");
 
 		// Draw Names
 		for (int owner : {0,1})
