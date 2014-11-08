@@ -608,6 +608,7 @@ namespace visualizer
 				animationQueue.push(anim);
 
 				turn[plant.id]["id"] = plant.id;
+				turn[plant.id]["owner"] = plant.owner;
 				turn[plant.id]["X"] = plant.x;
 				turn[plant.id]["Y"] = plant.y;
 				turn[plant.id]["mutation"] = plant.mutation;
