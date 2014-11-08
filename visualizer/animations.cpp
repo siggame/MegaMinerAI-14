@@ -86,7 +86,7 @@ namespace visualizer
             game->renderer->drawTexturedQuad(x, y, w, h, 1.0f, m_data->texture, m_data->flip );
             game->popZoomMatrix();
             
-        }
+	}
 
 	void DrawAnimatedSprite::animate(const float &t, AnimData *d, IGame *game)
 	{

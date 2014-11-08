@@ -24,8 +24,9 @@ namespace visualizer
 		return (distance.x * distance.x + distance.y * distance.y) < (r * r);
 	}
 
-	const float Plants::GRID_OFFSET = 20.0f;
+	const float Plants::GRID_OFFSET = 30.0f;
         const float Plants::PLANT_SIZE = 60.0f;
+
 	Plants::Plants()
 	{
                 m_zoomFactor = 2;
@@ -77,27 +78,27 @@ namespace visualizer
 		//renderer->drawSubTexturedQuad(0, 0, getWidth(), getHeight(), offset, offset, getWidth(), getHeight(), "noise");
 		renderer->drawTexturedQuad(0, 0, getWidth(), getHeight(), 1, "noise");
 
-                // Draw Names
-                for (int owner : {0,1})
-                {
-                    int namePos = (owner == 0) ? (x - boxOffset) : (x + boxOffset);
-                    IRenderer::Alignment alignment = (owner == 0) ? IRenderer::Left : IRenderer::Right;
-                    renderer->setColor(getPlayerColor(owner));
+		// Draw Names
+		for (int owner : {0,1})
+		{
+			int namePos = (owner == 0) ? (x - boxOffset) : (x + boxOffset);
+			IRenderer::Alignment alignment = (owner == 0) ? IRenderer::Left : IRenderer::Right;
+			renderer->setColor(getPlayerColor(owner));
 
-                    std::stringstream stream;
-                                stream << m_game->states[0].players[owner].playerName << " Spores: " << m_game->states[timeManager->getTurn()].players[owner].spores;
-                    renderer->drawText(namePos, y, "Roboto", stream.str(), 200.0f, alignment);
-                }
+			std::stringstream stream;
+						stream << m_game->states[0].players[owner].playerName << " Spores: " << m_game->states[timeManager->getTurn()].players[owner].spores;
+			renderer->drawText(namePos, y, "Roboto", stream.str(), 200.0f, alignment);
+		}
 
 		renderer->enableScissor(GRID_OFFSET, getHeight() + GRID_OFFSET, getWidth(), getHeight());
 	}
 
 	void Plants::postDraw()
 	{
+		DrawObjectSelection();
+
 		renderer->disableScissor();
 		renderer->pop();
-        
-        DrawObjectSelection();
 
 	}
 
@@ -156,15 +157,17 @@ namespace visualizer
 		int width = getWidth();
 		int height = getHeight();
 
-		cout << "Width: " << width << " Height: " << height << endl;
-		// Setup the renderer as a 4 x 4 map by default
+                // Setup the renderer as a 4 x 4 map by default
 		// TODO: Change board size to something useful
 		renderer->setCamera( 0, 0, width, height );
 		renderer->setGridDimensions( width, height );
                 
                 m_zoomPoint.x = width*.6;
                 m_zoomPoint.y = height*.6;
-                
+
+		renderer->setCamera( 0, 0, width + GRID_OFFSET, height + 200);
+		renderer->setGridDimensions( width + GRID_OFFSET, height + 200);
+
 		start();
 	} // Plants::loadGamelog()
 
@@ -196,14 +199,13 @@ namespace visualizer
                 {
                     case 4: stream << "bumbleweed"; break;
                 }
-                cout << "Heal" << endl;
                 break;
             case parser::PLANTTALK:
                 switch(id)
                 {/*
                     case 0: stream << "mother"; break;
                     case 1: stream << "spawner"; break;
-                    case 2: stream << "choke"; break;
+					case 2: stream << "choke"; break;
                     case 3: stream << "soaker"; break;
                     case 4: stream << "bumbleweed"; break;
                     case 5: stream << "aralia"; break;
@@ -211,7 +213,6 @@ namespace visualizer
                     default: stream << "spawner";
                   */
                 }
-                cout << "Talk" << endl;
                 break;
             case parser::SOAK:
                 switch(id)
@@ -226,7 +227,6 @@ namespace visualizer
                     default: stream << "spawner";
                     */
                 }
-                cout << "Soak" << endl;
                 break;
             case parser::UPROOT:
                 switch(id)
@@ -241,7 +241,6 @@ namespace visualizer
                     default: stream << "spawner";
                     */
                 }
-                cout << "UpRoot" << endl;
                 break;
             default:
                 switch(id)
@@ -273,9 +272,6 @@ namespace visualizer
 		{
 			Rect R;
 			GetSelectedRect(R);
-
-			// todo: this causes the game to hang
-			//renderer->setCamera( R.left, R.top, R.right, R.bottom );
 
 			m_SelectedUnits.clear();
 
@@ -349,16 +345,16 @@ namespace visualizer
         int turn = timeManager->getTurn();
         if(turn < (int) m_game->states.size())
         {
-             for(auto & iter : m_SelectedUnits)
+			for(auto & iter : m_SelectedUnits)
             {
                 if(m_game->states[turn].plants.find(iter) != m_game->states[turn].plants.end())
                 {
                     auto & plant = m_game->states[turn].plants.at(iter);
                     DrawQuadAroundObj(parser::Mappable({plant.id, plant.x, plant.y}), glm::vec4(1.0f, 0.4, 0.4, 0.6));
                 }
-            }
+			}
 
-            int focus = gui->getCurrentUnitFocus();
+			int focus = gui->getCurrentUnitFocus();
             if(focus >= 0)
             {
                 if(m_game->states[turn].plants.find(focus) != m_game->states[turn].plants.end())
@@ -366,13 +362,13 @@ namespace visualizer
                     auto& plant = m_game->states[turn].plants.at(focus);
                     DrawBoxAroundObj(parser::Mappable({plant.id, plant.x, plant.y}), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
                 }
-            }
+			}
         }
     }
 
     void Plants::DrawBoxAroundObj(const parser::Mappable& obj, const glm::vec4 &color) const
     {
-        float posFix = 1.3;
+		float posFix = -10;
         
         //push the zoom matrix here
         renderer->setColor(Color(color.r, color.g, color.b, color.a));
@@ -387,11 +383,11 @@ namespace visualizer
 
     void Plants::DrawQuadAroundObj(const parser::Mappable& obj, const glm::vec4 &color) const
     {
-        float posFix = 60;
+		float posFix = -10;
         
         // push the zoom matrix here
         renderer->setColor( Color( color.r, color.g, color.b, color.a) );
-        renderer->drawQuad(obj.x + .5*posFix, obj.y + .5*posFix, 1,1);
+		renderer->drawQuad(obj.x + .5*posFix, obj.y + .5*posFix, 50,50);
         // pop the zoom matrix here
         
     }
@@ -435,7 +431,7 @@ namespace visualizer
 	std::list<IGUI::DebugOption> Plants::getDebugOptions()
 	{
 		return std::list<IGUI::DebugOption>({{"Units Selectable", true},
-											 {"Tiles Selectable", false}});
+											 {"Tiles Selectable", true}});
 	}
 	
     //ENUMERATION FOR PLANT MUTATIONS
@@ -462,39 +458,32 @@ namespace visualizer
 		std::set<int> spawnedPlants;
 		std::queue<SmartPointer<Animatable>> animationQueue;
 
+		Frame * turn = new Frame;
+		Frame * nextTurn = new Frame;
+
 		// Look through each turn in the gamelog
 		for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
 		{
-			Frame turn;  // The frame that will be drawn
-
-			for(auto iter : m_game->states[state].players)
-			{
-				const parser::Player& player = iter.second;
-
-
-				// Render animations for this player
-				for(const SmartPointer< parser::Animation >& animation : m_game->states[state].animations[player.id])
-				{
-					switch(animation->type)
-					{
-						case parser::GERMINATE:
-							cout << "Germinate" << endl;
-							break;
-						default:
-							assert(false && "Unknown animation");
-					}
-				}
-			}
-			
 			// TODO: clean this up
 			for(auto iter : m_game->states[state].plants)
             {
 				const parser::Plant& plant = iter.second;
-				bool bSpawned = spawnedPlants.insert(plant.id).second;
-                bool direction = plant.owner;
+
                 float health = plant.maxRads - plant.rads;
                 string plantTexture = getPlantFromID(plant.mutation, plant.owner);
+				bool direction = plant.owner;
+				bool bSpawned = spawnedPlants.insert(plant.id).second;
+				bool bDied = false;
+				if(state < m_game->states.size() - 1)
+				{
+					auto& nextState = m_game->states[state+1];
+					auto next = nextState.plants.find(plant.id);
 
+					if(next == nextState.plants.end())
+					{
+						bDied = true;
+					}
+				}
 				// Coloring plants and radii
                 Color plantColor = Color(1, (health/plant.maxRads), (health/plant.maxRads), 1);
                 Color radiusColor = getPlayerColor(plant.owner);
@@ -505,7 +494,7 @@ namespace visualizer
 				{
 					SmartPointer<DrawCircleData> circleData = new DrawCircleData(plant.x, plant.y, plant.range);
 					circleData->addKeyFrame( new DrawCircle( circleData, radiusColor, bSpawned ? FadeIn : None ) );
-					turn.addAnimatable( circleData );
+					turn->addAnimatable( circleData );
 				}
 
                 // Only scale the mother plant and the rad pools
@@ -514,6 +503,9 @@ namespace visualizer
 				{
 					plantSize = plant.range;
 				}
+
+				float x = plant.x - plantSize / 2.0;
+				float y = plant.y - plantSize / 2.0;
 
 				SmartPointer<Animatable> anim;
 				if (plant.mutation != 7)
@@ -544,13 +536,11 @@ namespace visualizer
                             break;
 
                     }
-
-                    float x = plant.x - plantSize / 2.0;
-					float y = plant.y - plantSize / 2.0;
                     
                     //Show seed sprite when first spawned
+
                     SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
-                    spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
+					spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : bDied ? FadeOut : None ) );
                     anim = spriteData;
                     if(!bSpawned)
                     {
@@ -569,8 +559,6 @@ namespace visualizer
                             anim = idle;
                         }
                     }
-
-
 
                     //SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
                     //spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
@@ -612,18 +600,24 @@ namespace visualizer
                                 heal->addKeyFrame( new DrawAnimatedSprite( heal, plantColor, bSpawned ? FadeIn : None ) );
                                 anim = heal;
 
-                                cout << "Heal" << endl;
                                 break;
                             }
                             case parser::PLANTTALK:
-                                cout << "Talk" << endl;
+							{
+								const parser::plantTalk& talkAnim = static_cast<const parser::plantTalk&>(*animation);
+								cout <<"Talk: " << talkAnim.message << endl;
                                 break;
+							}
                             case parser::SOAK:
-                                cout << "Soak" << endl;
+							{
+								const parser::soak& soakAnim = static_cast<const parser::soak&>(*animation);
                                 break;
+							}
                             case parser::UPROOT:
-                                cout << "UpRoot" << endl;
+							{
+								const parser::uproot& upRootAnim = static_cast<const parser::uproot&>(*animation);
                                 break;
+							}
                             default:
                                 assert(false && "Unknown animation");
                                 break;
@@ -634,30 +628,44 @@ namespace visualizer
 				}
 				else
 				{
-                    SmartPointer<DrawTexturedCircleData> spriteData = new DrawTexturedCircleData(plant.x, plant.y, plantSize, plantTexture);
-                    spriteData->addKeyFrame( new DrawTexturedCircle( spriteData, Color(1, 1, 1, 0.7), bSpawned ? FadeIn : None ) );
+					SmartPointer<DrawTexturedCircleData> spriteData = new DrawTexturedCircleData(plant.x, plant.y, plantSize, plantTexture);
+					spriteData->addKeyFrame( new DrawTexturedCircle( spriteData, Color(1, 1, 1, 0.7), bSpawned ? FadeIn : None ) );
 
-                    anim = spriteData;
+					anim = spriteData;
 				}
 
 				animationQueue.push(anim);
 
-				turn[plant.id]["id"] = plant.id;
-				turn[plant.id]["X"] = plant.x;
-				turn[plant.id]["Y"] = plant.y;
-				turn[plant.id]["mutation"] = plant.mutation;
-				turn[plant.id]["radiatesLeft"] = plant.radiatesLeft;
-				turn[plant.id]["rads"] = plant.rads;
-				turn[plant.id]["strength"] = plant.strength;
-				turn[plant.id]["uprootsLeft"] = plant.uprootsLeft;
-				turn[plant.id]["range"] = plant.range;
-				turn[plant.id]["baseStrength"] = plant.baseStrength;
-				turn[plant.id]["maxRadiates"] = plant.maxRadiates;
-				turn[plant.id]["maxRads"] = plant.maxRads;
-				turn[plant.id]["maxStrength"] = plant.maxStrength;
-				turn[plant.id]["maxUproots"] = plant.maxUproots;
-				turn[plant.id]["minStrength"] = plant.minStrength;
+				// check for deaths
+				if(bDied)
+				{
 
+					SmartPointer<DrawAnimatedSpriteData> deathAnim =
+							new DrawAnimatedSpriteData(0, 3,
+													   x, y,
+													   plantSize, plantSize,
+													   "death", false);
+
+					deathAnim->addKeyFrame(new DrawAnimatedSprite(deathAnim, Color(1.0f, 1.0f, 1.0f, 1.0f)));
+					animationQueue.push(deathAnim);
+				}
+
+				(*turn)[plant.id]["id"] = plant.id;
+				(*turn)[plant.id]["owner"] = plant.owner;
+				(*turn)[plant.id]["X"] = plant.x;
+				(*turn)[plant.id]["Y"] = plant.y;
+				(*turn)[plant.id]["mutation"] = plant.mutation;
+				(*turn)[plant.id]["radiatesLeft"] = plant.radiatesLeft;
+				(*turn)[plant.id]["rads"] = plant.rads;
+				(*turn)[plant.id]["strength"] = plant.strength;
+				(*turn)[plant.id]["uprootsLeft"] = plant.uprootsLeft;
+				(*turn)[plant.id]["range"] = plant.range;
+				(*turn)[plant.id]["baseStrength"] = plant.baseStrength;
+				(*turn)[plant.id]["maxRadiates"] = plant.maxRadiates;
+				(*turn)[plant.id]["maxRads"] = plant.maxRads;
+				(*turn)[plant.id]["maxStrength"] = plant.maxStrength;
+				(*turn)[plant.id]["maxUproots"] = plant.maxUproots;
+				(*turn)[plant.id]["minStrength"] = plant.minStrength;
 			}
 
             /*
@@ -677,7 +685,7 @@ namespace visualizer
 
 			while(!animationQueue.empty())
 			{
-				turn.addAnimatable( animationQueue.front() );
+				turn->addAnimatable( animationQueue.front() );
 				animationQueue.pop();
 			}
 			
@@ -685,11 +693,11 @@ namespace visualizer
 			{
 				SmartPointer<DrawWinningData> winningData = new DrawWinningData(0, 0, getWidth(), getHeight(), m_game->winReason);
 				winningData->addKeyFrame( new DrawWinningScreen( winningData, Color(0.1,0.6,0.8,0.2), None ) );
-				turn.addAnimatable( winningData );
+				turn->addAnimatable( winningData );
 			}
 
-			animationEngine->buildAnimations(turn);
-			addFrame(turn);
+			animationEngine->buildAnimations(*turn);
+			addFrame(*turn);
 
 			// Register the game and begin playing delayed due to multithreading
 			if(state > 5)
@@ -703,6 +711,9 @@ namespace visualizer
 					timeManager->play();
 				}
 			}
+			delete turn;
+			turn = nextTurn;
+			nextTurn = new Frame;
 		}
 
 		if(!m_suicide)
@@ -710,6 +721,9 @@ namespace visualizer
 			timeManager->setNumTurns( m_game->states.size() );
 			timeManager->play();
 		}
+
+		delete turn;
+		delete nextTurn;
 
 	} // Plants::run()
 

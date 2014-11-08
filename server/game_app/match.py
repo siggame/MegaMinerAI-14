@@ -268,9 +268,9 @@ class Match(DefaultGameWorld):
         motherDead2 = False
 
     if motherDead1:
-      self.declareWinner(self.players[1], "Player 1\'s mother plant is dead")
+      self.declareWinner(self.players[1], "Player 2 wins. Player 1\'s mother plant is dead")
     elif motherDead2:
-      self.declareWinner(self.players[0], "Player 2\'s mother plant is dead")
+      self.declareWinner(self.players[0], "Player 1 wins. Player 2\'s mother plant is dead")
     elif self.turnNumber >= self.turnLimit:
       motherRad1 = 0
       motherRad2 = 0
