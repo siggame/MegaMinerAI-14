@@ -48,6 +48,7 @@ class Match(DefaultGameWorld):
     self.poolBuff = self.poolBuff
     self.sporeRate = self.sporeRate
     self.maxSpores = self.maxSpores
+	self.uprootRange = None
 
     self.plantsByPosition = dict()
 
@@ -234,6 +235,7 @@ class Match(DefaultGameWorld):
           poolBuff = self.poolBuff,
           sporeRate = self.sporeRate,
           maxSpores = self.maxSpores,
+          uprootRange = self.uprootRange,
           Players = [i.toJson() for i in self.objects.values() if i.__class__ is Player],
           Mappables = [i.toJson() for i in self.objects.values() if i.__class__ is Mappable],
           Plants = [i.toJson() for i in self.objects.values() if i.__class__ is Plant],
@@ -386,7 +388,7 @@ class Match(DefaultGameWorld):
     msg = ["status"]
 
     msg.append(["game", self.mapWidth, self.mapHeight, self.turnNumber, self.maxPlants, self.playerID, self.gameNumber,
-                self.bumbleweedSpeed, self.poolDamage, self.poolBuff, self.sporeRate, self.maxSpores])
+                self.bumbleweedSpeed, self.poolDamage, self.poolBuff, self.sporeRate, self.maxSpores, self.uprootRange])
 
     typeLists = []
     typeLists.append(["Player"] + [i.toList() for i in self.objects.values() if i.__class__ is Player])
