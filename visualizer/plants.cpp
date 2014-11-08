@@ -362,7 +362,7 @@ namespace visualizer
                 if(m_game->states[turn].plants.find(iter) != m_game->states[turn].plants.end())
                 {
                     auto & plant = m_game->states[turn].plants.at(iter);
-                    DrawQuadAroundObj(parser::Mappable({plant.id, plant.x, plant.y}), glm::vec4(1.0f, 0.4, 0.4, 0.6));
+                    DrawQuadAroundObj(parser::Mappable({plant.id, plant.x, plant.y}), glm::vec4(1.0f, 1.0f, 0.0f, 0.6f));
                 }
             }
 
@@ -372,7 +372,7 @@ namespace visualizer
                 if(m_game->states[turn].plants.find(focus) != m_game->states[turn].plants.end())
                 {
                     auto& plant = m_game->states[turn].plants.at(focus);
-                    DrawBoxAroundObj(parser::Mappable({plant.id, plant.x, plant.y}), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+                    DrawBoxAroundObj(parser::Mappable({plant.id, plant.x, plant.y}), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
                 }
             }
         }
@@ -380,6 +380,7 @@ namespace visualizer
 
     void Plants::DrawBoxAroundObj(const parser::Mappable& obj, const glm::vec4 &color) const
     {
+
         float w = PLANT_SIZE * (1/m_zoomFactor);
         float h = PLANT_SIZE * (1/m_zoomFactor);
         pushZoomMatrix();
