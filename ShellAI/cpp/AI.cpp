@@ -48,39 +48,74 @@ bool AI::run()
   for (int j = 0; j < myPlants.size(); j++)
   {
     Plant& plant = *myPlants[j];
-    //move them if we can
+    //only try radiating if it's possible
+    if(plant.radiatesLeft() > 0)
+    {
+      //only heal or buff allies and attack enemies
+      int targetOwner = 1 - playerID();
+      if(plant.mutation() == BUMBLEWEED || plant.mutation() == SOAKER)
+      {
+        targetOwner = playerID();
+      }
+      for (int i = 0; i < plants.size(); i++)
+      {
+        Plant foe = plants[i];
+
+        //if it's dead skip it
+        if(foe.rads() >= foe.maxRads())
+        {
+          continue;
+        }
+
+        //don't mess with pools
+        if(foe.mutation() == POOL)
+        {
+          continue;
+        }
+
+        //if it's not the right target
+        if(foe.owner() != targetOwner)
+        {
+          continue;
+        }
+
+        //if a healer or soaker can't effect the mother weed
+        if(targetOwner == playerID() && foe.mutation() == MOTHER)
+        {
+          continue;
+        }
+
+        //if a soaker can't effect other soakers
+        if(plant.mutation() == SOAKER && foe.mutation() == SOAKER)
+        {
+          continue;
+        }
+
+        //if we're within range...
+        if (distance(plant.x(), plant.y(), foe.x(), foe.y()) < plant.range())
+        {
+          //get 'im!
+          plant.radiate(foe.x(), foe.y());
+          break;
+        }
+      }
+    }
+    //move them straight to the other side. no regrets.
+    //move as far as possible, as long as it's not off the map
+    int wantedX = plant.x();
+    if(plant.mutation() == BUMBLEWEED)
+    {
+      wantedX += directionOfEnemy * bumbleweedSpeed();
+    }
+    else
+    {
+      wantedX += directionOfEnemy * uprootRange();
+    }
     if (plant.uprootsLeft() > 0 &&
-        getPlantAt(plant.x()+directionOfEnemy, plant.y()) == NULL &&
-        withinSpawnerRange(plant.x()+directionOfEnemy, plant.y()))
+        getPlantAt(wantedX, plant.y()) == NULL &&
+        wantedX >= 0 && wantedX < mapWidth())
     {
-      //move them straight to the other side. no regrets.
-      plant.uproot(plant.x()+directionOfEnemy, plant.y());
-    }
-
-    //if we can't attack, don't bother trying.
-    if (plant.radiatesLeft() == 0)
-    {
-      continue;
-    }
-
-    //if there's anyone around, attaaaaaaaaaaack!!
-    for (int i = 0; i < plants.size(); i++)
-    {
-      Plant foe = plants[i];
-
-      //let's not kill our own men, shall we?
-      //also no pools
-      if (foe.owner() == me->id() && foe.mutation() != POOL)
-      {
-        continue;
-      }
-
-      //if we're within range...
-      if (distance(plant.x(), plant.y(), foe.x(), foe.y()) < plant.range())
-      {
-        //get 'im!
-        plant.radiate(foe.x(), foe.y());
-      }
+      plant.uproot(wantedX, plant.y());
     }
   }
 

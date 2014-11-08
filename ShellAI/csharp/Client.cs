@@ -58,6 +58,8 @@ public class Client {
   public static extern int getSporeRate(IntPtr connection);
   [DllImport("client")]
   public static extern int getMaxSpores(IntPtr connection);
+  [DllImport("client")]
+  public static extern int getUprootRange(IntPtr connection);
 
   [DllImport("client")]
   public static extern IntPtr getPlayer(IntPtr connection, int num);
@@ -86,6 +88,8 @@ public class Client {
   public static extern float playerGetTime(IntPtr ptr);
   [DllImport("client")]
   public static extern int playerGetSpores(IntPtr ptr);
+  [DllImport("client")]
+  public static extern int playerGetUprootRange(IntPtr ptr);
 
   [DllImport("client")]
   public static extern int mappableGetId(IntPtr ptr);

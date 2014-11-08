@@ -9,7 +9,7 @@ public class AI extends BaseAI
                           SPAWNER = 1,
                           CHOKER = 2,
                           SOAKER = 3,
-                          TUMBLEWEED = 4,
+                          BUMBLEWEED = 4,
                           ARALIA = 5,
                           TITAN = 6,
                           POOL = 7;
@@ -37,39 +37,74 @@ public class AI extends BaseAI
     //for every plant we own, move them forward and attack if it finds an enemy
     for (Plant plant : myPlants)
     {
-      //move them if we can
-      if (plant.getUprootsLeft() > 0 &&
-          getPlantAt(plant.getX()+directionOfEnemy, plant.getY()) == null &&
-          withinSpawnerRange(plant.getX()+directionOfEnemy, plant.getY()))
+      //only try radiating if it's possible
+      if(plant.getRadiatesLeft() > 0)
       {
-        //move them straight to the other side. no regrets.
-        plant.uproot(plant.getX()+directionOfEnemy, plant.getY());
-      }
-      
-      //if we can't attack, don't bother trying.
-      if (plant.getRadiatesLeft() == 0)
-      {
-        continue;
-      }
-      
-      //if there's anyone around, attaaaaaaaaaaack!!
-      for (int i = 0; i < plants.length; i++)
-      {
-        Plant foe = plants[i];
-        
-        //let's not kill our own men, shall we?
-        //also no pools
-        if (foe.getOwner() == me.getId() && foe.getMutation() != POOL)
-        { 
-          continue;
-        }
-        
-        //if we're within range...
-        if (distance(plant.getX(), plant.getY(), foe.getX(), foe.getY()) < plant.getRange())
+        //only heal or buff allies and attack enemies
+        int targetOwner = 1 - playerID();
+        if(plant.getMutation() == BUMBLEWEED || plant.getMutation() == SOAKER)
         {
-          //get 'im!
-          plant.radiate(foe.getX(), foe.getY());
+          targetOwner = playerID();
         }
+        for (int i = 0; i < plants.length; i++)
+        {
+          Plant foe = plants[i];
+
+          //if it's dead skip it
+          if(foe.getRads() >= foe.getMaxRads())
+          {
+            continue;
+          }
+
+          //don't mess with pools
+          if(foe.getMutation() == POOL)
+          {
+            continue;
+          }
+
+          //if it's not the right target
+          if(foe.getOwner() != targetOwner)
+          {
+            continue;
+          }
+
+          //if a healer or soaker can't effect the mother weed
+          if(targetOwner == playerID() && foe.getMutation() == MOTHER)
+          {
+            continue;
+          }
+
+          //if a soaker can't effect other soakers
+          if(plant.getMutation() == SOAKER && foe.getMutation() == SOAKER)
+          {
+            continue;
+          }
+
+          //if we're within range...
+          if (distance(plant.getX(), plant.getY(), foe.getX(), foe.getY()) < plant.getRange())
+          {
+            //get 'im!
+            plant.radiate(foe.getX(), foe.getY());
+            break;
+          }
+        }
+      }
+      //move them straight to the other side. no regrets.
+      //move as far as possible, as long as it's not off the map
+      int wantedX = plant.getX();
+      if(plant.getMutation() == BUMBLEWEED)
+      {
+        wantedX += directionOfEnemy * bumbleweedSpeed();
+      }
+      else
+      {
+        wantedX += directionOfEnemy * uprootRange();
+      }
+      if (plant.getUprootsLeft() > 0 &&
+          getPlantAt(wantedX, plant.getY()) == null &&
+          wantedX > 0 && wantedX < mapWidth())
+      {
+        plant.uproot(wantedX, plant.getY());
       }
     }
     
