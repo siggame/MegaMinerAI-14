@@ -34,4 +34,7 @@ animation bumbleweed2 textures/animations/bumblesheet2.png
 animation choke_anim1 textures/animations/chokesheet1.png
 animation choke_anim2 textures/animations/chokesheet2.png
 
+animation titan_anim1 textures/animations/wiggle1.png
+animation titan_anim2 textures/animations/wiggle2.png
+
 animation death_anim textures/animations/death.png

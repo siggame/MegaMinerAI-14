@@ -161,10 +161,10 @@ namespace visualizer
 		renderer->setCamera( 0, 0, width, height );
 		renderer->setGridDimensions( width, height );
 
-                m_zoomRect.left = 0
-                m_zoomRect.top = 0
-                m_zoomRect.right = width
-                m_zoomRect.bottom = height
+                m_zoomRect.left = 0;
+                m_zoomRect.top = 0;
+                m_zoomRect.right = width;
+                m_zoomRect.bottom = height;
                 
 		start();
 	} // Plants::loadGamelog()
@@ -186,7 +186,7 @@ namespace visualizer
                    // case 3: stream << "soaker"; break;
                    // case 4: stream << "bumbleweed"; break;
                     case 5: stream << "aralia_anim"; break;
-                   // case 6: stream "titan"; break;
+                    case 6: stream << "titan_anim"; break;
                     default: stream << "bumbleweed";
 
                 }
@@ -253,7 +253,7 @@ namespace visualizer
                     case 3: stream << "soaker"; break;
                     case 4: stream << "bumbleweed"; break;
                     case 5: stream << "aralia"; break;
-                    case 6: stream << "titan"; break;
+                    case 6: stream << "titan_anim"; break;
                     default: stream << "spawner";
 
                 }
@@ -504,7 +504,7 @@ namespace visualizer
                             endframe = 7;
                             break;
                         case Titan:
-                            endframe = 23;
+                            endframe = 15;
                             break;
 
                     }
@@ -515,14 +515,24 @@ namespace visualizer
                     SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
                     spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
                     anim = spriteData;
-
-                    if(plant.mutation == Bumbleweed && !bSpawned)
+                    if(!bSpawned)
                     {
-                        SmartPointer<DrawAnimatedSpriteData> idle = new DrawAnimatedSpriteData(0, 7, x, y, plantSize, plantSize,
-                                                                                               plantTexture, direction);
-                        idle->addKeyFrame( new DrawAnimatedSprite( idle, plantColor, bSpawned ? FadeIn : None ) );
-                        anim = idle;
+                        if(plant.mutation == Bumbleweed)
+                        {
+                            SmartPointer<DrawAnimatedSpriteData> idle = new DrawAnimatedSpriteData(0, 7, x, y, plantSize, plantSize,
+                                                                                                   plantTexture, direction);
+                            idle->addKeyFrame( new DrawAnimatedSprite( idle, plantColor, bSpawned ? FadeIn : None ) );
+                            anim = idle;
+                        }
+                        else if(plant.mutation == Titan)
+                        {
+                            SmartPointer<DrawAnimatedSpriteData> idle = new DrawAnimatedSpriteData(0, endframe, x, y, plantSize * 1.20f, plantSize * 1.20f,
+                                                                                                   plantTexture, direction);
+                            idle->addKeyFrame( new DrawAnimatedSprite( idle, plantColor, bSpawned ? FadeIn : None ) );
+                            anim = idle;
+                        }
                     }
+
 
 
                     //SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
