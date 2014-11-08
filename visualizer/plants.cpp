@@ -431,25 +431,6 @@ namespace visualizer
 		for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
 		{
 			Frame turn;  // The frame that will be drawn
-
-			for(auto iter : m_game->states[state].players)
-			{
-				const parser::Player& player = iter.second;
-
-
-				// Render animations for this player
-				for(const SmartPointer< parser::Animation >& animation : m_game->states[state].animations[player.id])
-				{
-					switch(animation->type)
-					{
-						case parser::GERMINATE:
-							cout << "Germinate" << endl;
-							break;
-						default:
-							assert(false && "Unknown animation");
-					}
-				}
-			}
 			
 			// TODO: clean this up
 			for(auto iter : m_game->states[state].plants)
