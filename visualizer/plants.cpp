@@ -38,7 +38,7 @@ namespace visualizer
 	}
 
 	const float Plants::GRID_OFFSET = 30.0f;
-        const float Plants::PLANT_SIZE = 60.0f;
+	const float Plants::PLANT_SIZE = 60.0f;
 
 	Plants::Plants()
 	{
@@ -167,8 +167,8 @@ namespace visualizer
                 m_zoomPoint.x = width*.5;
                 m_zoomPoint.y = height*.5;
 
-		renderer->setCamera( 0, 0, width + GRID_OFFSET, height + 200);
-		renderer->setGridDimensions( width + GRID_OFFSET, height + 200);
+		renderer->setCamera( 0, 0, width + GRID_OFFSET, height + 350);
+		renderer->setGridDimensions( width + GRID_OFFSET, height + 350);
 
 		start();
 	} // Plants::loadGamelog()
@@ -483,26 +483,26 @@ namespace visualizer
 		}
 
 
-                const parser::Plant& plant = m_game->states[currentTurn].plants.at(m_motherPlantID[0]);
-                float health = (plant.maxRads - plant.rads) / (float)plant.maxRads;
+		const parser::Plant& plant = m_game->states[currentTurn].plants.at(m_motherPlantID[0]);
+		float health = (plant.maxRads - plant.rads) / (float)plant.maxRads;
 
-                renderer->setColor(Color(1.0f, 0.0f, 0.5f, 1.0f));
-                renderer->drawTexturedQuad(50, getHeight() + 100, 500.0f, 150.0f, 1.0f, "vine", 0);
+		renderer->setColor(Color(1.0f, 0.0f, 0.5f, 1.0f));
+		renderer->drawTexturedQuad(50, getHeight() + 100, 500.0f, 150.0f, 1.0f, "vine", 0);
 
-                renderer->setColor(Color(0.0f, 1.0f, 1.0f, 1.0f));
-                renderer->drawTexturedQuad(50, getHeight() + 100, health * 500.0f, 150.0f, 1.0f, "vine", 0);
+		renderer->setColor(Color(0.0f, 1.0f, 1.0f, 1.0f));
+		renderer->drawSubTexturedQuad(50, getHeight() + 100, 500.0f, 150.0f, 0, 0, health, 1, "vine");
 
-                const parser::Plant& plant2 = m_game->states[currentTurn].plants.at(m_motherPlantID[1]);
-                health = (plant2.maxRads - plant2.rads) / (float)plant.maxRads;
+		const parser::Plant& plant2 = m_game->states[currentTurn].plants.at(m_motherPlantID[1]);
+		health = (plant2.maxRads - plant2.rads) / (float)plant.maxRads;
 
-                renderer->setColor(Color(1.0f, 0.0f, 0.5f, 1.0f));
-                renderer->drawTexturedQuad(50 + (getWidth() * 0.7f), getHeight() + 100, 500.0f, 150.0f, 1.0f, "vine", 1);
+		renderer->setColor(Color(1.0f, 0.0f, 0.5f, 1.0f));
+		renderer->drawTexturedQuad(50 + (getWidth() * 0.76f), getHeight() + 100, 500.0f, 150.0f, 1.0f, "vine", 0);
 
-                renderer->setColor(Color(0.0f, 1.0f, 1.0f, 1.0f));
-                renderer->drawTexturedQuad(50 + (getWidth() * 0.7f) + ((1 - health) * 500.0f), getHeight() + 100, health * 500.0f, 150.0f, 1.0f, "vine", 1);
+		renderer->setColor(Color(0.0f, 1.0f, 1.0f, 1.0f));
+		//renderer->drawTexturedQuad(50 + (getWidth() * 0.7f) + ((1 - health) * 500.0f), getHeight() + 100, health * 500.0f, 150.0f, 1.0f, "vine", 1);
 
-                
-                
+		renderer->drawSubTexturedQuad(50 + (getWidth() * 0.76f), getHeight() + 100, 500.0f, 150.0f, 0, 0, health, 1, "vine");
+
                 
 	}
 
