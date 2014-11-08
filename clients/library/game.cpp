@@ -408,6 +408,7 @@ DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
 
     int damage = object->strength + int(object->strength * ((float)object->rads / (float)object->maxRads));
     target->rads += damage;
+    object->uprootsLeft = 0;
   }
   else if (object->mutation == 3 || object->mutation == 4)
   {
