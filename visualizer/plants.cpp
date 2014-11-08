@@ -171,6 +171,7 @@ namespace visualizer
 		renderer->setGridDimensions( width + GRID_OFFSET, height + 350);
 
 		start();
+
 	} // Plants::loadGamelog()
 
     string Plants::getPlantFromID(int id, int owner, int actionState) const
@@ -471,6 +472,7 @@ namespace visualizer
 			float xPos = 400 + i * getWidth() * 0.60f;
 			float yPos = getHeight() + 50;
 
+            cout <<  m_game->states[currentTurn].maxSpores << endl;
 			stream << sporeCount;
 
 			renderer->setColor(Color(0.4f, 0.6f, 0.4f, 1.0f));
@@ -535,6 +537,7 @@ namespace visualizer
 	// The "main" function
 	void Plants::run()
     {
+
 		timeManager->setNumTurns( 0 );
 
 		animationEngine->registerGame(0, 0);
@@ -550,6 +553,7 @@ namespace visualizer
 		// Look through each turn in the gamelog
 		for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
 		{
+            cout << "gameRunStart " << endl;
 			// TODO: clean this up
 			for(auto iter : m_game->states[state].plants)
             {
@@ -558,10 +562,13 @@ namespace visualizer
                 const int plantId = iter.first;
                 float health = plant.maxRads - plant.rads;
                 float prevHealth = health;
-                if(m_game->states[state-1].plants.find(plantId) !=  m_game->states[state-1].plants.end())
+                if(state - 1 >= 0)
                 {
-                    const parser::Plant& prevPlant = m_game->states[state-1].plants[plantId];
-                    prevHealth = (prevPlant.maxRads - prevPlant.rads);
+                    if(m_game->states[state-1].plants.find(plantId) !=  m_game->states[state-1].plants.end())
+                    {
+                        const parser::Plant& prevPlant = m_game->states[state-1].plants[plantId];
+                        prevHealth = (prevPlant.maxRads - prevPlant.rads);
+                    }
                 }
                 string plantTexture = getPlantFromID(plant.mutation, plant.owner);
 				bool direction = plant.owner;
@@ -653,6 +660,7 @@ namespace visualizer
                             anim = idle;
                         }
                     }
+                    cout << "gameRunEnd " << endl;
 
                     //SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
                     //spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
@@ -699,7 +707,7 @@ namespace visualizer
                             case parser::PLANTTALK:
 							{
 								const parser::plantTalk& talkAnim = static_cast<const parser::plantTalk&>(*animation);
-								(*turn)[-1]["TALK"] = talkAnim.message;
+                                //(*turn)[-1]["TALK"] = talkAnim.message;
 								//cout <<"Talk: " << talkAnim.message << endl;
                                 break;
 							}
