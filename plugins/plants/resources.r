@@ -24,6 +24,7 @@ texture seed textures/seed.png
 texture grid textures/ground.jpg
 texture noise textures/noise.png
 texture rad_pool textures/rad_pool.png
+texture vine textures/vine.png
 
 animation aralia_anim1 textures/animations/araliasheet1.png
 animation aralia_anim2 textures/animations/araliasheet2.png

@@ -408,11 +408,11 @@ namespace visualizer
 			const parser::Plant& plant = m_game->states[currentTurn].plants.at(m_motherPlantID[i]);
 			float health = (plant.maxRads - plant.rads) / (float)plant.maxRads;
 
-			renderer->setColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
-			renderer->drawQuad(50 + i * getWidth() * 0.7f, getHeight() + 100, 500.0f, 50.0f);
+			renderer->setColor(Color(1.0f, 0.0f, 0.5f, 1.0f));
+			renderer->drawTexturedQuad(50 + i * getWidth() * 0.7f, getHeight() + 100, 500.0f, 150.0f, 1.0f, "vine", i);
 
-			renderer->setColor(Color(1.0f, 0.0f, 1.0f, 1.0f));
-			renderer->drawQuad(50 + i * getWidth() * 0.7f, getHeight() + 100, health * 500.0f, 50.0f);
+			renderer->setColor(Color(0.0f, 1.0f, 1.0f, 1.0f));
+			renderer->drawTexturedQuad(50 + i * getWidth() * 0.7f, getHeight() + 100, health * 500.0f, 150.0f, 1.0f, "vine", i);
 		}
 
 	}
