@@ -89,6 +89,9 @@ library.getSporeRate.argtypes = [c_void_p]
 library.getMaxSpores.restype = c_int
 library.getMaxSpores.argtypes = [c_void_p]
 
+library.getUprootRange.restype = c_int
+library.getUprootRange.argtypes = [c_void_p]
+
 library.getPlayer.restype = c_void_p
 library.getPlayer.argtypes = [c_void_p, c_int]
 
