@@ -271,6 +271,21 @@ namespace visualizer
 											 {"Tiles Selectable", false}});
 	}
 	
+    //ENUM FOR PLANTS
+
+    enum
+    {
+       Mother,
+       Spawner,
+       Choker,
+       Soaker,
+       Bumbleweed,
+       Aralia,
+       Titan,
+       Pool
+    };
+
+
 	// The "main" function
 	void Plants::run()
 	{
@@ -310,6 +325,7 @@ namespace visualizer
 			{
 				const parser::Plant& plant = iter.second;
 				bool bSpawned = spawnedPlants.insert(plant.id).second;
+                bool direction = plant.owner;
 
 				string plantTexture = getPlantFromID(plant.mutation, plant.owner);
 
@@ -325,7 +341,9 @@ namespace visualizer
 				}
 
                 // Only scale the mother plant and the rad pools
+
 				float plantSize = 60.0f;
+
 				if(plant.mutation == 0 || plant.mutation == 7)
 				{
 					plantSize = plant.range;
@@ -334,52 +352,96 @@ namespace visualizer
 				SmartPointer<Animatable> anim;
 				if (plant.mutation != 7)
 				{
-					float x = plant.x - plantSize / 2.0;
-					float y = plant.y - plantSize / 2.0;
-					SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture);
-					spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
+                    int endframe;
+                    switch(plant.mutation)
+                    {
+                        case Mother:
+                            endframe = 23;
+                            break;
+                        case Spawner:
+                            endframe = 23;
+                            break;
+                        case Choker:
+                            endframe = 23;
+                            break;
+                        case Soaker:
+                            endframe = 23;
+                            break;
+                        case Bumbleweed:
+                            endframe = 23;
+                            break;
+                        case Aralia:
+                            endframe = 23;
+                            break;
+                        case Titan:
+                            endframe = 23;
+                            break;
 
-					anim = spriteData;
+                    }
+
+                    float x = plant.x - plantSize / 2.0;
+					float y = plant.y - plantSize / 2.0;
+
+                    SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
+                    spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
+
+                    anim = spriteData;
+                    //direction is initially right (IE the animation;
+
+                    // Render animations for this plant
+                    for(const SmartPointer< parser::Animation >& animation : m_game->states[state].animations[plant.id])
+                    {
+                        switch(animation->type)
+                        {
+
+                            case parser::ATTACK:
+                            {
+                                const parser::attack& atkAnim = static_cast<const parser::attack&>(*animation);
+
+                                if(m_game->states[state].plants[atkAnim.targetID].x < plant.x)
+                                    direction = true;
+                                else
+                                    direction = false;
+                                SmartPointer<DrawAnimatedSpriteData> atk = new DrawAnimatedSpriteData(0, 7, x, y, plantSize, plantSize, "bumblesheet1", direction);
+                                atk->addKeyFrame( new DrawAnimatedSprite( atk, plantColor, bSpawned ? FadeIn : None ) );
+                                anim = atk;
+
+                                //cout << "Attack actingID, targetID: " << atkAnim.actingID << ", " << atkAnim.targetID << endl;
+                                break;
+                            }
+
+                            case parser::HEAL:
+                               // SmartPointer<DrawAnimatedSpriteData> heal = new DrawAnimatedSpriteData(0, 7, x, y, plantSize, plantSize, "bumblesheet1");
+                               // heal->addKeyFrame( new DrawAnimatedSprite( heal, plantColor, bSpawned ? FadeIn : None ) );
+                               // anim = heal;
+                                cout << "Heal" << endl;
+                                break;
+                            case parser::PLANTTALK:
+                                cout << "Talk" << endl;
+                                break;
+                            case parser::SOAK:
+                                cout << "Soak" << endl;
+                                break;
+                            case parser::UPROOT:
+                                cout << "UpRoot" << endl;
+                                break;
+                            default:
+                                assert(false && "Unknown animation");
+                                break;
+
+                        }
+                    }
+
 				}
 				else
 				{
-					SmartPointer<DrawTexturedCircleData> spriteData = new DrawTexturedCircleData(plant.x, plant.y, plantSize, plantTexture);
-					spriteData->addKeyFrame( new DrawTexturedCircle( spriteData, Color(1, 1, 1, 0.7), bSpawned ? FadeIn : None ) );
+                    SmartPointer<DrawTexturedCircleData> spriteData = new DrawTexturedCircleData(plant.x, plant.y, plantSize, plantTexture);
+                    spriteData->addKeyFrame( new DrawTexturedCircle( spriteData, Color(1, 1, 1, 0.7), bSpawned ? FadeIn : None ) );
 
-					anim = spriteData;
+                    anim = spriteData;
 				}
 
 				animationQueue.push(anim);
-
-				// Render animations for this plant
-				for(const SmartPointer< parser::Animation >& animation : m_game->states[state].animations[plant.id])
-				{
-					switch(animation->type)
-					{
-						case parser::ATTACK:
-						{
-                            const parser::attack& atkAnim = static_cast<const parser::attack&>(*animation);
-							//cout << "Attack actingID, targetID: " << atkAnim.actingID << ", " << atkAnim.targetID << endl;
-							break;
-						}
-						case parser::HEAL:
-							cout << "Heal" << endl;
-							break;
-						case parser::PLANTTALK:
-							cout << "Talk" << endl;
-							break;
-						case parser::SOAK:
-							cout << "Soak" << endl;
-							break;
-						case parser::UPROOT:
-							cout << "UpRoot" << endl;
-							break;
-						default:
-							assert(false && "Unknown animation");
-							break;
-
-					}
-				}
 
 				turn[plant.id]["id"] = plant.id;
 				turn[plant.id]["X"] = plant.x;
