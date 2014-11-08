@@ -26,4 +26,5 @@ texture grid textures/ground.jpg
 texture noise textures/noise.png
 texture rad_pool textures/rad_pool.png
 
+animation bumblesheet1 textures/bumblesheet1.png
 animation aralia_anim textures/animations/araliaSpriteSheet.png
