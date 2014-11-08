@@ -460,17 +460,14 @@ namespace visualizer
                 float health = plant.maxRads - plant.rads;
                 string plantTexture = getPlantFromID(plant.mutation, plant.owner);
 
-				// Coloring plants
+				// Coloring plants and radii
                 Color plantColor = Color(1, (health/plant.maxRads), (health/plant.maxRads), 1);
+                Color radiusColor = getPlayerColor(plant.owner);
+                radiusColor.a = .4;
 
 				// Render circle around plants
 				if (plant.mutation != 7)
 				{
-
-                    //Plant Radius Color
-                    Color radiusColor = getPlayerColor(plant.owner);
-                    radiusColor.a = .4;
-
 					SmartPointer<DrawCircleData> circleData = new DrawCircleData(plant.x, plant.y, plant.range);
 					circleData->addKeyFrame( new DrawCircle( circleData, radiusColor, bSpawned ? FadeIn : None ) );
 					turn.addAnimatable( circleData );
@@ -515,7 +512,8 @@ namespace visualizer
 
                     float x = plant.x - plantSize / 2.0;
 					float y = plant.y - plantSize / 2.0;
-
+                    
+                    //Show seed sprite when first spawned
                     SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
                     spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
                     anim = spriteData;
