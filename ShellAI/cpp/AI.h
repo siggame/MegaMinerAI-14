@@ -15,7 +15,7 @@ class AI: public BaseAI
     SPAWNER,
     CHOKER,
     SOAKER,
-    TUMBLEWEED,
+    BUMBLEWEED,
     ARALIA,
     TITAN,
     POOL

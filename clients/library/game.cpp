@@ -338,6 +338,15 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
 
 DLLEXPORT int plantTalk(_Plant* object, char* message)
 {
+  if(object -> hasSpoken == 0)
+  {
+    if(strlen(message) > 140)
+    {
+      message[140] = '\0';               //sneakily truncating message
+      object -> hasSpoken = 1;
+    }
+  }
+      
   stringstream expr;
   expr << "(game-talk " << object->id
       << " \"" << escape_string(message) << "\""
@@ -408,6 +417,7 @@ DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
 
     int damage = object->strength + int(object->strength * ((float)object->rads / (float)object->maxRads));
     target->rads += damage;
+    object->uprootsLeft = 0;
   }
   else if (object->mutation == 3 || object->mutation == 4)
   {
@@ -485,25 +495,7 @@ DLLEXPORT int plantUproot(_Plant* object, int x, int y)
   bool inRange;
   if (object->mutation != tumbleNo)
   {
-    inRange = false;
-    //identify and check every possible spawner
-    _Plant* checking_plant;
-    for (int i = 0; i < getPlantCount(c); i++)
-    {
-      checking_plant = getPlant(c,i);
-      if ((checking_plant->mutation == spawnerNo || checking_plant->mutation == motherNo) && checking_plant->owner == getPlayerID(c) && checking_plant->id != object->id)
-      {
-        if (dist(x, y, checking_plant->x, checking_plant->y) <= checking_plant->range)
-        {
-          if (dist(object->x, object->y, checking_plant->x, checking_plant->y) <= checking_plant->range)
-          {
-            inRange = true;
-            break;
-          }
-        }
-      }
-    }
-    if (!inRange)
+    if (dist(object->x, object->y, x, y) > getUprootRange(c))
       return 0;
   }
   else if (dist(object->x, object->y, x, y) > getBumbleweedSpeed(c))
@@ -594,6 +586,7 @@ void parsePlant(Connection* c, _Plant* object, sexp_t* expression)
   sub = sub->next;
   object->maxStrength = atoi(sub->val);
   sub = sub->next;
+  object -> hasSpoken = false;
 
 }
 void parseMutation(Connection* c, _Mutation* object, sexp_t* expression)
