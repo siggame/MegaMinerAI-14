@@ -220,7 +220,7 @@ class Plant(Mappable):
       else:
         # Soaker; buff
         buff = int(1 + self.strength/4)
-        target_plant.strength = max(target_plant.strength + buff, target_plant.maxStrength)
+        target_plant.strength = min(target_plant.strength + buff, target_plant.maxStrength)
 
     self.radiatesLeft -= 1
     if self.mutation == self.game.tumbleweed:
