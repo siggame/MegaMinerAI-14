@@ -63,15 +63,12 @@ namespace visualizer
 			int getHeight() const { return m_game->states[0].mapHeight; }
 
 			Color getPlayerColor(int id) const { return (id == 1) ? Color(0.9,0.5,0.5,1) : Color(0.5,0.5,0.9,1); }
-			      string getPlantFromID(int id) const;
+			string getPlantFromID(int id, int owner) const;
 
 			void GetSelectedRect(Rect &out) const;
 			std::list<IGUI::DebugOption> getDebugOptions();
 			static const float GRID_OFFSET;
 			static const float PLANT_SIZE;
-
-			Color getPlayerColor(int id) const { return (id == 1) ? Color(0.9,0.5,0.5,1) : Color(0.5,0.5,0.9,1); }
-			string getPlantFromID(int id, int owner) const;
 
 			void DrawObjectSelection() const;
 			void DrawBoxAroundObj(const parser::Mappable& obj, const glm::vec4& color) const;
