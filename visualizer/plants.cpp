@@ -174,14 +174,14 @@ namespace visualizer
         {
             case parser::ATTACK:
                 switch(id)
-                {/*
-                    case 0: stream << "mother"; break;
-                    case 1: stream << "spawner"; break;
-                    case 2: stream << "choke"; break;
-                    case 3: stream << "soaker"; break;
-                    case 4: stream << "bumbleweed"; break;
-                    case 5: stream << "aralia"; break;
-                    case 6: stream "titan"; break; */
+                {
+                   // case 0: stream << "mother"; break;
+                   // case 1: stream << "spawner"; break;
+                    case 2: stream << "choke_anim"; break;
+                   // case 3: stream << "soaker"; break;
+                   // case 4: stream << "bumbleweed"; break;
+                    case 5: stream << "aralia_anim"; break;
+                   // case 6: stream "titan"; break;
                     default: stream << "bumbleweed";
 
                 }
@@ -479,7 +479,7 @@ namespace visualizer
                             endframe = 23;
                             break;
                         case Choker:
-                            endframe = 23;
+                            endframe = 5;
                             break;
                         case Soaker:
                             endframe = 23;
@@ -488,7 +488,7 @@ namespace visualizer
                             endframe = 23;
                             break;
                         case Aralia:
-                            endframe = 23;
+                            endframe = 7;
                             break;
                         case Titan:
                             endframe = 23;
@@ -532,7 +532,7 @@ namespace visualizer
                                     direction = true;
                                 else
                                     direction = false;
-                                SmartPointer<DrawAnimatedSpriteData> atk = new DrawAnimatedSpriteData(15, endframe, x, y, plantSize, plantSize, plantTexture, direction);
+                                SmartPointer<DrawAnimatedSpriteData> atk = new DrawAnimatedSpriteData(0, endframe, x, y, plantSize, plantSize, plantTexture, direction);
                                 atk->addKeyFrame( new DrawAnimatedSprite( atk, plantColor, bSpawned ? FadeIn : None ) );
                                 anim = atk;
 
