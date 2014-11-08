@@ -171,6 +171,7 @@ namespace visualizer
 		renderer->setGridDimensions( width + GRID_OFFSET, height + 350);
 
 		start();
+
 	} // Plants::loadGamelog()
 
     string Plants::getPlantFromID(int id, int owner, int actionState) const
@@ -471,6 +472,7 @@ namespace visualizer
 			float xPos = 400 + i * getWidth() * 0.60f;
 			float yPos = getHeight() + 50;
 
+            cout <<  m_game->states[currentTurn].maxSpores << endl;
 			stream << sporeCount;
 
 			renderer->setColor(Color(0.4f, 0.6f, 0.4f, 1.0f));
@@ -534,7 +536,8 @@ namespace visualizer
 
 	// The "main" function
 	void Plants::run()
-	{
+    {
+
 		timeManager->setNumTurns( 0 );
 
 		animationEngine->registerGame(0, 0);
@@ -550,12 +553,23 @@ namespace visualizer
 		// Look through each turn in the gamelog
 		for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
 		{
+            cout << "gameRunStart " << endl;
 			// TODO: clean this up
 			for(auto iter : m_game->states[state].plants)
             {
-				const parser::Plant& plant = iter.second;
 
+				const parser::Plant& plant = iter.second;
+                const int plantId = iter.first;
                 float health = plant.maxRads - plant.rads;
+                float prevHealth = health;
+                if(state - 1 >= 0)
+                {
+                    if(m_game->states[state-1].plants.find(plantId) !=  m_game->states[state-1].plants.end())
+                    {
+                        const parser::Plant& prevPlant = m_game->states[state-1].plants[plantId];
+                        prevHealth = (prevPlant.maxRads - prevPlant.rads);
+                    }
+                }
                 string plantTexture = getPlantFromID(plant.mutation, plant.owner);
 				bool direction = plant.owner;
 				bool bSpawned = spawnedPlants.insert(plant.id).second;
@@ -571,6 +585,7 @@ namespace visualizer
 					}
 				}
 				// Coloring plants and radii
+                Color prevColor = Color(1, (prevHealth/plant.maxRads), (prevHealth/plant.maxRads), 1);
                 Color plantColor = Color(1, (health/plant.maxRads), (health/plant.maxRads), 1);
                 Color radiusColor = getPlayerColor(plant.owner);
                 radiusColor.a = .4;
@@ -579,7 +594,7 @@ namespace visualizer
 				if (plant.mutation != 7)
 				{
 					SmartPointer<DrawCircleData> circleData = new DrawCircleData(plant.x, plant.y, plant.range);
-					circleData->addKeyFrame( new DrawCircle( circleData, radiusColor, bSpawned ? FadeIn : None ) );
+                    circleData->addKeyFrame( new DrawCircle( circleData, radiusColor, radiusColor, bSpawned ? FadeIn : None ) );
 					turn->addAnimatable( circleData );
 				}
 
@@ -626,7 +641,7 @@ namespace visualizer
                     //Show seed sprite when first spawned
 
                     SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
-					spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : bDied ? FadeOut : None ) );
+                    spriteData->addKeyFrame( new DrawSprite( spriteData, prevColor, plantColor, bSpawned ? FadeIn : bDied ? FadeOut : None ) );
                     anim = spriteData;
                     if(!bSpawned)
                     {
@@ -634,17 +649,18 @@ namespace visualizer
                         {
                             SmartPointer<DrawAnimatedSpriteData> idle = new DrawAnimatedSpriteData(0, 7, x, y, plantSize, plantSize,
                                                                                                    plantTexture, direction);
-                            idle->addKeyFrame( new DrawAnimatedSprite( idle, plantColor, bSpawned ? FadeIn : None ) );
+                            idle->addKeyFrame( new DrawAnimatedSprite( idle, prevColor, plantColor, bSpawned ? FadeIn : None ) );
                             anim = idle;
                         }
                         else if(plant.mutation == Titan)
                         {
                             SmartPointer<DrawAnimatedSpriteData> idle = new DrawAnimatedSpriteData(0, endframe, x, y, plantSize * 1.20f, plantSize * 1.20f,
                                                                                                    plantTexture, direction);
-                            idle->addKeyFrame( new DrawAnimatedSprite( idle, plantColor, bSpawned ? FadeIn : None ) );
+                            idle->addKeyFrame( new DrawAnimatedSprite( idle, prevColor, plantColor, bSpawned ? FadeIn : None ) );
                             anim = idle;
                         }
                     }
+                    cout << "gameRunEnd " << endl;
 
                     //SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
                     //spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
@@ -667,7 +683,7 @@ namespace visualizer
                                 else
                                     direction = false;
                                 SmartPointer<DrawAnimatedSpriteData> atk = new DrawAnimatedSpriteData(0, endframe, x, y, plantSize, plantSize, plantTexture, direction);
-                                atk->addKeyFrame( new DrawAnimatedSprite( atk, plantColor, bSpawned ? FadeIn : None ) );
+                                atk->addKeyFrame( new DrawAnimatedSprite( atk, prevColor, plantColor, bSpawned ? FadeIn : None ) );
                                 anim = atk;
 
                                 //cout << "Attack actingID, targetID: " << atkAnim.actingID << ", " << atkAnim.targetID << endl;
@@ -683,7 +699,7 @@ namespace visualizer
                                 else
                                     direction = false;
                                 SmartPointer<DrawAnimatedSpriteData> heal = new DrawAnimatedSpriteData(0, endframe, x, y, plantSize, plantSize, plantTexture, direction);
-                                heal->addKeyFrame( new DrawAnimatedSprite( heal, plantColor, bSpawned ? FadeIn : None ) );
+                                heal->addKeyFrame( new DrawAnimatedSprite( heal, prevColor, plantColor, bSpawned ? FadeIn : None ) );
                                 anim = heal;
 
                                 break;
@@ -691,7 +707,7 @@ namespace visualizer
                             case parser::PLANTTALK:
 							{
 								const parser::plantTalk& talkAnim = static_cast<const parser::plantTalk&>(*animation);
-								(*turn)[-1]["TALK"] = talkAnim.message;
+                                //(*turn)[-1]["TALK"] = talkAnim.message;
 								//cout <<"Talk: " << talkAnim.message << endl;
                                 break;
 							}
@@ -714,9 +730,9 @@ namespace visualizer
 
 				}
 				else
-				{
+                {
 					SmartPointer<DrawTexturedCircleData> spriteData = new DrawTexturedCircleData(plant.x, plant.y, plantSize, plantTexture);
-					spriteData->addKeyFrame( new DrawTexturedCircle( spriteData, Color(1, 1, 1, 0.7), bSpawned ? FadeIn : None ) );
+                    spriteData->addKeyFrame( new DrawTexturedCircle( spriteData, Color(1, 1, 1, 0.7), Color(1, 1, 1, 0.7), bSpawned ? FadeIn : None ) );
 
 					anim = spriteData;
 				}
@@ -730,10 +746,10 @@ namespace visualizer
 					SmartPointer<DrawAnimatedSpriteData> deathAnim =
 							new DrawAnimatedSpriteData(0, 3,
 													   x, y,
-													   plantSize, plantSize,
+                                                       plantSize, plantSize,
 													   "death", false);
 
-					deathAnim->addKeyFrame(new DrawAnimatedSprite(deathAnim, Color(1.0f, 1.0f, 1.0f, 1.0f)));
+                    deathAnim->addKeyFrame(new DrawAnimatedSprite(deathAnim, Color(1.0f, 1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f, 1.0f)));
 					animationQueue.push(deathAnim);
 				}
 
@@ -779,7 +795,7 @@ namespace visualizer
 			if(state == (int)m_game->states.size() - 1)
 			{
 				SmartPointer<DrawWinningData> winningData = new DrawWinningData(0, 0, getWidth(), getHeight(), m_game->winReason);
-				winningData->addKeyFrame( new DrawWinningScreen( winningData, Color(0.1,0.6,0.8,0.2), None ) );
+                winningData->addKeyFrame( new DrawWinningScreen( winningData, Color(0.1,0.6,0.8,0.2), Color(0.1,0.6,0.8,0.2),None ) );
 				turn->addAnimatable( winningData );
 			}
 

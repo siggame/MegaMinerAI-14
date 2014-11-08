@@ -1,10 +1,12 @@
 #include "animations.h"
 #include "plants.h"
+#include <glm/glm.hpp>
 
 namespace visualizer
 {
 	void DrawFadedObject::animate(const float &t, AnimData *d, IGame *game)
 	{
+       glm::vec4 vecColor = glm::mix(glm::vec4(m_start.r, m_start.g, m_start.b, m_start.a), glm::vec4(m_end.r, m_end.g, m_end.b, m_end.a), t);
 		// Set the color to red
 		float scalar = t;
 		if(m_fade == FadeIn)
@@ -21,7 +23,7 @@ namespace visualizer
 		}
 
 		//float color = m_data->fade
-		game->renderer->setColor(Color(m_color.r, m_color.g, m_color.b, m_color.a * scalar));
+        game->renderer->setColor(Color(vecColor.r, vecColor.g, vecColor.b, vecColor.a * scalar));
 	}
 
 	void DrawQuad::animate( const float& t, AnimData* d, IGame* game )
@@ -85,7 +87,7 @@ namespace visualizer
             game->popZoomMatrix();
 	}
 
-	void DrawAnimatedSprite::animate(const float &t, AnimData *d, IGame *game)
+    void DrawAnimatedSprite::animate(const float &t, AnimData *d, IGame *game)
 	{
 		DrawFadedObject::animate(t, d, game);
                 
