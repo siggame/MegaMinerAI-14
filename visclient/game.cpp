@@ -63,6 +63,7 @@ DLLEXPORT Connection* createConnection()
   c->poolBuff = 0;
   c->sporeRate = 0;
   c->maxSpores = 0;
+  c->uprootRange = 0;
   c->Players = NULL;
   c->PlayerCount = 0;
   c->Mappables = NULL;
@@ -476,6 +477,9 @@ DLLEXPORT int networkLoop(Connection* c)
           c->maxSpores = atoi(sub->val);
           sub = sub->next;
 
+          c->uprootRange = atoi(sub->val);
+          sub = sub->next;
+
         }
         else if(string(sub->val) == "Player")
         {
@@ -641,6 +645,10 @@ DLLEXPORT int getSporeRate(Connection* c)
 DLLEXPORT int getMaxSpores(Connection* c)
 {
   return c->maxSpores;
+}
+DLLEXPORT int getUprootRange(Connection* c)
+{
+  return c->uprootRange;
 }
 
 }

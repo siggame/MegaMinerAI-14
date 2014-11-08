@@ -186,7 +186,8 @@ class Plant(Mappable):
       return 'Turn {}: Your {} does not have any radiates left.'.format(self.game.turnNumber, self.id)
     elif not (0 <= x < self.game.mapWidth) or not (0 <= y < self.game.mapHeight):
       return 'Turn {}: Your {} cannot radiate off the map.'.format(self.game.turnNumber, self.id)
-    elif not (self.game.dist(self.x, self.y, x, y) <= self.range):
+    #Inverted from what it was. Can target >= range
+    elif self.game.dist(self.x, self.y, x, y) > self.range:
       return 'Turn {}: Your {} cannot radiate outside of its range.'.format(self.game.turnNumber, self.id)
 
     target_plant = None
@@ -202,7 +203,7 @@ class Plant(Mappable):
         return 'Turn {}: Your {} cannot attack your own plants'.format(self.game.turnNumber, self.id)
 
       # Deal damage
-      damage = self.strength + int(self.strength * (self.rads / self.maxRads))
+      damage = self.strength + int(self.strength * (float(self.rads) / float(self.maxRads)))
       target_plant.rads += damage
       target_plant.handleDeath()
 
@@ -220,7 +221,7 @@ class Plant(Mappable):
       else:
         # Soaker; buff
         buff = int(1 + self.strength/4)
-        target_plant.strength = max(target_plant.strength + buff, target_plant.maxStrength)
+        target_plant.strength = min(target_plant.strength + buff, target_plant.maxStrength)
 
     self.radiatesLeft -= 1
     if self.mutation == self.game.tumbleweed:

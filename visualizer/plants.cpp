@@ -8,6 +8,8 @@
 #include <list>
 #include <queue>
 #include <glm/glm.hpp>
+#include <sstream>
+
 
 namespace visualizer
 {
@@ -66,6 +68,12 @@ namespace visualizer
 
 		renderer->setColor(Color(0.9f,0.9f,0.9f,1));
 		renderer->drawTexturedQuad(0, 0, getWidth(), getHeight(), 2, "grid");
+
+		//static float offset = 0;
+		//offset += timeManager->getDt();
+		renderer->setColor(Color(1,1,1,0.2f));
+		//renderer->drawSubTexturedQuad(0, 0, getWidth(), getHeight(), offset, offset, getWidth(), getHeight(), "noise");
+		renderer->drawTexturedQuad(0, 0, getWidth(), getHeight(), 1, "noise");
 
         // Draw Names
         for (int owner : {0,1})
@@ -152,21 +160,27 @@ namespace visualizer
 		start();
 	} // Plants::loadGamelog()
 
-	string Plants::getPlantFromID(int id) const
+	string Plants::getPlantFromID(int id, int owner) const
 	{
+		if(id == 7)
+			return "rad_pool";
+
+		std::stringstream stream;
 		// TODO: correctly match ids with string and team color
 		switch(id)
 		{
-			case 0: return "mother"; break;
-			case 1: return "spawner"; break;
-			case 2: return "choke1"; break;
-			case 3: return "soaker"; break;
-			case 4: return "bumbleweed1"; break;
-			case 5: return "aralia"; break;
+			case 0: stream << "mother"; break;
+			case 1: stream << "spawner"; break;
+			case 2: stream << "choke"; break;
+			case 3: stream << "soaker"; break;
+			case 4: stream << "bumbleweed"; break;
+			case 5: stream << "aralia"; break;
 			//case 6: return "titan"; break;
-			case 7: return "rad_pool"; break;
-			default: return "spawner";
+			default: stream << "spawner";
 		}
+
+		stream << ((owner == 0) ? 1 : 2);
+		return stream.str();
 	}
 
 	void Plants::ProcessInput()
@@ -297,7 +311,7 @@ namespace visualizer
 				const parser::Plant& plant = iter.second;
 				bool bSpawned = spawnedPlants.insert(plant.id).second;
 
-				string plantTexture = getPlantFromID(plant.mutation);
+				string plantTexture = getPlantFromID(plant.mutation, plant.owner);
 
 				// Coloring plants
 				Color plantColor = Color(1, 1, 1, 1);
@@ -305,15 +319,13 @@ namespace visualizer
 				// Render circle around plants
 				if (plant.mutation != 7)
 				{
-					plantColor = getPlayerColor(plant.owner);
-
 					SmartPointer<DrawCircleData> circleData = new DrawCircleData(plant.x, plant.y, plant.range);
 					circleData->addKeyFrame( new DrawCircle( circleData, Color(0.1,0.6,0.8,0.2), bSpawned ? FadeIn : None ) );
 					turn.addAnimatable( circleData );
 				}
 
                 // Only scale the mother plant and the rad pools
-				float plantSize = 40.0f;
+				float plantSize = 60.0f;
 				if(plant.mutation == 0 || plant.mutation == 7)
 				{
 					plantSize = plant.range;
@@ -324,7 +336,7 @@ namespace visualizer
 				{
 					float x = plant.x - plantSize / 2.0;
 					float y = plant.y - plantSize / 2.0;
-					SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, plantTexture);
+					SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture);
 					spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
 
 					anim = spriteData;

@@ -158,6 +158,7 @@ struct GameState
   int poolBuff;
   int sporeRate;
   int maxSpores;
+  int uprootRange;
 
   std::map< int, std::vector< SmartPointer< Animation > > > animations;
   friend std::ostream& operator<<(std::ostream& stream, GameState obj);

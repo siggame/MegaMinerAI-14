@@ -22,6 +22,7 @@ globals = [
   Variable('poolBuff', int, 'The strength buff taken from standing in a pool'),
   Variable('sporeRate', int, 'The rate which your spores return to maxSpores'),
   Variable('maxSpores', int, 'The maximum number of spores a player can have'),
+  Variable('uprootRange', int, 'The maximum range which a plant can move'),
 ]
 
 playerData = [
