@@ -690,7 +690,8 @@ namespace visualizer
                             case parser::PLANTTALK:
 							{
 								const parser::plantTalk& talkAnim = static_cast<const parser::plantTalk&>(*animation);
-								cout <<"Talk: " << talkAnim.message << endl;
+								(*turn)[-1]["TALK"] = talkAnim.message;
+								//cout <<"Talk: " << talkAnim.message << endl;
                                 break;
 							}
                             case parser::SOAK:

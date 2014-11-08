@@ -463,6 +463,7 @@ static bool parseHeal(heal& object, sexp_t* expression)
 }
 static bool parsePlantTalk(plantTalk& object, sexp_t* expression)
 {
+	cout << "Parse plant talk" << endl;
   sexp_t* sub;
   if ( !expression ) return false;
   object.type = PLANTTALK;
@@ -681,7 +682,7 @@ static bool parseSexp(Game& game, sexp_t* expression)
 
         animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
       }
-      if(string(ToLower( sub->val ) ) == "plant-talk")
+	  if(string(ToLower( sub->val ) ) == "planttalk")
       {
         SmartPointer<plantTalk> animation = new plantTalk;
         if ( !parsePlantTalk(*animation, expression) )
