@@ -13,8 +13,8 @@ texture mother2 textures/mother2.png
 texture spawner1 textures/dandelion.png
 texture spawner2 textures/dandelion.png
 
-texture bumbleweed1 textures/bumblesheet1.png
-texture bumbleweed2 textures/bumblesheet2.png
+animation bumbleweed1 textures/bumblesheet1.png
+animation bumbleweed2 textures/bumblesheet2.png
 
 texture choke1 textures/choke1.png
 texture choke2 textures/choke2.png
@@ -29,4 +29,5 @@ texture noise textures/noise.png
 texture rad_pool textures/rad_pool.png
 
 animation bumblesheet1 textures/bumblesheet1.png
+animation bumblesheet2 textures/bumblesheet2.png
 animation aralia_anim textures/animations/araliaSpriteSheet.png
