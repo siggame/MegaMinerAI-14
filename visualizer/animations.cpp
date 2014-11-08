@@ -85,7 +85,6 @@ namespace visualizer
             y = m_data->y + ((m_data->height/2) - (h/2));            
             game->renderer->drawTexturedQuad(x, y, w, h, 1.0f, m_data->texture, m_data->flip );
             game->popZoomMatrix();
-            
 	}
 
     void DrawAnimatedSprite::animate(const float &t, AnimData *d, IGame *game)
@@ -93,9 +92,15 @@ namespace visualizer
 		DrawFadedObject::animate(t, d, game);
                 
                 game->pushZoomMatrix();
+                
+                float x,y, w, h;
+                w = m_data->width * (1/game->zoomFactor());
+                h = m_data->height * (1/game->zoomFactor());
+                x = m_data->x + ((m_data->width/2) - (w/2));
+                y = m_data->y + ((m_data->height/2) - (h/2));
 		int currentFrame = (m_data->endFrame - m_data->startFrame) * t + m_data->startFrame;
-		game->renderer->drawAnimQuad(m_data->x, m_data->y,
-                                     m_data->width, m_data->height,
+		game->renderer->drawAnimQuad(x, y,
+                                     w, h,
                                      m_data->texture, m_data->flip, currentFrame);
 	
                 game->popZoomMatrix();

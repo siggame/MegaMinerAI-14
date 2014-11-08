@@ -26,6 +26,7 @@ texture noise textures/noise.png
 texture rad_pool textures/rad_pool.png
 texture vine textures/vine.png
 texture background textures/background.png
+texture guibg textures/guibg.png
 
 animation aralia_anim1 textures/animations/araliasheet1.png
 animation aralia_anim2 textures/animations/araliasheet2.png
