@@ -474,28 +474,36 @@ namespace visualizer
 
 			renderer->setColor(Color(0.4f, 0.6f, 0.4f, 1.0f));
 			renderer->drawCircle(xPos, yPos, 50, 1, 10);
-
+                        
 			renderer->setColor(Color(0.3f, 0.9f, 0.3f, 1.0f));
-			renderer->drawCircle(xPos, yPos, 50, sporeCount /
-															m_game->states[currentTurn].maxSpores, 10, 90);
+			renderer->drawCircle(xPos, yPos, 50, static_cast<float>(sporeCount) / m_game->states[currentTurn].maxSpores, 10, 90);
 
 			renderer->setColor(Color(0, 0, 0, 1));
 			renderer->drawText(xPos, yPos, "Roboto", stream.str(), 150.0f, IRenderer::Center);
 		}
 
-		// Render Progress bar
-		for(int i : {0, 1})
-		{
-			const parser::Plant& plant = m_game->states[currentTurn].plants.at(m_motherPlantID[i]);
-			float health = (plant.maxRads - plant.rads) / (float)plant.maxRads;
 
-			renderer->setColor(Color(1.0f, 0.0f, 0.5f, 1.0f));
-			renderer->drawTexturedQuad(50 + i * getWidth() * 0.7f, getHeight() + 100, 500.0f, 150.0f, 1.0f, "vine", i);
+                const parser::Plant& plant = m_game->states[currentTurn].plants.at(m_motherPlantID[0]);
+                float health = (plant.maxRads - plant.rads) / (float)plant.maxRads;
 
-			renderer->setColor(Color(0.0f, 1.0f, 1.0f, 1.0f));
-			renderer->drawTexturedQuad(50 + i * getWidth() * 0.7f, getHeight() + 100, health * 500.0f, 150.0f, 1.0f, "vine", i);
-		}
+                renderer->setColor(Color(1.0f, 0.0f, 0.5f, 1.0f));
+                renderer->drawTexturedQuad(50, getHeight() + 100, 500.0f, 150.0f, 1.0f, "vine", 0);
 
+                renderer->setColor(Color(0.0f, 1.0f, 1.0f, 1.0f));
+                renderer->drawTexturedQuad(50, getHeight() + 100, health * 500.0f, 150.0f, 1.0f, "vine", 0);
+
+                const parser::Plant& plant2 = m_game->states[currentTurn].plants.at(m_motherPlantID[1]);
+                health = (plant2.maxRads - plant2.rads) / (float)plant.maxRads;
+
+                renderer->setColor(Color(1.0f, 0.0f, 0.5f, 1.0f));
+                renderer->drawTexturedQuad(50 + (getWidth() * 0.7f), getHeight() + 100, 500.0f, 150.0f, 1.0f, "vine", 1);
+
+                renderer->setColor(Color(0.0f, 1.0f, 1.0f, 1.0f));
+                renderer->drawTexturedQuad(50 + (getWidth() * 0.7f) + ((1 - health) * 500.0f), getHeight() + 100, health * 500.0f, 150.0f, 1.0f, "vine", 1);
+
+                
+                
+                
 	}
 
 	void Plants::LoadMotherPlants()
