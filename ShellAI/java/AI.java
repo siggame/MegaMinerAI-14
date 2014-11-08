@@ -17,7 +17,6 @@ public class AI extends BaseAI
   private Player me;
   private Plant mother;
   private int directionOfEnemy; //moving in this direction moves you to the enemy's side
-  private boolean firstTurn = true;
   private Random rand = new Random();        
           
   public String username()
@@ -34,12 +33,6 @@ public class AI extends BaseAI
   public boolean run()
   {
     ArrayList<Plant> myPlants = getMyPlants();
-    
-    if (firstTurn)
-    {
-      //do special things on your first turn if you want
-      firstTurn = false;
-    }
   
     //for every plant we own, move them forward and attack if it finds an enemy
     for (Plant plant : myPlants)
