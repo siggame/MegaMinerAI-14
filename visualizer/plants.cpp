@@ -28,7 +28,7 @@ namespace visualizer
         const float Plants::PLANT_SIZE = 60.0f;
 	Plants::Plants()
 	{
-                m_zoomFactor = 1;
+                m_zoomFactor = 2;
 		m_game = 0;
 		m_suicide=false;
 	} // Plants::Plants()
@@ -162,8 +162,8 @@ namespace visualizer
 		renderer->setCamera( 0, 0, width, height );
 		renderer->setGridDimensions( width, height );
                 
-                m_zoomPoint.x = width*.5;
-                m_zoomPoint.y = height*.5;
+                m_zoomPoint.x = width*.6;
+                m_zoomPoint.y = height*.6;
                 
 		start();
 	} // Plants::loadGamelog()
@@ -404,8 +404,6 @@ namespace visualizer
             int x = (m_zoomPoint.x/getWidth()) * width;
             int y = (m_zoomPoint.y/getHeight()) * height;
             
-            std::cout << -(x - (width/2)) << "   " << -(y - (height/2)) << std::endl;
-            
             renderer->push();
             renderer->scale(m_zoomFactor, m_zoomFactor);
             renderer->translate( -(m_zoomPoint.x - (width/2)), -(m_zoomPoint.y - (height/2)));
@@ -414,6 +412,24 @@ namespace visualizer
     void Plants::popZoomMatrix() const 
     {
             renderer->pop();
+    }
+    
+    void Plants::wheelEvent(int delta)
+    {
+            m_zoomFactor += ((m_zoomFactor* 0.02) * (delta * 0.02));
+    }
+    
+    void Plants::keyPressEvent(std::string& s)
+    {
+        if(s == "W")
+            m_zoomPoint.y -= 8;
+        else if( s == "A")
+            m_zoomPoint.x -= 8;
+        else if(s == "S")
+            m_zoomPoint.y += 8;
+        else if(s == "D")
+            m_zoomPoint.x += 8;
+            
     }
     
 	std::list<IGUI::DebugOption> Plants::getDebugOptions()

@@ -29,7 +29,7 @@ namespace visualizer
 		DrawFadedObject::animate(t, d, game);
 
                 game->pushZoomMatrix();
-		game->renderer->drawQuad( m_data->x, m_data->y, m_data->width, m_data->height );
+		game->renderer->drawQuad( m_data->x, m_data->y, m_data->width * (1/game->zoomFactor()), m_data->height * (1/game->zoomFactor()) );
                 game->popZoomMatrix();
         }
 	
@@ -78,7 +78,12 @@ namespace visualizer
             DrawFadedObject::animate(t, d, game);
             
             game->pushZoomMatrix();
-            game->renderer->drawTexturedQuad( m_data->x, m_data->y, m_data->width, m_data->height, 1.0f, m_data->texture, m_data->flip );
+            float x, y, w, h;
+            w = m_data->width * (1/game->zoomFactor());
+            h = m_data->height * (1/game->zoomFactor());
+            x = m_data->x + ((m_data->width/2) - (w/2));
+            y = m_data->y + ((m_data->height/2) - (h/2));            
+            game->renderer->drawTexturedQuad(x, y, w, h, 1.0f, m_data->texture, m_data->flip );
             game->popZoomMatrix();
             
         }
@@ -90,7 +95,7 @@ namespace visualizer
                 game->pushZoomMatrix();
 		int currentFrame = (m_data->endFrame - m_data->startFrame) * t + m_data->startFrame;
 		game->renderer->drawAnimQuad(m_data->x, m_data->y,
-									 m_data->width, m_data->height,
+                                     m_data->width, m_data->height,
                                      m_data->texture, m_data->flip, currentFrame);
 	
                 game->popZoomMatrix();
