@@ -35,7 +35,7 @@ class Player(object):
 
       sporesYouShouldHave = self.game.maxSpores
 
-      sporesYouGet = math.ceil((sporesYouShouldHave - plantWorth) * self.game.sporeRate / 100)
+      sporesYouGet = max(math.ceil((sporesYouShouldHave - plantWorth) * self.game.sporeRate / 100), self.game.sporeBase)
       self.spores += sporesYouGet
       if self.spores > self.game.maxSpores:
         self.spores = self.game.maxSpores
@@ -186,7 +186,8 @@ class Plant(Mappable):
       return 'Turn {}: Your {} does not have any radiates left.'.format(self.game.turnNumber, self.id)
     elif not (0 <= x < self.game.mapWidth) or not (0 <= y < self.game.mapHeight):
       return 'Turn {}: Your {} cannot radiate off the map.'.format(self.game.turnNumber, self.id)
-    elif not (self.game.dist(self.x, self.y, x, y) < self.range):
+    #Inverted from what it was. Can target >= range
+    elif self.game.dist(self.x, self.y, x, y) > self.range:
       return 'Turn {}: Your {} cannot radiate outside of its range.'.format(self.game.turnNumber, self.id)
 
     target_plant = None
