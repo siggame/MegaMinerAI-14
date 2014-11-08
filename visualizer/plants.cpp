@@ -93,10 +93,10 @@ namespace visualizer
 
 	void Plants::postDraw()
 	{
+		DrawObjectSelection();
+
 		renderer->disableScissor();
 		renderer->pop();
-        
-        DrawObjectSelection();
 
 	}
 
@@ -194,7 +194,6 @@ namespace visualizer
                 {
                     case 4: stream << "bumbleweed"; break;
                 }
-                cout << "Heal" << endl;
                 break;
             case parser::PLANTTALK:
                 switch(id)
@@ -209,7 +208,6 @@ namespace visualizer
                     default: stream << "spawner";
                   */
                 }
-                cout << "Talk" << endl;
                 break;
             case parser::SOAK:
                 switch(id)
@@ -224,7 +222,6 @@ namespace visualizer
                     default: stream << "spawner";
                     */
                 }
-                cout << "Soak" << endl;
                 break;
             case parser::UPROOT:
                 switch(id)
@@ -239,7 +236,6 @@ namespace visualizer
                     default: stream << "spawner";
                     */
                 }
-                cout << "UpRoot" << endl;
                 break;
             default:
                 switch(id)
@@ -271,9 +267,6 @@ namespace visualizer
 		{
 			Rect R;
 			GetSelectedRect(R);
-
-			// todo: this causes the game to hang
-			//renderer->setCamera( R.left, R.top, R.right, R.bottom );
 
 			m_SelectedUnits.clear();
 
@@ -347,16 +340,16 @@ namespace visualizer
         int turn = timeManager->getTurn();
         if(turn < (int) m_game->states.size())
         {
-             for(auto & iter : m_SelectedUnits)
+			for(auto & iter : m_SelectedUnits)
             {
                 if(m_game->states[turn].plants.find(iter) != m_game->states[turn].plants.end())
                 {
                     auto & plant = m_game->states[turn].plants.at(iter);
                     DrawQuadAroundObj(parser::Mappable({plant.id, plant.x, plant.y}), glm::vec4(1.0f, 0.4, 0.4, 0.6));
                 }
-            }
+			}
 
-            int focus = gui->getCurrentUnitFocus();
+			int focus = gui->getCurrentUnitFocus();
             if(focus >= 0)
             {
                 if(m_game->states[turn].plants.find(focus) != m_game->states[turn].plants.end())
@@ -364,13 +357,13 @@ namespace visualizer
                     auto& plant = m_game->states[turn].plants.at(focus);
                     DrawBoxAroundObj(parser::Mappable({plant.id, plant.x, plant.y}), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
                 }
-            }
+			}
         }
     }
 
     void Plants::DrawBoxAroundObj(const parser::Mappable& obj, const glm::vec4 &color) const
     {
-        float posFix = 1.3;
+		float posFix = -10;
         
         //push the zoom matrix here
         renderer->setColor(Color(color.r, color.g, color.b, color.a));
@@ -385,11 +378,11 @@ namespace visualizer
 
     void Plants::DrawQuadAroundObj(const parser::Mappable& obj, const glm::vec4 &color) const
     {
-        float posFix = 60;
+		float posFix = -10;
         
         // push the zoom matrix here
         renderer->setColor( Color( color.r, color.g, color.b, color.a) );
-        renderer->drawQuad(obj.x + .5*posFix, obj.y + .5*posFix, 1,1);
+		renderer->drawQuad(obj.x + .5*posFix, obj.y + .5*posFix, 50,50);
         // pop the zoom matrix here
         
     }
@@ -397,7 +390,7 @@ namespace visualizer
 	std::list<IGUI::DebugOption> Plants::getDebugOptions()
 	{
 		return std::list<IGUI::DebugOption>({{"Units Selectable", true},
-											 {"Tiles Selectable", false}});
+											 {"Tiles Selectable", true}});
 	}
 	
     //ENUMERATION FOR PLANT MUTATIONS
@@ -566,18 +559,24 @@ namespace visualizer
                                 heal->addKeyFrame( new DrawAnimatedSprite( heal, plantColor, bSpawned ? FadeIn : None ) );
                                 anim = heal;
 
-                                cout << "Heal" << endl;
                                 break;
                             }
                             case parser::PLANTTALK:
-                                cout << "Talk" << endl;
+							{
+								const parser::plantTalk& talkAnim = static_cast<const parser::plantTalk&>(*animation);
+								cout <<"Talk: " << talkAnim.message << endl;
                                 break;
+							}
                             case parser::SOAK:
-                                cout << "Soak" << endl;
+							{
+								const parser::soak& soakAnim = static_cast<const parser::soak&>(*animation);
                                 break;
+							}
                             case parser::UPROOT:
-                                cout << "UpRoot" << endl;
+							{
+								const parser::uproot& upRootAnim = static_cast<const parser::uproot&>(*animation);
                                 break;
+							}
                             default:
                                 assert(false && "Unknown animation");
                                 break;

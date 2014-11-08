@@ -61,7 +61,7 @@ namespace visualizer
 
 		DrawFadedObject::animate(t, d, game);
 
-                // push the zoom matrix here
+				// push the zoom matrix here
 		float dx = 0.3 * cos(0.01*dt);
 		float dy = 0.3 * sin(0.01*dt);
 		game->renderer->drawTexturedCircle(m_data->x, m_data->y, m_data->radius, 1, 100, m_data->texture, 0.0f, dx, dy);
@@ -80,7 +80,7 @@ namespace visualizer
             game->renderer->drawTexturedQuad( m_data->x, m_data->y, m_data->width, m_data->height, 1.0f, m_data->texture, m_data->flip );
             // pop the zoom matrix here
             
-        }
+	}
 
 	void DrawAnimatedSprite::animate(const float &t, AnimData *d, IGame *game)
 	{
