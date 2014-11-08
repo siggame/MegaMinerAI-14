@@ -72,6 +72,12 @@ namespace visualizer
                 
 		renderer->push();
 		renderer->translate(GRID_OFFSET, GRID_OFFSET);
+
+		static float d = 0.0f;
+		d += timeManager->getDt() * 0.5f;
+
+		renderer->setColor(Color(0.4,0.4,0.4,1));
+		renderer->drawRotatedTexturedQuad(-getWidth(), -getHeight(), 3*getWidth(), 3*getHeight(), 1.0f, d, "background");
                 
 		renderer->setColor(Color(0.9f,0.9f,0.9f,1));
 		renderer->drawTexturedQuad(0, 0, getWidth(), getHeight(), 2, "grid");
@@ -389,6 +395,10 @@ namespace visualizer
 		const float y = getHeight() + 2;
 		const float boxOffset = 980;
 		int currentTurn = timeManager->getTurn();
+
+		renderer->setColor(Color(0.54, 0.27, 0.07, 1));
+		renderer->drawQuad(0, getHeight(), 500, 400);
+		renderer->drawQuad(1550, getHeight(), 500, 400);
 
 		// Draw Names
 		for (int owner : {0,1})
