@@ -37,11 +37,9 @@ namespace visualizer
 	{
 		DrawFadedObject::animate(t, d, game);
 
-                game->pushZoomMatrix();
                 game->renderer->drawQuad( m_data->x, m_data->y, m_data->width, m_data->height );
-		game->renderer->setColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
-		game->renderer->drawText( m_data->x + (m_data->width)/2, m_data->y + (m_data->height)/2, "Roboto", m_data->winner, 200.0f, IRenderer::Center);
-                game->popZoomMatrix();
+                game->renderer->setColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
+                game->renderer->drawText( m_data->x + (m_data->width)/2, m_data->y + (m_data->height)/2, "Roboto", m_data->winner, 200.0f, IRenderer::Center);
         }
 
 	void DrawCircle::animate( const float& t, AnimData* d, IGame* game )

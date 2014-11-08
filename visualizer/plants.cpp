@@ -29,7 +29,7 @@ namespace visualizer
 
 	Plants::Plants()
 	{
-                m_zoomFactor = 2;
+                m_zoomFactor = 1;
 		m_game = 0;
 		m_suicide=false;
 	} // Plants::Plants()
@@ -162,8 +162,8 @@ namespace visualizer
 		renderer->setCamera( 0, 0, width, height );
 		renderer->setGridDimensions( width, height );
                 
-                m_zoomPoint.x = width*.6;
-                m_zoomPoint.y = height*.6;
+                m_zoomPoint.x = width*.5;
+                m_zoomPoint.y = height*.5;
 
 		renderer->setCamera( 0, 0, width + GRID_OFFSET, height + 200);
 		renderer->setGridDimensions( width + GRID_OFFSET, height + 200);
@@ -325,15 +325,25 @@ namespace visualizer
 	void Plants::GetSelectedRect(Rect &out) const
 	{
 		const Input& input = gui->getInput();
-
-		int x = input.x - GRID_OFFSET;
-		int y = input.y - GRID_OFFSET;
-		int width = input.sx - x - GRID_OFFSET;
-		int height = input.sy - y - GRID_OFFSET;
-
+                
+                int viewwidth = (1/m_zoomFactor) * getWidth();
+                int viewheight = (1/m_zoomFactor) * getHeight();
+            
+                int viewx = (m_zoomPoint.x/getWidth()) * viewwidth;
+                int viewy = (m_zoomPoint.y/getHeight()) * viewheight;
+                
+                int width = ((input.sx - input.x)/getWidth()) * viewwidth;
+                int height = ((input.sy - input.y)/getHeight()) * viewheight;                
+                
+                int x = (m_zoomPoint.x - (viewwidth/2)) + ((input.x/getWidth())  * viewwidth);
+                int y = (m_zoomPoint.y - (viewheight/2)) + ((input.y/getHeight()) * viewheight);
+                
 		int right = x + width;
 		int bottom = y + height;
-
+              
+                std::cout << "x:" << input.x << " y:" << input.y << " sx:" << input.sx << " sy:" << input.sy << std::endl;
+                std::cout << "x:" << viewx << " y:" << viewy << " w:" << viewwidth << " h:" << viewheight << std::endl;
+                std::cout << "x:" << x << " y:" << y << " w:" << width << " h:" << height << std::endl; 
 		out.left = min(x,right);
 		out.top = min(y,bottom);
 		out.right = max(x,right);
@@ -345,16 +355,16 @@ namespace visualizer
         int turn = timeManager->getTurn();
         if(turn < (int) m_game->states.size())
         {
-			for(auto & iter : m_SelectedUnits)
+            for(auto & iter : m_SelectedUnits)
             {
                 if(m_game->states[turn].plants.find(iter) != m_game->states[turn].plants.end())
                 {
                     auto & plant = m_game->states[turn].plants.at(iter);
                     DrawQuadAroundObj(parser::Mappable({plant.id, plant.x, plant.y}), glm::vec4(1.0f, 0.4, 0.4, 0.6));
                 }
-			}
+            }
 
-			int focus = gui->getCurrentUnitFocus();
+            int focus = gui->getCurrentUnitFocus();
             if(focus >= 0)
             {
                 if(m_game->states[turn].plants.find(focus) != m_game->states[turn].plants.end())
@@ -362,34 +372,32 @@ namespace visualizer
                     auto& plant = m_game->states[turn].plants.at(focus);
                     DrawBoxAroundObj(parser::Mappable({plant.id, plant.x, plant.y}), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
                 }
-			}
+            }
         }
     }
 
     void Plants::DrawBoxAroundObj(const parser::Mappable& obj, const glm::vec4 &color) const
     {
-		float posFix = -10;
-        
-        //push the zoom matrix here
+        float w = PLANT_SIZE * (1/m_zoomFactor);
+        float h = PLANT_SIZE * (1/m_zoomFactor);
+        pushZoomMatrix();
         renderer->setColor(Color(color.r, color.g, color.b, color.a));
-        renderer->drawLine(obj.x, obj.y, obj.x + 50+posFix, obj.y);
-        renderer->drawLine(obj.x, obj.y, obj.x, obj.y + 50+posFix);
-        renderer->drawLine(obj.x + 50+posFix, obj.y, obj.x + 50+posFix, obj.y + 50+posFix);
-        renderer->drawLine(obj.x, obj.y + 50+posFix, obj.x + 50+posFix, obj.y + 50+posFix);
-    
-        // pop the zoom matrix here
+        renderer->drawLine(obj.x - (w/2), obj.y - (h/2), obj.x - (w/2), obj.y + (h/2));
+        renderer->drawLine(obj.x - (w/2), obj.y + (h/2), obj.x + (w/2), obj.y + (h/2));
+        renderer->drawLine(obj.x + (w/2), obj.y + (h/2), obj.x + (w/2), obj.y - (h/2));
+        renderer->drawLine(obj.x + (w/2), obj.y - (h/2), obj.x - (w/2), obj.y - (h/2));
+        popZoomMatrix();
     }
 
 
     void Plants::DrawQuadAroundObj(const parser::Mappable& obj, const glm::vec4 &color) const
     {
-		float posFix = -10;
-        
-        // push the zoom matrix here
+        float w = PLANT_SIZE * (1/m_zoomFactor);
+        float h = PLANT_SIZE * (1/m_zoomFactor);
+        pushZoomMatrix();
         renderer->setColor( Color( color.r, color.g, color.b, color.a) );
-		renderer->drawQuad(obj.x + .5*posFix, obj.y + .5*posFix, 50,50);
-        // pop the zoom matrix here
-        
+        renderer->drawQuad(obj.x- (w/2), obj.y - (h/2),w,h);
+        popZoomMatrix();
     }
 
     void Plants::pushZoomMatrix() const 
