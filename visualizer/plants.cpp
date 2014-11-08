@@ -25,6 +25,7 @@ namespace visualizer
 	}
 
 	const float Plants::GRID_OFFSET = 20.0f;
+    const float Plants::PLANT_SIZE = 60.0f;
 	Plants::Plants()
 	{
 		m_game = 0;
@@ -94,6 +95,9 @@ namespace visualizer
 	{
 		renderer->disableScissor();
 		renderer->pop();
+
+        DrawObjectSelection();
+
 	}
 
 
@@ -264,6 +268,50 @@ namespace visualizer
 		out.bottom = max(y,bottom);
 	}
 
+    void Plants::DrawObjectSelection() const
+    {
+        int turn = timeManager->getTurn();
+        if(turn < (int) m_game->states.size())
+        {
+             for(auto & iter : m_SelectedUnits)
+            {
+                if(m_game->states[turn].plants.find(iter) != m_game->states[turn].plants.end())
+                {
+                    auto & plant = m_game->states[turn].plants.at(iter);
+                    DrawQuadAroundObj(parser::Mappable({plant.id, plant.x, plant.y}), glm::vec4(1.0f, 0.4, 0.4, 0.6));
+                }
+            }
+
+            int focus = gui->getCurrentUnitFocus();
+            if(focus >= 0)
+            {
+                if(m_game->states[turn].plants.find(focus) != m_game->states[turn].plants.end())
+                {
+                    auto& plant = m_game->states[turn].plants.at(focus);
+                    DrawBoxAroundObj(parser::Mappable({plant.id, plant.x, plant.y}), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+                }
+            }
+        }
+    }
+
+    void Plants::DrawBoxAroundObj(const parser::Mappable& obj, const glm::vec4 &color) const
+    {
+        float posFix = 1.3;
+        renderer->setColor(Color(color.r, color.g, color.b, color.a));
+        renderer->drawLine(obj.x, obj.y, obj.x + 50+posFix, obj.y);
+        renderer->drawLine(obj.x, obj.y, obj.x, obj.y + 50+posFix);
+        renderer->drawLine(obj.x + 50+posFix, obj.y, obj.x + 50+posFix, obj.y + 50+posFix);
+        renderer->drawLine(obj.x, obj.y + 50+posFix, obj.x + 50+posFix, obj.y + 50+posFix);
+    }
+
+
+    void Plants::DrawQuadAroundObj(const parser::Mappable& obj, const glm::vec4 &color) const
+    {
+        float posFix = 60;
+        renderer->setColor( Color( color.r, color.g, color.b, color.a) );
+        renderer->drawQuad(obj.x + .5*posFix, obj.y + .5*posFix, 1,1);
+    }
+
 	std::list<IGUI::DebugOption> Plants::getDebugOptions()
 	{
 		return std::list<IGUI::DebugOption>({{"Units Selectable", true},
@@ -340,9 +388,7 @@ namespace visualizer
 				}
 
                 // Only scale the mother plant and the rad pools
-
-				float plantSize = 60.0f;
-
+                float plantSize = PLANT_SIZE;
 				if(plant.mutation == 0 || plant.mutation == 7)
 				{
 					plantSize = plant.range;
