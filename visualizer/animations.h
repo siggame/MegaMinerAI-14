@@ -9,11 +9,12 @@ namespace visualizer
 	class DrawFadedObject : public Anim
 	{
 	public:
-		DrawFadedObject(const Color& color, FadeFlag fade) : m_color(color), m_fade(fade) {}
+        DrawFadedObject(const Color& start, const Color& end, FadeFlag fade) : m_start(start), m_end(end), m_fade(fade) {}
 
 		void animate(const float &t, AnimData *d, IGame *game);
 	private:
-		Color m_color;
+        Color m_start;
+        Color m_end;
 		FadeFlag m_fade;
 	};
 
@@ -21,7 +22,7 @@ namespace visualizer
 	class nameClass: public DrawFadedObject \
     { \
         public: \
-			nameClass( dataClass* data, const Color& color, FadeFlag fade = None ) : DrawFadedObject(color, fade) { m_data = data; } \
+            nameClass( dataClass* data, const Color& start, const Color& end, FadeFlag fade = None ) : DrawFadedObject(start, end, fade) { m_data = data; } \
             void animate( const float& t, AnimData* d, IGame* game ); \
         private: \
             dataClass *m_data; \
