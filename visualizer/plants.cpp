@@ -313,7 +313,7 @@ namespace visualizer
 				}
 
                 // Only scale the mother plant and the rad pools
-				float plantSize = 40.0f;
+				float plantSize = 60.0f;
 				if(plant.mutation == 0 || plant.mutation == 7)
 				{
 					plantSize = plant.range;
@@ -324,7 +324,7 @@ namespace visualizer
 				{
 					float x = plant.x - plantSize / 2.0;
 					float y = plant.y - plantSize / 2.0;
-					SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, plantTexture);
+					SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture);
 					spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
 
 					anim = spriteData;
