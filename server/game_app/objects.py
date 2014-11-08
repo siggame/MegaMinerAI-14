@@ -142,6 +142,7 @@ class Plant(Mappable):
     self.baseStrength = baseStrength
     self.maxStrength = maxStrength
     self.updatedAt = game.turnNumber
+    self.hasSpoken = False
 
   def toList(self):
     return [self.id, self.x, self.y, self.owner, self.mutation, self.rads, self.maxRads, self.radiatesLeft, self.maxRadiates, self.range, self.uprootsLeft, self.maxUproots, self.strength, self.minStrength, self.baseStrength, self.maxStrength, ]
@@ -173,10 +174,15 @@ class Plant(Mappable):
         self.strength = min(self.strength - 1, self.maxStrength)
 
       self.handleDeath()
+      
+      self.hasSpoken = False
 
 
   def talk(self, message):
-    self.game.addAnimation(PlantTalkAnimation(self.id, message))
+    if not self.hasSpoken:
+      message = message[0:140]
+      self.hasSpoken = True
+      self.game.addAnimation(PlantTalkAnimation(self.id, message))
 
 
   def radiate(self, x, y):

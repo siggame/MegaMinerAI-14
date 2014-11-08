@@ -338,6 +338,15 @@ DLLEXPORT int playerGerminate(_Player* object, int x, int y, int mutation)
 
 DLLEXPORT int plantTalk(_Plant* object, char* message)
 {
+  if(object -> hasSpoken == 0)
+  {
+    if(strlen(message) > 140)
+    {
+      message[140] = '\0';               //sneakily truncating message
+      object -> hasSpoken = 1;
+    }
+  }
+      
   stringstream expr;
   expr << "(game-talk " << object->id
       << " \"" << escape_string(message) << "\""
@@ -577,6 +586,7 @@ void parsePlant(Connection* c, _Plant* object, sexp_t* expression)
   sub = sub->next;
   object->maxStrength = atoi(sub->val);
   sub = sub->next;
+  object -> hasSpoken = false;
 
 }
 void parseMutation(Connection* c, _Mutation* object, sexp_t* expression)
