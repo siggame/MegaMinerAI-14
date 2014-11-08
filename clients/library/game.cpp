@@ -485,25 +485,7 @@ DLLEXPORT int plantUproot(_Plant* object, int x, int y)
   bool inRange;
   if (object->mutation != tumbleNo)
   {
-    inRange = false;
-    //identify and check every possible spawner
-    _Plant* checking_plant;
-    for (int i = 0; i < getPlantCount(c); i++)
-    {
-      checking_plant = getPlant(c,i);
-      if ((checking_plant->mutation == spawnerNo || checking_plant->mutation == motherNo) && checking_plant->owner == getPlayerID(c) && checking_plant->id != object->id)
-      {
-        if (dist(x, y, checking_plant->x, checking_plant->y) <= checking_plant->range)
-        {
-          if (dist(object->x, object->y, checking_plant->x, checking_plant->y) <= checking_plant->range)
-          {
-            inRange = true;
-            break;
-          }
-        }
-      }
-    }
-    if (!inRange)
+    if (dist(object->x, object->y, x, y) > getUprootRange(c))
       return 0;
   }
   else if (dist(object->x, object->y, x, y) > getBumbleweedSpeed(c))
