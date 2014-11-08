@@ -95,8 +95,8 @@ namespace visualizer
 	{
 		renderer->disableScissor();
 		renderer->pop();
-
-                DrawObjectSelection();
+        
+        DrawObjectSelection();
 
 	}
 
@@ -403,8 +403,7 @@ namespace visualizer
 											 {"Tiles Selectable", false}});
 	}
 	
-    //ENUM FOR PLANTS
-
+    //ENUMERATION FOR PLANT MUTATIONS
     enum
     {
        Mother,
@@ -467,8 +466,13 @@ namespace visualizer
 				// Render circle around plants
 				if (plant.mutation != 7)
 				{
+
+                    //Plant Radius Color
+                    Color radiusColor = getPlayerColor(plant.owner);
+                    radiusColor.a = .4;
+
 					SmartPointer<DrawCircleData> circleData = new DrawCircleData(plant.x, plant.y, plant.range);
-					circleData->addKeyFrame( new DrawCircle( circleData, Color(0.1,0.6,0.8,0.2), bSpawned ? FadeIn : None ) );
+					circleData->addKeyFrame( new DrawCircle( circleData, radiusColor, bSpawned ? FadeIn : None ) );
 					turn.addAnimatable( circleData );
 				}
 
@@ -622,6 +626,21 @@ namespace visualizer
 				turn[plant.id]["minStrength"] = plant.minStrength;
 
 			}
+
+            /*
+            for( auto& p : m_game->states[ state ].plants )
+            {
+                // Player talk
+                for( auto& t : m_game->states[state].animations[ p.first ] )
+                {
+                parser::PLANTTALK &plantTalk = (parser::PLANTTALK&)*t;
+                stringstream talkstring;
+                talkstring << "(" << state << ") " << plantTalk.message;
+                //playerTalks[ player.first ] = talkstring.str();
+                turn[-1]["Talk"] = talkstring.str().c_str();
+                }
+            }
+            */
 
 			while(!animationQueue.empty())
 			{
