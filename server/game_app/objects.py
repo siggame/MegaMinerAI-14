@@ -201,6 +201,8 @@ class Plant(Mappable):
       target_plant = self.game.plantsByPosition[(x, y)]
       if target_plant.mutation == self.game.pool:
         target_plant = None
+      if target_plant == self:
+        target_plant = None
 
     if not target_plant:
       return 'Turn {}: Your {} must radiate another plant'.format(self.game.turnNumber, self.id)
