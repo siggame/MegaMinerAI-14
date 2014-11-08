@@ -48,7 +48,7 @@ class Match(DefaultGameWorld):
     self.poolBuff = self.poolBuff
     self.sporeRate = self.sporeRate
     self.maxSpores = self.maxSpores
-	self.uprootRange = None
+    self.uprootRange = self.uprootRange
 
     self.plantsByPosition = dict()
 

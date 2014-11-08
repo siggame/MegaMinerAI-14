@@ -207,6 +207,8 @@ class Plant(Mappable):
       target_plant.rads += damage
       target_plant.handleDeath()
 
+      self.uprootsLeft = 0
+
     elif self.mutation in (self.game.tumbleweed, self.game.soaker):
       if target_plant.owner != self.game.playerID:
         return 'Turn {}: Your {} cannot heal or buff the opponent\'s plants'.format(self.game.turnNumber, self.id)
