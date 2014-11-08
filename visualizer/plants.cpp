@@ -96,8 +96,8 @@ namespace visualizer
 	{
 		renderer->disableScissor();
 		renderer->pop();
-
-                DrawObjectSelection();
+        
+        DrawObjectSelection();
 
 	}
 
@@ -175,14 +175,14 @@ namespace visualizer
         {
             case parser::ATTACK:
                 switch(id)
-                {/*
-                    case 0: stream << "mother"; break;
-                    case 1: stream << "spawner"; break;
-                    case 2: stream << "choke"; break;
-                    case 3: stream << "soaker"; break;
-                    case 4: stream << "bumbleweed"; break;
-                    case 5: stream << "aralia"; break;
-                    case 6: stream "titan"; break; */
+                {
+                   // case 0: stream << "mother"; break;
+                   // case 1: stream << "spawner"; break;
+                    case 2: stream << "choke_anim"; break;
+                   // case 3: stream << "soaker"; break;
+                   // case 4: stream << "bumbleweed"; break;
+                    case 5: stream << "aralia_anim"; break;
+                    case 6: stream << "titan_anim"; break;
                     default: stream << "bumbleweed";
 
                 }
@@ -249,7 +249,7 @@ namespace visualizer
                     case 3: stream << "soaker"; break;
                     case 4: stream << "bumbleweed"; break;
                     case 5: stream << "aralia"; break;
-                    case 6: stream << "titan"; break;
+                    case 6: stream << "titan_anim"; break;
                     default: stream << "spawner";
 
                 }
@@ -410,8 +410,7 @@ namespace visualizer
 											 {"Tiles Selectable", false}});
 	}
 	
-    //ENUM FOR PLANTS
-
+    //ENUMERATION FOR PLANT MUTATIONS
     enum
     {
        Mother,
@@ -465,17 +464,22 @@ namespace visualizer
 				const parser::Plant& plant = iter.second;
 				bool bSpawned = spawnedPlants.insert(plant.id).second;
                 bool direction = plant.owner;
-
+                float health = plant.maxRads - plant.rads;
                 string plantTexture = getPlantFromID(plant.mutation, plant.owner);
 
 				// Coloring plants
-				Color plantColor = Color(1, 1, 1, 1);
+                Color plantColor = Color(1, (health/plant.maxRads), (health/plant.maxRads), 1);
 
 				// Render circle around plants
 				if (plant.mutation != 7)
 				{
+
+                    //Plant Radius Color
+                    Color radiusColor = getPlayerColor(plant.owner);
+                    radiusColor.a = .4;
+
 					SmartPointer<DrawCircleData> circleData = new DrawCircleData(plant.x, plant.y, plant.range);
-					circleData->addKeyFrame( new DrawCircle( circleData, Color(0.1,0.6,0.8,0.2), bSpawned ? FadeIn : None ) );
+					circleData->addKeyFrame( new DrawCircle( circleData, radiusColor, bSpawned ? FadeIn : None ) );
 					turn.addAnimatable( circleData );
 				}
 
@@ -499,7 +503,7 @@ namespace visualizer
                             endframe = 23;
                             break;
                         case Choker:
-                            endframe = 23;
+                            endframe = 5;
                             break;
                         case Soaker:
                             endframe = 23;
@@ -508,10 +512,10 @@ namespace visualizer
                             endframe = 23;
                             break;
                         case Aralia:
-                            endframe = 23;
+                            endframe = 7;
                             break;
                         case Titan:
-                            endframe = 23;
+                            endframe = 15;
                             break;
 
                     }
@@ -522,14 +526,24 @@ namespace visualizer
                     SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
                     spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
                     anim = spriteData;
-
-                    if(plant.mutation == Bumbleweed && !bSpawned)
+                    if(!bSpawned)
                     {
-                        SmartPointer<DrawAnimatedSpriteData> idle = new DrawAnimatedSpriteData(0, 7, x, y, plantSize, plantSize,
-                                                                                               plantTexture, direction);
-                        idle->addKeyFrame( new DrawAnimatedSprite( idle, plantColor, bSpawned ? FadeIn : None ) );
-                        anim = idle;
+                        if(plant.mutation == Bumbleweed)
+                        {
+                            SmartPointer<DrawAnimatedSpriteData> idle = new DrawAnimatedSpriteData(0, 7, x, y, plantSize, plantSize,
+                                                                                                   plantTexture, direction);
+                            idle->addKeyFrame( new DrawAnimatedSprite( idle, plantColor, bSpawned ? FadeIn : None ) );
+                            anim = idle;
+                        }
+                        else if(plant.mutation == Titan)
+                        {
+                            SmartPointer<DrawAnimatedSpriteData> idle = new DrawAnimatedSpriteData(0, endframe, x, y, plantSize * 1.20f, plantSize * 1.20f,
+                                                                                                   plantTexture, direction);
+                            idle->addKeyFrame( new DrawAnimatedSprite( idle, plantColor, bSpawned ? FadeIn : None ) );
+                            anim = idle;
+                        }
                     }
+
 
 
                     //SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
@@ -552,7 +566,7 @@ namespace visualizer
                                     direction = true;
                                 else
                                     direction = false;
-                                SmartPointer<DrawAnimatedSpriteData> atk = new DrawAnimatedSpriteData(15, endframe, x, y, plantSize, plantSize, plantTexture, direction);
+                                SmartPointer<DrawAnimatedSpriteData> atk = new DrawAnimatedSpriteData(0, endframe, x, y, plantSize, plantSize, plantTexture, direction);
                                 atk->addKeyFrame( new DrawAnimatedSprite( atk, plantColor, bSpawned ? FadeIn : None ) );
                                 anim = atk;
 
@@ -619,6 +633,21 @@ namespace visualizer
 				turn[plant.id]["minStrength"] = plant.minStrength;
 
 			}
+
+            /*
+            for( auto& p : m_game->states[ state ].plants )
+            {
+                // Player talk
+                for( auto& t : m_game->states[state].animations[ p.first ] )
+                {
+                parser::PLANTTALK &plantTalk = (parser::PLANTTALK&)*t;
+                stringstream talkstring;
+                talkstring << "(" << state << ") " << plantTalk.message;
+                //playerTalks[ player.first ] = talkstring.str();
+                turn[-1]["Talk"] = talkstring.str().c_str();
+                }
+            }
+            */
 
 			while(!animationQueue.empty())
 			{
