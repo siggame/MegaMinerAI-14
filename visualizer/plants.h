@@ -74,6 +74,7 @@ namespace visualizer
 			void DrawBoxAroundObj(const parser::Mappable& obj, const glm::vec4& color) const;
 			void DrawQuadAroundObj(const parser::Mappable& obj, const glm::vec4& color) const;
 
+            Rect m_zoomRect;
 	};
 
 } // visualizer

@@ -55,18 +55,18 @@ namespace visualizer
 
 	void Plants::preDraw()
 	{
-        const float x = getWidth() / 2;
-        const float y = getHeight() + 2;
-        const float boxOffset = 980;
-        const float boxWidth = 0;
+                const float x = getWidth() / 2;
+                const float y = getHeight() + 2;
+                const float boxOffset = 980;
+                const float boxWidth = 0;
 
 		const Input& input = gui->getInput();
 
 		ProcessInput();
-
+                
 		renderer->push();
 		renderer->translate(GRID_OFFSET, GRID_OFFSET);
-
+                
 		renderer->setColor(Color(0.9f,0.9f,0.9f,1));
 		renderer->drawTexturedQuad(0, 0, getWidth(), getHeight(), 2, "grid");
 
@@ -76,17 +76,17 @@ namespace visualizer
 		//renderer->drawSubTexturedQuad(0, 0, getWidth(), getHeight(), offset, offset, getWidth(), getHeight(), "noise");
 		renderer->drawTexturedQuad(0, 0, getWidth(), getHeight(), 1, "noise");
 
-        // Draw Names
-        for (int owner : {0,1})
-        {
-            int namePos = (owner == 0) ? (x - boxOffset) : (x + boxOffset);
-            IRenderer::Alignment alignment = (owner == 0) ? IRenderer::Left : IRenderer::Right;
-            renderer->setColor(getPlayerColor(owner));
+                // Draw Names
+                for (int owner : {0,1})
+                {
+                    int namePos = (owner == 0) ? (x - boxOffset) : (x + boxOffset);
+                    IRenderer::Alignment alignment = (owner == 0) ? IRenderer::Left : IRenderer::Right;
+                    renderer->setColor(getPlayerColor(owner));
 
-            std::stringstream stream;
-			stream << m_game->states[0].players[owner].playerName << " Spores: " << m_game->states[timeManager->getTurn()].players[owner].spores;
-            renderer->drawText(namePos, y, "Roboto", stream.str(), 200.0f, alignment);
-        }
+                    std::stringstream stream;
+                                stream << m_game->states[0].players[owner].playerName << " Spores: " << m_game->states[timeManager->getTurn()].players[owner].spores;
+                    renderer->drawText(namePos, y, "Roboto", stream.str(), 200.0f, alignment);
+                }
 
 		renderer->enableScissor(GRID_OFFSET, getHeight() + GRID_OFFSET, getWidth(), getHeight());
 	}
@@ -96,7 +96,7 @@ namespace visualizer
 		renderer->disableScissor();
 		renderer->pop();
 
-        DrawObjectSelection();
+                DrawObjectSelection();
 
 	}
 
@@ -161,6 +161,11 @@ namespace visualizer
 		renderer->setCamera( 0, 0, width, height );
 		renderer->setGridDimensions( width, height );
 
+                m_zoomRect.left = 0
+                m_zoomRect.top = 0
+                m_zoomRect.right = width
+                m_zoomRect.bottom = height
+                
 		start();
 	} // Plants::loadGamelog()
 
@@ -369,19 +374,27 @@ namespace visualizer
     void Plants::DrawBoxAroundObj(const parser::Mappable& obj, const glm::vec4 &color) const
     {
         float posFix = 1.3;
+        
+        //push the zoom matrix here
         renderer->setColor(Color(color.r, color.g, color.b, color.a));
         renderer->drawLine(obj.x, obj.y, obj.x + 50+posFix, obj.y);
         renderer->drawLine(obj.x, obj.y, obj.x, obj.y + 50+posFix);
         renderer->drawLine(obj.x + 50+posFix, obj.y, obj.x + 50+posFix, obj.y + 50+posFix);
         renderer->drawLine(obj.x, obj.y + 50+posFix, obj.x + 50+posFix, obj.y + 50+posFix);
+    
+        // pop the zoom matrix here
     }
 
 
     void Plants::DrawQuadAroundObj(const parser::Mappable& obj, const glm::vec4 &color) const
     {
         float posFix = 60;
+        
+        // push the zoom matrix here
         renderer->setColor( Color( color.r, color.g, color.b, color.a) );
         renderer->drawQuad(obj.x + .5*posFix, obj.y + .5*posFix, 1,1);
+        // pop the zoom matrix here
+        
     }
 
 	std::list<IGUI::DebugOption> Plants::getDebugOptions()
