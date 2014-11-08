@@ -457,11 +457,11 @@ namespace visualizer
 				const parser::Plant& plant = iter.second;
 				bool bSpawned = spawnedPlants.insert(plant.id).second;
                 bool direction = plant.owner;
-
+                float health = plant.maxRads - plant.rads;
                 string plantTexture = getPlantFromID(plant.mutation, plant.owner);
 
 				// Coloring plants
-				Color plantColor = Color(1, 1, 1, 1);
+                Color plantColor = Color(1, (health/plant.maxRads), (health/plant.maxRads), 1);
 
 				// Render circle around plants
 				if (plant.mutation != 7)
