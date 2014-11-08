@@ -423,7 +423,7 @@ DLLEXPORT int plantRadiate(_Plant* object, int x, int y)
       target->rads = std::max(target->rads - object->strength, 0);
     else if (object->mutation == 3) { //buff if soaker
       int buff = static_cast<int>(1 + object->strength/4.0);
-      target->strength = std::max(target->strength + buff, target->maxStrength);
+      target->strength = std::min(target->strength + buff, target->maxStrength);
     }
   }
 
