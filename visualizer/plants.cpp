@@ -160,24 +160,98 @@ namespace visualizer
 		start();
 	} // Plants::loadGamelog()
 
-	string Plants::getPlantFromID(int id, int owner) const
+    string Plants::getPlantFromID(int id, int owner, int actionState) const
 	{
 		if(id == 7)
 			return "rad_pool";
 
-		std::stringstream stream;
-		// TODO: correctly match ids with string and team color
-		switch(id)
-		{
-			case 0: stream << "mother"; break;
-			case 1: stream << "spawner"; break;
-			case 2: stream << "choke"; break;
-			case 3: stream << "soaker"; break;
-			case 4: stream << "bumbleweed"; break;
-			case 5: stream << "aralia"; break;
-			//case 6: return "titan"; break;
-			default: stream << "spawner";
-		}
+        std::stringstream stream;
+        switch(actionState)
+        {
+            case parser::ATTACK:
+                switch(id)
+                {/*
+                    case 0: stream << "mother"; break;
+                    case 1: stream << "spawner"; break;
+                    case 2: stream << "choke"; break;
+                    case 3: stream << "soaker"; break;
+                    case 4: stream << "bumbleweed"; break;
+                    case 5: stream << "aralia"; break;
+                    case 6: stream "titan"; break; */
+                    default: stream << "bumbleweed";
+
+                }
+                break;
+
+            case parser::HEAL:
+                switch(id)
+                {
+                    case 4: stream << "bumbleweed"; break;
+                }
+                cout << "Heal" << endl;
+                break;
+            case parser::PLANTTALK:
+                switch(id)
+                {/*
+                    case 0: stream << "mother"; break;
+                    case 1: stream << "spawner"; break;
+                    case 2: stream << "choke"; break;
+                    case 3: stream << "soaker"; break;
+                    case 4: stream << "bumbleweed"; break;
+                    case 5: stream << "aralia"; break;
+                    case 6: stream "titan"; break;
+                    default: stream << "spawner";
+                  */
+                }
+                cout << "Talk" << endl;
+                break;
+            case parser::SOAK:
+                switch(id)
+                {/*
+                    case 0: stream << "mother"; break;
+                    case 1: stream << "spawner"; break;
+                    case 2: stream << "choke"; break;
+                    case 3: stream << "soaker"; break;
+                    case 4: stream << "bumbleweed"; break;
+                    case 5: stream << "aralia"; break;
+                    case 6: stream << "titan"; break;
+                    default: stream << "spawner";
+                    */
+                }
+                cout << "Soak" << endl;
+                break;
+            case parser::UPROOT:
+                switch(id)
+                {/*
+                    case 0: stream << "mother"; break;
+                    case 1: stream << "spawner"; break;
+                    case 2: stream << "choke"; break;
+                    case 3: stream << "soaker"; break;
+                    case 4: stream << "bumbleweed"; break;
+                    case 5: stream << "aralia"; break;
+                    case 6: stream << "titan"; break;
+                    default: stream << "spawner";
+                    */
+                }
+                cout << "UpRoot" << endl;
+                break;
+            default:
+                switch(id)
+                {
+                    case 0: stream << "mother"; break;
+                    case 1: stream << "spawner"; break;
+                    case 2: stream << "choke"; break;
+                    case 3: stream << "soaker"; break;
+                    case 4: stream << "bumbleweed"; break;
+                    case 5: stream << "aralia"; break;
+                    case 6: stream << "titan"; break;
+                    default: stream << "spawner";
+
+                }
+                break;
+        };
+
+
 
 		stream << ((owner == 0) ? 1 : 2);
 		return stream.str();
@@ -322,12 +396,12 @@ namespace visualizer
 			
 			// TODO: clean this up
 			for(auto iter : m_game->states[state].plants)
-			{
+            {
 				const parser::Plant& plant = iter.second;
 				bool bSpawned = spawnedPlants.insert(plant.id).second;
                 bool direction = plant.owner;
 
-				string plantTexture = getPlantFromID(plant.mutation, plant.owner);
+                string plantTexture = getPlantFromID(plant.mutation, plant.owner);
 
 				// Coloring plants
 				Color plantColor = Color(1, 1, 1, 1);
@@ -342,7 +416,7 @@ namespace visualizer
 
                 // Only scale the mother plant and the rad pools
 
-				float plantSize = 60.0f;
+                float plantSize = 160.0f;
 
 				if(plant.mutation == 0 || plant.mutation == 7)
 				{
@@ -384,13 +458,26 @@ namespace visualizer
 
                     SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
                     spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
-
                     anim = spriteData;
-                    //direction is initially right (IE the animation;
+
+                    if(plant.mutation == Bumbleweed && !bSpawned)
+                    {
+                        SmartPointer<DrawAnimatedSpriteData> idle = new DrawAnimatedSpriteData(0, 7, x, y, plantSize, plantSize,
+                                                                                               plantTexture, direction);
+                        idle->addKeyFrame( new DrawAnimatedSprite( idle, plantColor, bSpawned ? FadeIn : None ) );
+                        anim = idle;
+                    }
+
+
+                    //SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
+                    //spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
+                    //anim = spriteData;
+
 
                     // Render animations for this plant
                     for(const SmartPointer< parser::Animation >& animation : m_game->states[state].animations[plant.id])
                     {
+                        plantTexture = getPlantFromID(plant.mutation, plant.owner, animation->type);
                         switch(animation->type)
                         {
 
@@ -402,7 +489,7 @@ namespace visualizer
                                     direction = true;
                                 else
                                     direction = false;
-                                SmartPointer<DrawAnimatedSpriteData> atk = new DrawAnimatedSpriteData(0, 7, x, y, plantSize, plantSize, "bumblesheet1", direction);
+                                SmartPointer<DrawAnimatedSpriteData> atk = new DrawAnimatedSpriteData(15, endframe, x, y, plantSize, plantSize, plantTexture, direction);
                                 atk->addKeyFrame( new DrawAnimatedSprite( atk, plantColor, bSpawned ? FadeIn : None ) );
                                 anim = atk;
 
@@ -411,11 +498,20 @@ namespace visualizer
                             }
 
                             case parser::HEAL:
-                               // SmartPointer<DrawAnimatedSpriteData> heal = new DrawAnimatedSpriteData(0, 7, x, y, plantSize, plantSize, "bumblesheet1");
-                               // heal->addKeyFrame( new DrawAnimatedSprite( heal, plantColor, bSpawned ? FadeIn : None ) );
-                               // anim = heal;
+                            {
+                                const parser::heal& healAnim = static_cast<const parser::heal&>(*animation);
+
+                                if(m_game->states[state].plants[healAnim.targetID].x < plant.x)
+                                    direction = true;
+                                else
+                                    direction = false;
+                                SmartPointer<DrawAnimatedSpriteData> heal = new DrawAnimatedSpriteData(0, endframe, x, y, plantSize, plantSize, plantTexture, direction);
+                                heal->addKeyFrame( new DrawAnimatedSprite( heal, plantColor, bSpawned ? FadeIn : None ) );
+                                anim = heal;
+
                                 cout << "Heal" << endl;
                                 break;
+                            }
                             case parser::PLANTTALK:
                                 cout << "Talk" << endl;
                                 break;

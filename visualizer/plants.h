@@ -62,7 +62,7 @@ namespace visualizer
 			int getHeight() const { return m_game->states[0].mapHeight; }
 
 			Color getPlayerColor(int id) const { return (id == 1) ? Color(0.9,0.5,0.5,1) : Color(0.5,0.5,0.9,1); }
-			string getPlantFromID(int id, int owner) const;
+            string getPlantFromID(int id, int owner, int actionState = -1) const;
 
 			void GetSelectedRect(Rect &out) const;
 			std::list<IGUI::DebugOption> getDebugOptions();
