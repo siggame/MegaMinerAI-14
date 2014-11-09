@@ -25,6 +25,18 @@ namespace visualizer
 		//float color = m_data->fade
         game->renderer->setColor(Color(vecColor.r, vecColor.g, vecColor.b, vecColor.a * scalar));
 	}
+   /*void DrawSmoothStaticSprite::animate(const float &t, AnimData *d, IGame *game)
+    {
+
+        DrawFadedObject::animate(t, d, game);
+                float x, y, w, h;
+        w = m_data->width;
+        h = m_data->height;
+        x = m_data->x + ((m_data->width/2) - (w/2));
+        y = m_data->y + ((m_data->height/2) - (h/2));
+        glm::vec4 vecMove = glm::mix(glm::vec4(m_data->x, m_data->y, 0, 0), glm::vec4(m_data->x, m_data->y, 0, 0), t);
+        game->renderer->drawTexturedQuad(move.x, move.y, w, h, 1.0f, m_data->texture, m_data->flip );
+    }*/
 
 	void DrawQuad::animate( const float& t, AnimData* d, IGame* game )
 	{

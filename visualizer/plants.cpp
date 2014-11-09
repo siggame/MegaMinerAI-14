@@ -441,69 +441,92 @@ namespace visualizer
     }
     
 	void Plants::DrawGUI() const
-	{
+    {
 		const float x = getWidth() / 2;
 		const float y = getHeight() + 2;
 		const float boxOffset = 980;
+        const float guibgOff = 50;
 		int currentTurn = timeManager->getTurn();
 
 		renderer->setColor(Color(1, 1, 1, 1));
-		renderer->drawTexturedQuad(0, getHeight(), 500, 400, 1, "guibg");
-		renderer->drawTexturedQuad(1550, getHeight(), 500, 400, 1, "guibg");
-
-		// Draw Names
-		for (int owner : {0,1})
-		{
-			int namePos = (owner == 0) ? (x - boxOffset) : (x + boxOffset);
-			IRenderer::Alignment alignment = (owner == 0) ? IRenderer::Left : IRenderer::Right;
-			renderer->setColor(getPlayerColor(owner));
-
-			// Todo: add player time
-			std::stringstream stream;
-			stream << m_game->states[0].players[owner].playerName;
-			renderer->drawText(namePos, y, "Roboto", stream.str(), 200.0f, alignment);
-		}
+        renderer->drawTexturedQuad(0, getHeight() + guibgOff, 500, 400, 1, "guibg");
+        renderer->drawTexturedQuad(1550, getHeight() + guibgOff, 500, 400, 1, "guibg");
 
 		// Draw Pie chart of spores!
 		for (int i : {0,1})
 		{
-			std::stringstream stream;
+            std::stringstream stream;
 			float sporeCount = m_game->states[currentTurn].players[i].spores;
-			float xPos = 400 + i * getWidth() * 0.60f;
-			float yPos = getHeight() + 50;
+            float xPos = (400 + i * getWidth() * 0.60f)+ 135 -(i * 250);
+            float yPos = getHeight() + 120;
 
 			stream << sporeCount;
 
 			renderer->setColor(Color(0.4f, 0.6f, 0.4f, 1.0f));
-			renderer->drawCircle(xPos, yPos, 50, 1, 10);
+            renderer->drawCircle(xPos, yPos, 50, 1, 10);
                         
 			renderer->setColor(Color(0.3f, 0.9f, 0.3f, 1.0f));
-			renderer->drawCircle(xPos, yPos, 50, static_cast<float>(sporeCount) / m_game->states[currentTurn].maxSpores, 10, 90);
+            renderer->drawCircle(xPos, yPos, 50, static_cast<float>(sporeCount) / m_game->states[currentTurn].maxSpores, 10, 90);
 
 			renderer->setColor(Color(0, 0, 0, 1));
-			renderer->drawText(xPos, yPos, "Roboto", stream.str(), 150.0f, IRenderer::Center);
+            renderer->drawText(xPos, yPos, "Roboto", stream.str(), 150.0f, IRenderer::Center);
 		}
 
 
 		const parser::Plant& plant = m_game->states[currentTurn].plants.at(m_motherPlantID[0]);
-		float health = (plant.maxRads - plant.rads) / (float)plant.maxRads;
+        float health1 = (plant.maxRads - plant.rads) / (float)plant.maxRads;
+        float healthPrev1 = health1;
+
+        if(currentTurn - 1 >= 0)
+        {
+            const parser::Plant& plant1Prev = m_game->states[currentTurn - 1].plants.at(m_motherPlantID[0]);
+            healthPrev1 = (plant1Prev.maxRads - plant1Prev.rads) / (float)plant1Prev.maxRads;
+        }
 
 		renderer->setColor(Color(1.0f, 0.0f, 0.5f, 1.0f));
-		renderer->drawTexturedQuad(50, getHeight() + 100, 500.0f, 150.0f, 1.0f, "vine", 0);
+        renderer->drawTexturedQuad(50, getHeight() + 100 + guibgOff, 500.0f, 150.0f, 1.0f, "vine", 0);
 
 		renderer->setColor(Color(0.0f, 1.0f, 1.0f, 1.0f));
-		renderer->drawSubTexturedQuad(50, getHeight() + 100, 500.0f, 150.0f, 0, 0, health, 1, "vine");
+        renderer->drawSubTexturedQuad(50, getHeight() + 100 + guibgOff, 500.0f, 150.0f, 0, 0, health1, 1, "vine");
 
 		const parser::Plant& plant2 = m_game->states[currentTurn].plants.at(m_motherPlantID[1]);
-		health = (plant2.maxRads - plant2.rads) / (float)plant.maxRads;
+        float health2 = (plant2.maxRads - plant2.rads) / (float)plant.maxRads;
+        float healthPrev2 = health2;
+
+        if(currentTurn - 1 >= 0)
+        {
+            const parser::Plant& plant2Prev = m_game->states[currentTurn - 1].plants.at(m_motherPlantID[1]);
+            healthPrev2 = (plant2Prev.maxRads - plant2Prev.rads) / (float)plant2Prev.maxRads;
+        }
 
 		renderer->setColor(Color(1.0f, 0.0f, 0.5f, 1.0f));
-		renderer->drawTexturedQuad(50 + (getWidth() * 0.76f), getHeight() + 100, 500.0f, 150.0f, 1.0f, "vine", 0);
+        renderer->drawTexturedQuad(50 + (getWidth() * 0.76f), getHeight() + 100 + guibgOff, 500.0f, 150.0f, 1.0f, "vine", 0);
 
 		renderer->setColor(Color(0.0f, 1.0f, 1.0f, 1.0f));
 		//renderer->drawTexturedQuad(50 + (getWidth() * 0.7f) + ((1 - health) * 500.0f), getHeight() + 100, health * 500.0f, 150.0f, 1.0f, "vine", 1);
 
-		renderer->drawSubTexturedQuad(50 + (getWidth() * 0.76f), getHeight() + 100, 500.0f, 150.0f, 0, 0, health, 1, "vine");
+        renderer->drawSubTexturedQuad(50 + (getWidth() * 0.76f), getHeight() + 100 + guibgOff, 500.0f, 150.0f, 0, 0, health2, 1, "vine");
+
+        // Draw Names
+        for (int owner : {0,1})
+        {
+            float health = (owner == 0) ? health1 : health2;
+            int namePos = (owner == 0) ? (x - boxOffset) : (x + boxOffset);
+            int motherHPos = (owner == 0) ? (x - (boxOffset - 200)) : (x + (boxOffset - 200));
+            IRenderer::Alignment alignment = (owner == 0) ? IRenderer::Left : IRenderer::Right;
+            renderer->setColor(getPlayerColor(owner));
+
+            // Todo: add player time
+            std::stringstream stream;
+            stream << m_game->states[0].players[owner].playerName;
+            renderer->drawText(namePos, y, "Roboto", stream.str(), 200.0f, alignment);
+
+            std::stringstream stream2;
+            stream2 << (health * 100);
+            renderer->setColor(Color(0, 0, 0, 1));
+            renderer->drawText(motherHPos, getHeight() + 200 + guibgOff + 20, "Roboto", stream2.str().substr(0,4).append("%"), 150.0f, IRenderer::Center);
+        }
+
 
                 
 	}
