@@ -188,7 +188,7 @@ namespace visualizer
                    // case 0: stream << "mother"; break;
                    // case 1: stream << "spawner"; break;
                     case 2: stream << "choke_anim"; break;
-                   // case 3: stream << "soaker"; break;
+                    case 3: stream << "soaker"; break;
                    // case 4: stream << "bumbleweed"; break;
                     case 5: stream << "aralia_anim"; break;
                     case 6: stream << "titan_anim"; break;
@@ -697,15 +697,27 @@ namespace visualizer
 
                             case parser::ATTACK:
                             {
+
                                 const parser::attack& atkAnim = static_cast<const parser::attack&>(*animation);
 
                                 if(m_game->states[state].plants[atkAnim.targetID].x < plant.x)
                                     direction = true;
                                 else
                                     direction = false;
-                                SmartPointer<DrawAnimatedSpriteData> atk = new DrawAnimatedSpriteData(0, endframe, x, y, plantSize, plantSize, plantTexture, direction);
-                                atk->addKeyFrame( new DrawAnimatedSprite( atk, prevColor, plantColor, bSpawned ? FadeIn : None ) );
-                                anim = atk;
+
+                                if(plant.mutation != Soaker)
+                                {
+                                    SmartPointer<DrawAnimatedSpriteData> atk = new DrawAnimatedSpriteData(0, endframe, x, y, plantSize, plantSize, plantTexture, direction);
+                                    atk->addKeyFrame( new DrawAnimatedSprite( atk, prevColor, plantColor, bSpawned ? FadeIn : None ) );
+                                    anim = atk;
+                                }
+                                else
+                                {
+                                    SmartPointer<DrawSpriteData> staticAtk = new DrawSpriteData(x, y, plantSize, plantSize, plantTexture, direction);
+                                    staticAtk->addKeyFrame( new DrawSprite( staticAtk, prevColor, plantColor, bSpawned ? FadeIn : bDied ? FadeOut : None ) );
+                                    anim = staticAtk;
+                                }
+
 
                                 //cout << "Attack actingID, targetID: " << atkAnim.actingID << ", " << atkAnim.targetID << endl;
                                 break;
