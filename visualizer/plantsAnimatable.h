@@ -77,6 +77,16 @@ namespace visualizer
 		std::string texture;
 	};
 
+    struct DrawScreenTextData : public Animatable
+    {
+        DrawScreenTextData(float x, float y, float width, float height, string text) :
+            x(x), y(y), width(width), height(height), text(text.substr(0,20) ) {}
+
+        float x, y, width, height;
+        string text;
+
+    };
+
 } // visualizer
 
 #endif // PLANTS_ANIMATABLE_H

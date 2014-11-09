@@ -34,6 +34,7 @@ namespace visualizer
     DRAW_OBJECT(DrawSprite, DrawSpriteData)
 	DRAW_OBJECT(DrawAnimatedSprite, DrawAnimatedSpriteData)
 	DRAW_OBJECT(DrawTexturedCircle, DrawTexturedCircleData)
+    DRAW_OBJECT(DrawScreenText, DrawScreenTextData)
 }
 
 #endif // ANIMATION_H
