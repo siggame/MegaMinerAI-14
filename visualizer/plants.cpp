@@ -472,7 +472,6 @@ namespace visualizer
 			float xPos = 400 + i * getWidth() * 0.60f;
 			float yPos = getHeight() + 50;
 
-            cout <<  m_game->states[currentTurn].maxSpores << endl;
 			stream << sporeCount;
 
 			renderer->setColor(Color(0.4f, 0.6f, 0.4f, 1.0f));
@@ -553,7 +552,6 @@ namespace visualizer
 		// Look through each turn in the gamelog
 		for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
 		{
-            cout << "gameRunStart " << endl;
 			// TODO: clean this up
 			for(auto iter : m_game->states[state].plants)
             {
@@ -609,6 +607,7 @@ namespace visualizer
 				float y = plant.y - plantSize / 2.0;
 
 				SmartPointer<Animatable> anim;
+
 				if (plant.mutation != 7)
 				{
                     int endframe;
@@ -660,7 +659,6 @@ namespace visualizer
                             anim = idle;
                         }
                     }
-                    cout << "gameRunEnd " << endl;
 
                     //SmartPointer<DrawSpriteData> spriteData = new DrawSpriteData(x, y, plantSize, plantSize, bSpawned ? "seed" : plantTexture, direction);
                     //spriteData->addKeyFrame( new DrawSprite( spriteData, plantColor, bSpawned ? FadeIn : None ) );
@@ -706,9 +704,21 @@ namespace visualizer
                             }
                             case parser::PLANTTALK:
 							{
-								const parser::plantTalk& talkAnim = static_cast<const parser::plantTalk&>(*animation);
+
+                                SmartPointer<Animatable> talky;
+                                const parser::plantTalk& talkAnim = static_cast<const parser::plantTalk&>(*animation);
+                                SmartPointer<DrawScreenTextData> text = new DrawScreenTextData(x, y, plantSize, plantSize, talkAnim.message);
+                                text->addKeyFrame( new DrawScreenText( text, Color(1.0f, 1.0f, 1.0f, 1.0f), Color(1.0f, 1.0f, 1.0f, 1.0f), bSpawned ? FadeIn : None ) );
+                                talky = text;
+                                animationQueue.push(talky);
                                 //(*turn)[-1]["TALK"] = talkAnim.message;
-								//cout <<"Talk: " << talkAnim.message << endl;
+                                /*
+                                SmartPointer<Animatable> backTalk;
+                                SmartPointer<DrawSpriteData> backTalkData = new DrawSpriteData(x, (y - 100), plantSize, plantSize, "talk", direction);
+                                backTalkData->addKeyFrame( new DrawSprite( backTalkData, Color(1.0f, 1.0f, 1.0f, 0.7f), Color(1.0f, 1.0f, 1.0f, 0.7f), bSpawned ? FadeIn : bDied ? FadeOut : None ) );
+                                backTalk = backTalkData;
+                                animationQueue.push(backTalk);'
+                                */
                                 break;
 							}
                             case parser::SOAK:

@@ -463,7 +463,6 @@ static bool parseHeal(heal& object, sexp_t* expression)
 }
 static bool parsePlantTalk(plantTalk& object, sexp_t* expression)
 {
-	cout << "Parse plant talk" << endl;
   sexp_t* sub;
   if ( !expression ) return false;
   object.type = PLANTTALK;

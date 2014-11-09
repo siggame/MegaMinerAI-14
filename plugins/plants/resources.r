@@ -1,6 +1,8 @@
 font DroidSansMono textures/fonts/DroidSansMono.png DroidSansMono.dat
 font Roboto textures/fonts/Roboto.png Roboto.dat
 
+texture talk textures/talk.png
+
 texture soaker1 textures/soaker1.png
 texture soaker2 textures/soaker2.png
 

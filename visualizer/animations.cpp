@@ -105,4 +105,43 @@ namespace visualizer
 	
                 game->popZoomMatrix();
         }
+
+
+    void DrawScreenText::animate(const float &t, AnimData *d, IGame *game)
+    {
+            if(game->options->getNumber("Toggle Plant Talk") > 0.0f)
+            {
+
+                DrawFadedObject::animate(t, d, game);
+
+               /* float fontSize = 100.0f * (1/game->zoomFactor());
+                string text = m_data->text;
+                float textWidth = game->renderer->textWidth("Roboto", text, fontSize);
+                textWidth *= (1/game->zoomFactor()); */
+                game->pushZoomMatrix();
+                float fontSize = 150.0f * (1/game->zoomFactor());
+                string text = m_data->text;
+                float textWidth = game->renderer->textWidth("Roboto", text, fontSize);
+                textWidth *= (1/game->zoomFactor());
+
+               /* float textDisplaceY = m_data->width*(1/game->zoomFactor());
+                float x, y;
+                x = m_data->x + (textWidth/2); //+ ((m_data->width/2));
+                y = m_data->y; //- textDisplaceY; //+ ((m_data->height/2));
+                */
+
+                float x,y, w, h;
+                w = m_data->width * (1/game->zoomFactor());
+                h = m_data->height * (1/game->zoomFactor());
+                x = m_data->x + ((m_data->width/2) - (w/2)) - ((textWidth/2) * 40); //(game->renderer->textWidth("Roboto", text, 100.0f)/2);
+                y = m_data->y + ((m_data->height/2) - (h/2)) - ((1/game->zoomFactor()) * 40);
+
+
+
+                game->renderer->drawText(x, y, "Roboto", text, fontSize);
+                //game->renderer->drawTexturedQuad(x, y, w, h, 1.0f, m_data->texture, m_data->flip );
+                game->popZoomMatrix();
+            }
+        }
+
 }
