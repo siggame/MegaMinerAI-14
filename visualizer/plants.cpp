@@ -381,7 +381,6 @@ namespace visualizer
 
     void Plants::DrawBoxAroundObj(const parser::Mappable& obj, const glm::vec4 &color) const
     {
-
         float w = PLANT_SIZE * (1/m_zoomFactor);
         float h = PLANT_SIZE * (1/m_zoomFactor);
         pushZoomMatrix();
@@ -704,7 +703,6 @@ namespace visualizer
                             }
                             case parser::PLANTTALK:
 							{
-
                                 SmartPointer<Animatable> talky;
                                 const parser::plantTalk& talkAnim = static_cast<const parser::plantTalk&>(*animation);
                                 SmartPointer<DrawScreenTextData> text = new DrawScreenTextData(x, y, plantSize, plantSize, talkAnim.message);
@@ -734,7 +732,6 @@ namespace visualizer
                             default:
                                 assert(false && "Unknown animation");
                                 break;
-
                         }
                     }
 
@@ -781,22 +778,7 @@ namespace visualizer
 				(*turn)[plant.id]["minStrength"] = plant.minStrength;
 			}
 
-            /*
-            for( auto& p : m_game->states[ state ].plants )
-            {
-                // Player talk
-                for( auto& t : m_game->states[state].animations[ p.first ] )
-                {
-                parser::PLANTTALK &plantTalk = (parser::PLANTTALK&)*t;
-                stringstream talkstring;
-                talkstring << "(" << state << ") " << plantTalk.message;
-                //playerTalks[ player.first ] = talkstring.str();
-                turn[-1]["Talk"] = talkstring.str().c_str();
-                }
-            }
-            */
-
-			while(!animationQueue.empty())
+            while(!animationQueue.empty())
 			{
 				turn->addAnimatable( animationQueue.front() );
 				animationQueue.pop();
